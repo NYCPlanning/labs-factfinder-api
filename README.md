@@ -1,11 +1,11 @@
-# labs-ideas-api
-An express.js api that delivers project-related data from airtable for consumption in ideas.planninglabs.nyc
+# zola-search-api
+An express.js api that delivers typeahead results 
 
 ## Development Environment
 
 1. Clone this repo & install dependencies
   ```
-  git clone https://github.com/NYCPlanning/labs-ideas-api.git
+  git clone https://github.com/NYCPlanning/labs-zola-search-api.git
   npm install
   ```
 
@@ -13,13 +13,23 @@ An express.js api that delivers project-related data from airtable for consumpti
   ```
   cp .env-example .env
   ```
-  Open the new `.env` file and add your airtable key.
+  Open the new `.env` file and add your mapzen search api key.
 
 3. Start the server
   ```
-  npm start
+  npm run evstart
   ```
   
 ## Routes
 
-- `/projects/pipeline.json` - gets projects who's status includes "Pipeline"
+- `/search` - gets results that match a string passed in as query parameter `q`
+
+## Types of results
+
+Results in will be JSON objects and will be one of the following types:
+
+`address` - Mapzen Search geocoder results that matched the 
+
+`lot` - A PLUTO tax lot that matched either on `bbl` or `address`
+
+`zma` - A zoning amendment that matched either on `ulurpno` or `project_na`
