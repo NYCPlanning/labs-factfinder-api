@@ -38,7 +38,7 @@ function plutoSearch(string) {
         WHEN borough = 'QN' THEN 'Queens'
         WHEN borough = 'SI' THEN 'Staten Island'
       END) as address, bbl FROM support_mappluto
-     WHERE address LIKE '%25${string.toUpperCase()}%25' OR bbl = ${string}
+     WHERE address LIKE '%25${string.toUpperCase()}%25' OR bbl::text = '${string}'
      LIMIT 5
   `;
 
