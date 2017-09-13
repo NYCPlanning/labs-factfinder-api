@@ -38,7 +38,8 @@ function plutoSearch(string) {
         WHEN borough = 'QN' THEN 'Queens'
         WHEN borough = 'SI' THEN 'Staten Island'
       END) as address, bbl FROM support_mappluto
-     WHERE address LIKE '%25${string.toUpperCase()}%25' LIMIT 5
+     WHERE address LIKE '%25${string.toUpperCase()}%25' OR bbl = ${string}
+     LIMIT 5
   `;
 
   return carto.SQL(SQL).then(rows =>
