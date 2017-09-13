@@ -10,7 +10,7 @@ function toTitleCase(str) {
 
 function mapzenSearch(string) {
   const mapzenSearchAPI =
-   `https://search.mapzen.com/v1/autocomplete?focus.point.lat=40.7259&focus.point.lon=-73.9805&limit=5&api_key=${process.env.MAPZEN_API_KEY}&boundary.rect.min_lon=-74.292297&boundary.rect.max_lon=-73.618011&boundary.rect.min_lat=40.477248&boundary.rect.max_lat=40.958123&text=${string}`;
+   `https://search.mapzen.com/v1/autocomplete?&limit=5&api_key=${process.env.MAPZEN_API_KEY}&boundary.rect.min_lon=-74.292297&boundary.rect.max_lon=-73.618011&boundary.rect.min_lat=40.477248&boundary.rect.max_lat=40.958123&text=${string}`;
 
   return rp(mapzenSearchAPI)
     .then(res => JSON.parse(res))
