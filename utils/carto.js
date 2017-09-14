@@ -16,9 +16,14 @@ const Carto = {
     const cleanedQuery = query.replace('\n', '');
     const url = buildSqlUrl(cleanedQuery, type);
 
-    return rp(url)
+    return rp({
+      uri: url,
+      resolveWithFullResponse: true,
+      time: true,
+    })
       .then((response) => {
-        const obj = JSON.parse(response);
+        console.log(`Carto API call completed in ${response.elapsedTime}ms`);
+        const obj = JSON.parse(response.body);
         return obj.rows;
         // throw new Error('Not found');
       })
