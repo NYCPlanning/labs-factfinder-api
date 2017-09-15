@@ -10,11 +10,12 @@ function toTitleCase(str) {
 
 function mapzenSearch(string) {
   const mapzenSearchAPI =
-   `https://search.mapzen.com/v1/autocomplete?&limit=5&api_key=${process.env.MAPZEN_API_KEY}&boundary.rect.min_lon=-74.292297&boundary.rect.max_lon=-73.618011&boundary.rect.min_lat=40.477248&boundary.rect.max_lat=40.958123&text=${string}`;
+   `https://search.mapzen.com/v1/autocomplete?&api_key=${process.env.MAPZEN_API_KEY}&boundary.rect.min_lon=-74.292297&boundary.rect.max_lon=-73.618011&boundary.rect.min_lat=40.477248&boundary.rect.max_lat=40.958123&text=${string}`;
 
   return rp(mapzenSearchAPI)
     .then(res => JSON.parse(res))
-    .then(json => json.features.map((feature) => {
+    .then(json => json.features.filter(feature => feature.properties.borough))
+    .then(json => json.map((feature) => {
       const { label, neighbourhood } = feature.properties;
       const { coordinates } = feature.geometry;
 
@@ -25,12 +26,11 @@ function mapzenSearch(string) {
         type: 'address',
       };
     }))
-    .then(json => json.slice(1, 6));
+    .then(json => json.slice(1, 6)); // limit to first 5 results
 }
 
 function plutoSearch(string) {
-
-  const tenDigits = string.match(/^\d{10,14}$/)
+  const tenDigits = string.match(/^\d{10,14}$/);
 
   const lotClause = tenDigits ? `OR bbl = ${string}` : '';
 
