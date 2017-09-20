@@ -64,7 +64,7 @@ function zmaSearch(string) {
       ulurpno
     FROM support_nyzma
     WHERE
-      project_na LIKE '%25${string.toUpperCase()}%25' OR LOWER(ulurpno) LIKE LOWER('%25${string}%25')
+      LOWER(project_na) LIKE LOWER('%25${string.toUpperCase()}%25') OR LOWER(ulurpno) LIKE LOWER('%25${string}%25')
     LIMIT 5
   `;
 
