@@ -12,9 +12,11 @@
     "dotenv": "^4.0.0",
     "express": "^4.13.4",
     "numeral": "^2.0.6",
+    "proj4": "^2.4.4",
     "request": "^2.79.0",
     "request-promise": "^4.2.1",
     "slug": "^0.9.1",
+    "sphericalmercator": "^1.0.5",
     "underscore": "^1.8.3"
   },
   "engines": {
