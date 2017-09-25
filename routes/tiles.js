@@ -165,11 +165,12 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
           // x, y of nw corner, 256, 256
 
             const cropX = (bbox[0] - allTileBounds.nw.xmin) / zoomResolution;
-            const offset = ((bbox[2] - allTileBounds.nw.xmin) / zoomResolution) - cropX;
             const cropY = 512 - ((bbox[3] - allTileBounds.nw.ymin) / zoomResolution);
+            const offset = ((bbox[2] - allTileBounds.nw.xmin) / zoomResolution) - cropX;
           console.log('x', cropX, 'y', cropY, 'offset', offset)
 
           image.crop(cropX, cropY, offset, offset);
+          image.resize(256, 256);
 
           image.getBuffer(Jimp.MIME_PNG, (err, resImage) => {
             res.writeHead(200, {
