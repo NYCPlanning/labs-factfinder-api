@@ -1,7 +1,9 @@
 const express = require('express');
-const request = require('request');
+const rp = require('request-promise');
 const SphericalMercator = require('sphericalmercator');
 const proj4 = require('proj4');
+const mergeImages = require('merge-images');
+const Canvas = require('canvas');
 
 const merc = new SphericalMercator({
   size: 512,
@@ -117,15 +119,52 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
 
   console.log(allTileBounds);
 
+  const imagePromises = [];
+  const imageIds = [];
+
   Object.keys(allTileBounds).forEach((key) => {
     const tileBounds = allTileBounds[key];
     const tilebbox = `${tileBounds.xmin},${tileBounds.ymin},${tileBounds.xmax},${tileBounds.ymax}`;
-    const sourceTile = `http://maps1.nyc.gov/geowebcache/service/wms/?service=WMS&request=GetMap&version=1.1.1&format=image/png&layers=dtm&srs=EPSG:2263&width=512&height=512&bbox=${tilebbox}`;
+    const tileURL = `http://maps1.nyc.gov/geowebcache/service/wms/?service=WMS&request=GetMap&version=1.1.1&format=image/png&layers=dtm&srs=EPSG:2263&width=512&height=512&bbox=${tilebbox}`;
 
-    console.log(key, sourceTile);
-  })
+    imagePromises.push(rp({ url: tileURL, encoding: null }));
+    imageIds.push(key);
+  });
 
-  res.send(`X distance: ${widthInMeters}m, ${metersPerPixel} meters/pixel`)
+  Promise.all(imagePromises).then((imgBuffers) => {
+    const images = imgBuffers.map((buffer, i) => {
+      const id = imageIds[i];
+
+      // const img = new Canvas.Image();
+      // img.onerror = err => console.log(err);
+      // img.onload = () => console.log('success');
+      // img.src = ;
+      return {
+        src: new Buffer(buffer, 'binary'),
+        x: (id === 'nw' || id === 'sw') ? 0 : 512,
+        y: (id === 'nw' || id === 'ne') ? 0 : 512,
+      };
+    });
+
+    // console.log(images)
+
+    mergeImages(images, {
+      Canvas,
+      width: (allTileBounds.ne || allTileBounds.se) ? 1024 : 512,
+      height: (allTileBounds.sw || allTileBounds.se) ? 1024 : 512,
+    })
+      .then((b64) => {
+        const im = b64.split(",")[1];
+        const buf = Buffer.from(im, 'base64');
+
+        res.writeHead(200, {
+          'Content-Type': 'image/png',
+          'Content-Length': b64.length
+        });
+        res.end(buf);
+      })
+  });
+  // res.send(images);
 });
 
 
