@@ -8,6 +8,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "apicache": "^1.1.0",
     "body-parser": "^1.15.2",
     "canvas": "^1.6.7",
     "dotenv": "^4.0.0",

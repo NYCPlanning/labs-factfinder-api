@@ -5,6 +5,7 @@ const routes = require('./routes');
 
 const app = express();
 
+
 // allows CORS
 app.all('*', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
