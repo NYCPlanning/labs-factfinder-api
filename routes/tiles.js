@@ -4,6 +4,7 @@ const SphericalMercator = require('sphericalmercator');
 const proj4 = require('proj4');
 const mergeImages = require('merge-images');
 const Canvas = require('canvas');
+const Jimp = require('jimp');
 
 const merc = new SphericalMercator({
   size: 512,
@@ -53,7 +54,7 @@ function getTileBounds(x, y, zoomResolution) {
   }
 
   // get y bounds
-  for (let i = bounds[1]; i < bounds[3]; i += zoomResolution * 512) {
+  for (let i = 0; i < bounds[3]; i += zoomResolution * 512) {
     const min = i;
     const max = i + (zoomResolution * 512);
     if ((y >= min) && (y < max)) {
@@ -95,6 +96,7 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
   const mercbbox = merc.bbox(x, y, z, false); // [w, s, e, n]
 
 
+
   const ws = proj4(epsg2263, [mercbbox[0], mercbbox[1]]);
   const en = proj4(epsg2263, [mercbbox[2], mercbbox[3]]);
 
@@ -102,15 +104,15 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
     ws[0], ws[1], en[0], en[1],
   ];
 
-  // console.log(mercbbox, bbox);
+  console.log(mercbbox, bbox);
 
 
-  const widthInMeters = en[0] - ws[0];
-  const metersPerPixel = widthInMeters / 256;
+  const widthInFeet = en[0] - ws[0];
+  const feetPerPixel = widthInFeet / 256;
 
   // get the first resolution that is higher than that needed by this tile
   const zoomResolution = resolutions.reduce((acc, cur) => { // eslint-disable-line
-    return (cur > metersPerPixel) ? cur : acc;
+    return (cur > feetPerPixel) ? cur : acc;
   });
 
   console.log('next highest res', zoomResolution);
@@ -154,15 +156,30 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
       height: (allTileBounds.sw || allTileBounds.se) ? 1024 : 512,
     })
       .then((b64) => {
-        const im = b64.split(",")[1];
+        const im = b64.split(',')[1];
         const buf = Buffer.from(im, 'base64');
 
-        res.writeHead(200, {
-          'Content-Type': 'image/png',
-          'Content-Length': b64.length
+        Jimp.read(buf, (err, image) => {
+          console.log(err)
+          // crop by bounds of the tile we want
+          // x, y of nw corner, 256, 256
+
+            const cropX = (bbox[0] - allTileBounds.nw.xmin) / zoomResolution;
+            const offset = ((bbox[2] - allTileBounds.nw.xmin) / zoomResolution) - cropX;
+            const cropY = 512 - ((bbox[3] - allTileBounds.nw.ymin) / zoomResolution);
+          console.log('x', cropX, 'y', cropY, 'offset', offset)
+
+          image.crop(cropX, cropY, offset, offset);
+
+          image.getBuffer(Jimp.MIME_PNG, (err, resImage) => {
+            res.writeHead(200, {
+              'Content-Type': 'image/png',
+              'Content-Length': resImage.length,
+            });
+            res.end(resImage);
+          });
         });
-        res.end(buf);
-      })
+      });
   });
   // res.send(images);
 });
