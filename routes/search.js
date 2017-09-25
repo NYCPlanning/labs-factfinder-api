@@ -31,7 +31,6 @@ function mapzenSearch(string) {
 
 function plutoSearch(string) {
   const tenDigits = string.match(/^\d{10,14}$/);
-
   const lotClause = tenDigits ? `OR bbl = ${string}` : '';
 
   const SQL = `

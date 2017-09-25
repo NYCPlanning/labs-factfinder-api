@@ -35,12 +35,12 @@ const resolutions = [
 ];
 
 
-const epsg2263 = '+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs';
-
+const epsg2263 = '+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs';
 const router = express.Router();
 
 function getTileBounds(x, y, zoomResolution) {
   const tileBounds = {};
+
 
   // get x bounds
   for (let i = bounds[0]; i < bounds[2]; i += zoomResolution * 512) {
@@ -54,9 +54,9 @@ function getTileBounds(x, y, zoomResolution) {
   }
 
   // get y bounds
-  for (let i = 0; i < bounds[3]; i += zoomResolution * 512) {
-    const min = i;
-    const max = i + (zoomResolution * 512);
+  for (let i = bounds[3]; i > bounds[1]; i -= zoomResolution * 512) {
+    const max = i;
+    const min = i - (zoomResolution * 512);
     if ((y >= min) && (y < max)) {
       tileBounds.ymin = min;
       tileBounds.ymax = max;
@@ -96,7 +96,6 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
   const mercbbox = merc.bbox(x, y, z, false); // [w, s, e, n]
 
 
-
   const ws = proj4(epsg2263, [mercbbox[0], mercbbox[1]]);
   const en = proj4(epsg2263, [mercbbox[2], mercbbox[3]]);
 
@@ -112,7 +111,7 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
 
   // get the first resolution that is higher than that needed by this tile
   const zoomResolution = resolutions.reduce((acc, cur) => { // eslint-disable-line
-    return (cur > feetPerPixel) ? cur : acc;
+    return (acc < feetPerPixel) ? acc : cur;
   });
 
   console.log('next highest res', zoomResolution);
@@ -128,6 +127,7 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
     const tileBounds = allTileBounds[key];
     const tilebbox = `${tileBounds.xmin},${tileBounds.ymin},${tileBounds.xmax},${tileBounds.ymax}`;
     const tileURL = `http://maps1.nyc.gov/geowebcache/service/wms/?service=WMS&request=GetMap&version=1.1.1&format=image/png&layers=dtm&srs=EPSG:2263&width=512&height=512&bbox=${tilebbox}`;
+    console.log(tileURL)
 
     imagePromises.push(rp({ url: tileURL, encoding: null }));
     imageIds.push(key);
