@@ -111,7 +111,7 @@ router.get('/dtm/:z/:x/:y.png', (req, res) => {
 
   // get the first resolution that is higher than that needed by this tile
   const zoomResolution = resolutions.reduce((acc, cur) => { // eslint-disable-line
-    return (acc < feetPerPixel) ? acc : cur;
+    return (cur > feetPerPixel) ? cur : acc;
   });
 
   console.log('next highest res', zoomResolution);
