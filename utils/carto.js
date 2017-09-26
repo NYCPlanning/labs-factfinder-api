@@ -24,7 +24,7 @@ const Carto = {
       .then((response) => {
         console.log(`Carto API call completed in ${response.elapsedTime}ms`);
         const obj = JSON.parse(response.body);
-        return obj.rows;
+        return obj.rows ? obj.rows : obj;
         // throw new Error('Not found');
       })
       .catch((reason) => {
