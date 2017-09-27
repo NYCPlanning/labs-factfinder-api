@@ -1,10 +1,6 @@
 const carto = require('../utils/carto');
 
-function toTitleCase(str) {
-  return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-}
-
-const zoningMapAmendment = (string) => {
+const zoningDistrict = (string) => {
   const SQL = `
     SELECT DISTINCT zonedist
     FROM support_zoning_zd
@@ -21,4 +17,4 @@ const zoningMapAmendment = (string) => {
     }));
 };
 
-module.exports = zoningMapAmendment;
+module.exports = zoningDistrict;

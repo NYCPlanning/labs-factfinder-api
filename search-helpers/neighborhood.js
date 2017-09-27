@@ -9,7 +9,7 @@ function format(ntaname, string) {
   return toTitleCase(nabes.filter(nabe => nabe.toLowerCase().indexOf(string.toLowerCase()) !== -1)[0]);
 }
 
-const zoningMapAmendment = (string) => {
+const neighborhood = (string) => {
   const SQL = `
     SELECT
       ST_Centroid(the_geom) as the_geom,
@@ -18,7 +18,7 @@ const zoningMapAmendment = (string) => {
     FROM support_admin_ntaboundaries
     WHERE
       LOWER(ntaname) LIKE LOWER('%25${string}%25')
-      AND ntaname NOT ILIKE '${string}%25'
+      AND ntaname NOT ILIKE 'park-cemetery-etc%25'
     LIMIT 5
   `;
 
@@ -34,4 +34,4 @@ const zoningMapAmendment = (string) => {
   });
 };
 
-module.exports = zoningMapAmendment;
+module.exports = neighborhood;
