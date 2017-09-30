@@ -25,7 +25,7 @@
     "underscore": "^1.8.3"
   },
   "engines": {
-    "node": "8.60",
+    "node": "8.6.0",
     "npm": "5.3.0"
   },
   "devDependencies": {
