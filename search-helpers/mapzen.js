@@ -18,7 +18,7 @@ const mapzen = (string) => {
         type: 'address',
       };
     }))
-    .then(json => json.slice(1, 6)); // limit to first 5 results
+    .then(json => json.slice(0, 5)); // limit to first 5 results
 };
 
 module.exports = mapzen;
