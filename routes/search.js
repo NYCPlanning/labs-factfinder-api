@@ -3,6 +3,8 @@ const express = require('express');
 const mapzen = require('../search-helpers/mapzen');
 const neighborhoodTabulationArea = require('../search-helpers/neighborhood-tabulation-area');
 const puma = require('../search-helpers/puma');
+const tract = require('../search-helpers/tract');
+const block = require('../search-helpers/block');
 
 const router = express.Router();
 
@@ -13,11 +15,13 @@ router.get('/', (req, res) => {
     mapzen(q),
     neighborhoodTabulationArea(q),
     puma(q),
+    tract(q),
+    block(q),
   ])
     .then((values) => {
-      const [addresses, ntas, pumas] = values;
+      const [addresses, ntas, pumas, tracts, blocks] = values;
       const responseArray = [];
-      res.json(responseArray.concat(addresses, ntas, pumas));
+      res.json(responseArray.concat(addresses, ntas, pumas, tracts, blocks));
     }).catch((reason) => {
       console.error(reason); // eslint-disable-line
     });

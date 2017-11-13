@@ -1,14 +1,5 @@
 const carto = require('../utils/carto');
 
-// function toTitleCase(str) {
-//   return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-// }
-//
-// function format(ntaname, string) {
-//   const nabes = ntaname.split('-');
-//   return toTitleCase(nabes.filter(nabe => nabe.toLowerCase().indexOf(string.toLowerCase()) !== -1)[0]);
-// }
-
 const puma = (string) => {
   const SQL = `
     SELECT
