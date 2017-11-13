@@ -14,7 +14,9 @@ const neighborhood = (string) => {
     SELECT
       ST_Centroid(the_geom) as the_geom,
       ntaname,
-      ntacode
+      ntacode,
+      ntacode as geolabel,
+      ntacode as geoid
     FROM support_admin_ntaboundaries
     WHERE
       LOWER(ntaname) LIKE LOWER('%25${string}%25')
@@ -23,14 +25,11 @@ const neighborhood = (string) => {
   `;
 
   return carto.SQL(SQL, 'geojson').then((FeatureCollection) => { // eslint-disable-line
-    return FeatureCollection.features.map((feature) => {
-      const { geometry, properties } = feature;
-      return {
-        label: format(properties.ntaname, string),
-        coordinates: geometry.coordinates,
-        type: 'neighborhood',
-      };
-    });
+    return FeatureCollection.features.map(feature => ({
+      label: format(feature.properties.ntaname, string),
+      feature,
+      type: 'neighborhood-tabulation-area',
+    }));
   });
 };
 

@@ -1,11 +1,7 @@
 const express = require('express');
 
 const mapzen = require('../search-helpers/mapzen');
-const neighborhood = require('../search-helpers/neighborhood');
-const pluto = require('../search-helpers/pluto');
-const zoningDistrict = require('../search-helpers/zoning-district');
-const zoningMapAmendment = require('../search-helpers/zoning-map-amendment');
-const specialPurposeDistrict = require('../search-helpers/special-purpose-district');
+const neighborhoodTabulationArea = require('../search-helpers/neighborhood-tabulation-area');
 
 const router = express.Router();
 
@@ -14,16 +10,12 @@ router.get('/', (req, res) => {
 
   Promise.all([
     mapzen(q),
-    neighborhood(q),
-    pluto(q),
-    zoningDistrict(q),
-    zoningMapAmendment(q),
-    specialPurposeDistrict(q),
+    neighborhoodTabulationArea(q),
   ])
     .then((values) => {
-      const [addresses, neighborhoods, lots, zoningDistricts, zmas, spdistricts] = values;
+      const [addresses, ntas] = values;
       const responseArray = [];
-      res.json(responseArray.concat(addresses, neighborhoods, lots, zoningDistricts, zmas, spdistricts));
+      res.json(responseArray.concat(addresses, ntas));
     }).catch((reason) => {
       console.error(reason); // eslint-disable-line
     });

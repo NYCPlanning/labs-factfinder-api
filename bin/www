@@ -93,5 +93,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
-  console.log('ZoLa Search API running on port ' + bind)
+  console.log('NYC Factfinder API running on port ' + bind)
 }

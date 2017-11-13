@@ -8,12 +8,11 @@ const mapzen = (string) => {
     .then(res => JSON.parse(res))
     .then(json => json.features.filter(feature => feature.properties.borough))
     .then(json => json.map((feature) => {
-      const { label, neighbourhood } = feature.properties;
+      const { label } = feature.properties;
       const { coordinates } = feature.geometry;
 
       return {
         label,
-        neighbourhood,
         coordinates,
         type: 'address',
       };
