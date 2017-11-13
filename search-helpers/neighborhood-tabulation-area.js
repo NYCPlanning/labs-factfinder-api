@@ -12,7 +12,7 @@ function format(ntaname, string) {
 const neighborhood = (string) => {
   const SQL = `
     SELECT
-      ST_Centroid(the_geom) as the_geom,
+      the_geom,
       ntaname,
       ntacode,
       ntacode as geolabel,
