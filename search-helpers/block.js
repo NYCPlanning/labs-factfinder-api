@@ -2,27 +2,43 @@ const carto = require('../utils/carto');
 
 const block = (string) => {
   const SQL = `
-    SELECT
-      the_geom,
-      ct2010,
-      borocode || ct2010 AS boroct2010,
-      cb2010,
-      borocode,
-      bctcb2010,
-      bctcb2010 AS geoid,
-      (ct2010::float / 100)::text || ' - ' || cb2010 as geolabel
-    FROM nyc_census_blocks_2010
+    SELECT * FROM (
+      SELECT
+        the_geom,
+        ct2010,
+        borocode || ct2010 AS boroct2010,
+        cb2010,
+        boroname,
+        bctcb2010,
+        bctcb2010 AS geoid,
+        (ct2010::float / 100)::text || ' - ' || cb2010 as geolabel,
+        '36' ||
+          CASE
+            WHEN borocode = '1' THEN '061'
+            WHEN borocode = '2' THEN '005'
+            WHEN borocode = '3' THEN '047'
+            WHEN borocode = '4' THEN '081'
+            WHEN borocode = '5' THEN '085'
+          END
+        || ct2010 || cb2010 as fips
+      FROM nyc_census_blocks_2010
+    ) x
     WHERE
-      LOWER(bctcb2010) LIKE LOWER('%25${string}%25')
+      bctcb2010 LIKE '%25${string}%25'
+      OR fips LIKE '%25${string}%25'
     LIMIT 5
   `;
 
   return carto.SQL(SQL, 'geojson').then((FeatureCollection) => { // eslint-disable-line
-    return FeatureCollection.features.map(feature => ({
-      label: feature.properties.bctcb2010,
-      feature,
-      type: 'block',
-    }));
+    return FeatureCollection.features.map((feature) => {
+      const { boroname, geolabel, fips } = feature.properties;
+
+      return {
+        label: `${boroname} block ${geolabel} (${fips})`,
+        feature,
+        type: 'block',
+      };
+    });
   });
 };
 
