@@ -29,8 +29,6 @@ const neighborhood = (string) => {
   `;
 
   return carto.SQL(SQL, 'geojson').then((FeatureCollection) => { // eslint-disable-line
-    console.log(FeatureCollection)
-
     return FeatureCollection.features.map((feature) => {
       const { ntacode, ntaname } = feature.properties;
       return {
