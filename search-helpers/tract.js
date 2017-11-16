@@ -19,12 +19,15 @@ const tract = (string) => {
             WHEN borocode = '4' THEN '081'
             WHEN borocode = '5' THEN '085'
           END
-        || ct2010 as fips
+        || ct2010 as fips,
+        boroname || ' ' || ctlabel As boronamect
       FROM nyc_census_tracts_2010
     ) x
     WHERE
       boroct2010 LIKE '%25${string}%25'
       OR fips LIKE '%25${string}%25'
+      OR LOWER(boronamect) LIKE LOWER('%25${string}%25')
+
     LIMIT 5
   `;
 

@@ -11,7 +11,7 @@ const block = (string) => {
         boroname,
         bctcb2010,
         bctcb2010 AS geoid,
-        (ct2010::float / 100)::text || ' - ' || cb2010 as geolabel,
+        (ct2010::float / 100)::text as ctlabel,
         '36' ||
           CASE
             WHEN borocode = '1' THEN '061'
@@ -31,10 +31,15 @@ const block = (string) => {
 
   return carto.SQL(SQL, 'geojson').then((FeatureCollection) => { // eslint-disable-line
     return FeatureCollection.features.map((feature) => {
-      const { boroname, geolabel, fips } = feature.properties;
+      const {
+        boroname,
+        ctlabel,
+        cb2010,
+        fips,
+      } = feature.properties;
 
       return {
-        label: `${boroname} block ${geolabel} (${fips})`,
+        label: `${boroname} Tract ${ctlabel} Block ${cb2010} (${fips})`,
         feature,
         type: 'block',
       };
