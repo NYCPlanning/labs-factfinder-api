@@ -1,10 +1,12 @@
 // simple express app to serve up custom APIs
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
 const routes = require('./routes');
 
 const app = express();
-
+mongoose.connect(process.env.MONGO_URI);
 
 // allows CORS
 app.all('*', (req, res, next) => {
