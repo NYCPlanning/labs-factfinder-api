@@ -3,19 +3,17 @@ const sha1 = require('sha1');
 const carto = require('../utils/carto');
 
 const Selection = require('../models/selection');
+const summaryLevels = require('../selection-helpers/summary-levels');
 
 const router = express.Router();
 
 const getFeatures = (type, geoids) => {
   const inString = geoids.map(geoid => `'${geoid}'`).join(',');
+  const selectionClause = summaryLevels[type](false);
   const SQL = `
-    SELECT the_geom,
-      ct2010,
-      ctlabel as geolabel,
-      boroct2010,
-      ntacode,
-      boroct2010 AS geoid
-    FROM nyc_census_tracts_2010 WHERE boroct2010 in (${inString})`;
+    SELECT * FROM (${selectionClause}) normalized 
+    WHERE geoid in (${inString})`;
+
   return carto.SQL(SQL, 'geojson', 'post')
     .then(FC => FC.features);
 };

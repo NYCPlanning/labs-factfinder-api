@@ -11,7 +11,7 @@ const SelectionSchema = new mongoose.Schema({
     type: [{
       type: String,
       minlength: 4,
-      maxlength: 7,
+      maxlength: 12,
     }],
     required: true,
   },
