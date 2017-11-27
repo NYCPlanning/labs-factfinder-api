@@ -8,7 +8,14 @@ const router = express.Router();
 
 const getFeatures = (type, geoids) => {
   const inString = geoids.map(geoid => `'${geoid}'`).join(',');
-  const SQL = `SELECT the_geom, boroct2010 FROM nyc_census_tracts_2010 WHERE boroct2010 in (${inString})`;
+  const SQL = `
+    SELECT the_geom,
+      ct2010,
+      ctlabel as geolabel,
+      boroct2010,
+      ntacode,
+      boroct2010 AS geoid
+    FROM nyc_census_tracts_2010 WHERE boroct2010 in (${inString})`;
   return carto.SQL(SQL, 'geojson', 'post')
     .then(FC => FC.features);
 };
