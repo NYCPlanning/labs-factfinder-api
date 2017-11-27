@@ -2,11 +2,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-const routes = require('./routes');
+const autoIncrement = require('mongoose-auto-increment');
 
 const app = express();
-mongoose.connect(process.env.MONGO_URI);
+const connection = mongoose.connect(process.env.MONGO_URI);
+
+autoIncrement.initialize(connection);
+
+const routes = require('./routes');
 
 // allows CORS
 app.all('*', (req, res, next) => {

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
 const SelectionSchema = new mongoose.Schema({
   type: {
@@ -16,10 +17,12 @@ const SelectionSchema = new mongoose.Schema({
   },
   hash: {
     type: String,
-    length: 6,
+    length: 40,
     required: true,
   },
 });
+
+SelectionSchema.plugin(autoIncrement.plugin, 'Selection');
 
 const Selection = mongoose.model('Selection', SelectionSchema);
 

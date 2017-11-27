@@ -24,7 +24,8 @@ router.post('/', (req, res) => {
 
   body.geoids.sort();
 
-  const hash = sha1(JSON.stringify(body)).substring(0, 8);
+  const hash = sha1(JSON.stringify(body));
+
   const selection = new Selection({
     type,
     geoids,
@@ -35,15 +36,17 @@ router.post('/', (req, res) => {
   Selection.findOne({ hash })
     .then((match) => {
       if (match) {
+        const { _id: id } = match;
         res.send({
           status: 'existing selection found',
-          hash,
+          id,
         });
       } else {
         selection.save()
-          .then(() => {
+          .then(({ _id: id }) => {
             res.send({
               status: 'new selection saved',
+              id,
               hash,
             });
           })
@@ -53,6 +56,11 @@ router.post('/', (req, res) => {
             });
           }));
       }
+    })
+    .catch((err) => {
+      res.send({
+        status: `error: ${err}`,
+      });
     });
 });
 
