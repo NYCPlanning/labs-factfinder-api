@@ -7,23 +7,35 @@ const buildTemplate = (layergroupid, type) => { // eslint-disable-line
   return `https://${cartoDomain}/user/${cartoUser}/api/v1/map/${layergroupid}/{z}/{x}/{y}.${type}`;
 };
 
-const buildSqlUrl = (cleanedQuery, type = 'json') => { // eslint-disable-line
-  return `https://${cartoDomain}/user/${cartoUser}/api/v2/sql?q=${cleanedQuery}&format=${type}`;
+const buildSqlUrl = (cleanedQuery, format = 'json', method) => { // eslint-disable-line
+  let url = `https://${cartoDomain}/user/${cartoUser}/api/v2/sql`;
+  url += method === 'get' ? `?q=${cleanedQuery}&format=${format}` : '';
+  return url;
 };
 
 const Carto = {
-  SQL(query, type = 'json') {
+  SQL(query, format = 'json', method = 'get') {
     const cleanedQuery = query.replace('\n', '');
-    const url = buildSqlUrl(cleanedQuery, type);
+    const uri = buildSqlUrl(cleanedQuery, format, method);
 
-    return rp({
-      uri: url,
-      resolveWithFullResponse: true,
-      time: true,
-    })
+    let fetchOptions = {
+      uri,
+    };
+
+    if (method === 'post') {
+      fetchOptions = {
+        uri,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+        body: `q=${cleanedQuery}&format=${format}`,
+      };
+    }
+
+    return rp(fetchOptions)
       .then((response) => {
-        console.log(`Carto API call completed in ${response.elapsedTime}ms`);
-        const obj = JSON.parse(response.body);
+        const obj = JSON.parse(response);
         return obj.rows ? obj.rows : obj;
         // throw new Error('Not found');
       })
