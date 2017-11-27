@@ -5,14 +5,27 @@ const Selection = require('../models/selection');
 
 const router = express.Router();
 
-router.get('/:hash', (req, res) => {
-  const { hash } = req.params;
-  Selection.findOne({ hash })
+router.get('/:id', (req, res) => {
+  const { id: _id } = req.params;
+  Selection.findOne({ _id })
     .then((match) => {
-      const { type, geoids } = match;
+      if (match) {
+        const { type, geoids, _id: id } = match;
+        res.send({
+          status: 'success',
+          id,
+          type,
+          geoids,
+        });
+      } else {
+        res.status(404).send({
+          status: 'not found',
+        });
+      }
+    })
+    .catch((err) => {
       res.send({
-        type,
-        geoids,
+        status: `error: ${err}`,
       });
     });
 });
