@@ -1,9 +1,17 @@
 const express = require('express');
 const sha1 = require('sha1');
+const carto = require('../utils/carto');
 
 const Selection = require('../models/selection');
 
 const router = express.Router();
+
+const getFeatures = (type, geoids) => {
+  const inString = geoids.map(geoid => `'${geoid}'`).join(',');
+  const SQL = `SELECT the_geom, boroct2010 FROM nyc_census_tracts_2010 WHERE boroct2010 in (${inString})`;
+  return carto.SQL(SQL, 'geojson', 'post')
+    .then(FC => FC.features);
+};
 
 router.get('/:id', (req, res) => {
   const { id: _id } = req.params;
@@ -11,12 +19,19 @@ router.get('/:id', (req, res) => {
     .then((match) => {
       if (match) {
         const { type, geoids, _id: id } = match;
-        res.send({
-          status: 'success',
-          id,
-          type,
-          geoids,
-        });
+
+        getFeatures(type, geoids)
+          .then((features) => {
+            res.send({
+              status: 'success',
+              id,
+              type,
+              features,
+            });
+          })
+          .catch((err) => {
+            console.log('err', err); // eslint-disable-line
+          });
       } else {
         res.status(404).send({
           status: 'not found',
