@@ -32,6 +32,14 @@ const summaryLevels = {
       ntacode AS geoid
     FROM support_admin_ntaboundaries
   `,
+
+  pumas: (webmercator = true) => `
+    SELECT
+      ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
+      puma as geolabel,
+      puma AS geoid
+    FROM nyc_puma
+  `,
 };
 
 module.exports = summaryLevels;
