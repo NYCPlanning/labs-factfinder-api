@@ -1,14 +1,13 @@
 const rp = require('request-promise');
 
-const cartoUser = 'data';
-const cartoDomain = 'carto.planninglabs.nyc';
+const cartoDomain = 'planninglabs.carto.com';
 
 const buildTemplate = (layergroupid, type) => { // eslint-disable-line
-  return `https://${cartoDomain}/user/${cartoUser}/api/v1/map/${layergroupid}/{z}/{x}/{y}.${type}`;
+  return `https://${cartoDomain}/api/v1/map/${layergroupid}/{z}/{x}/{y}.${type}`;
 };
 
 const buildSqlUrl = (cleanedQuery, format = 'json', method) => { // eslint-disable-line
-  let url = `https://${cartoDomain}/user/${cartoUser}/api/v2/sql`;
+  let url = `https://${cartoDomain}/api/v2/sql`;
   url += method === 'get' ? `?q=${cleanedQuery}&format=${format}` : '';
   return url;
 };
