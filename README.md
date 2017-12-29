@@ -1,40 +1,62 @@
-# zola-search-api
-An express.js api that delivers typeahead results
+# factfinder-api
+An express.js api that provides search and selection data for [NYC Population Factfinder](https://github.com/NYCPlanning/labs-nyc-factfinder).  
 
-## Development Environment
+## Requirements
 
-### Dependencies
-- nodemon `npm install -g nodemon`
+You will need the following things properly installed on your computer.
 
-1. Clone this repo & install dependencies
-  ```
-  git clone https://github.com/NYCPlanning/labs-zola-search-api.git
-  npm install
-  ```
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) (with NPM)
 
-2. Copy .env example
-  ```
-  cp .env-example .env
-  ```
-  Open the new `.env` file and add your mapzen search api key.
+## Local development
 
-3. Start the server
-  ```
-  npm run devstart
-  ```
-### Developer Notes
-- When testing API call, it may be helpful to have JSONView from Chrome Store.
+- Clone this repo `https://github.com/NYCPlanning/labs-factfinder-api.git`
+- Install Dependencies `npm install`
+- Create `.env` file based on `.env-example` with your mapzen api key and mongo uri
+- Start the server `npm run devstart`
 
-## Routes
+## Architecture
 
-- `/search` - gets results that match a string passed in as query parameter `q`
+### Routes
 
-## Types of results
+- `/search` - gets results that match a string passed in as query parameter `q`.  Returns various search result types:
+  - `mapzen` - mapzen autocomplete api results
+  - `nta` - neighborhoods that match the input query
+  - `puma` - pumas that match the input query
+  - `tract` - tracts that match the input query
+  - `block` - census blocks that match the input query
 
-Results in will be JSON objects and will be one of the following types:
 
-`address` - Mapzen Search geocoder results that matched the
+- `/selection`
+  - `POST /selection`
+    - Request payload should be an object with the following properties:
+      - `geoids` - an array of geoids
+      - `type` - one of 'blocks', 'tracts', 'ntas', 'pumas'
+    - Checks if this combination of geoids already exists in the database.  If so, returns the `id` of the selection.  If not, it adds it to the database and returns the `id`
+  - `GET /selection/:id`
+    - Returns an object with the following properties:
+      - `status` - 'success' if found, 'not found' if not found
+      - `id` - the `id` of the selection
+      - `type` - geoid type of the selection, one of 'blocks', 'tracts', 'ntas', 'pumas'
+      - `features` - a geojson FeatureCollection containing a Feature for each selected geometry
 
-`lot` - A PLUTO tax lot that matched either on `bbl` or `address`
+## Backend services
 
-`zma` - A zoning amendment that matched either on `ulurpno` or `project_na`
+- **Carto** - Carto instance with MapPLUTO and other Zoning-related datasets
+- **mapzen search api** - Mapzen autocomplete search results
+- **mongolab** - cloud-hosted mongodb service
+
+## Testing and checks
+
+- **ESLint** - We use ESLint with Airbnb's rules for JavaScript projects
+  - Add an ESLint plugin to your text editor to highlight broken rules while you code
+  - You can also run `eslint` at the command line with the `--fix` flag to automatically fix some errors.
+
+## Deployment
+
+Create dokku remote: `git remote add dokku dokku@{dokkudomain}:factfinder-api`
+Deploy: `git push dokku master`
+
+## Contact us
+
+You can find us on Twitter at [@nycplanninglabs](https://twitter.com/nycplanninglabs), or comment on issues and we'll follow up as soon as we can. If you'd like to send an email, use [labs_dl@planning.nyc.gov](mailto:labs_dl@planning.nyc.gov)
