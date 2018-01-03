@@ -8,7 +8,7 @@ const summaryLevels = {
       borocode,
       bctcb2010,
       bctcb2010 AS geoid,
-      (ct2010::float / 100)::text || ' - ' || cb2010 as geolabel
+      (ct2010::float / 100)::text || '-' || cb2010 as geolabel
     FROM nyc_census_blocks_2010
   `,
 
@@ -17,6 +17,7 @@ const summaryLevels = {
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       ct2010,
       ctlabel as geolabel,
+      borocode,
       boroct2010,
       ntacode,
       boroct2010 AS geoid
@@ -28,7 +29,8 @@ const summaryLevels = {
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       ntaname,
       ntacode,
-      ntacode as geolabel,
+      ntaname || ' (' || ntacode || ')' as geolabel,
+      borocode::text,
       ntacode AS geoid
     FROM support_admin_ntaboundaries
   `,
@@ -36,7 +38,8 @@ const summaryLevels = {
   pumas: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      puma as geolabel,
+      borocode::text,
+      neighborhoods || ' - ' || puma || ' (approx. ' || cd || ')' as geolabel,
       puma AS geoid
     FROM nyc_puma
   `,
