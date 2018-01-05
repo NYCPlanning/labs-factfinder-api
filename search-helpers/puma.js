@@ -8,7 +8,7 @@ const pumaHelper = (string) => {
       a.puma as geolabel,
       a.puma as geoid,
       b.puma_name,
-      b.puma_roughcd_equiv
+      a.puma_roughcd_equiv
     FROM nyc_puma a
     LEFT JOIN support_census_crosswalk b
       ON a.puma = b.puma
