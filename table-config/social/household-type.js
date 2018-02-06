@@ -1,7 +1,7 @@
 const calculator = require('../../utils/calculator');
 const formula = require('../../utils/formula');
 
-export default [
+module.exports = [
   {
     title: 'Total households',
     highlight: true,

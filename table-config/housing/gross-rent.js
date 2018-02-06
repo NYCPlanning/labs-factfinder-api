@@ -1,6 +1,6 @@
-import interpolate from '../../utils/interpolate';
-import formula from '../../utils/formula';
-import calculateMedianError from '../../utils/calculate-median-error';
+const interpolate = require('../../utils/interpolate');
+const formula = require('../../utils/formula');
+const calculateMedianError = require('../../utils/calculate-median-error');
 
 const binsMedianEarlySet = [
   ['ru100', [0, 99]],
@@ -53,7 +53,7 @@ const binsMedianLaterSet = [
   ['r3500pl', [3500, 9000]],
 ];
 
-export default [
+module.exports = [
   {
     title: 'Occupied units paying rent',
     highlight: true,

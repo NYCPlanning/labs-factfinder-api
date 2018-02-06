@@ -1,8 +1,8 @@
-import interpolate from '../../utils/interpolate';
-import calculateMedianError from '../../utils/calculate-median-error';
-import formula from '../../utils/formula';
+const interpolate = require('../../utils/interpolate');
+const calculateMedianError = require('../../utils/calculate-median-error');
+const formula = require('../../utils/formula');
 
-export default [
+module.exports = [
   {
     title: 'Total housing units',
     highlight: true,

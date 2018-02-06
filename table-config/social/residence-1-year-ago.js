@@ -1,4 +1,4 @@
-export default [{
+module.exports = [{
   title: 'Population 1 year and over',
   highlight: true,
   data: 'pop1pl',

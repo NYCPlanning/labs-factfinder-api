@@ -1,6 +1,6 @@
-import interpolate from '../../utils/interpolate';
-import formula from '../../utils/formula';
-import calculateMedianError from '../../utils/calculate-median-error';
+const interpolate = require('../../utils/interpolate');
+const formula = require('../../utils/formula');
+const calculateMedianError = require('../../utils/calculate-median-error');
 
 // mdvl
 const binsMedianValueEarly = [
@@ -59,7 +59,7 @@ const binsMedianValueLater = [
   ['ov2milpl', [2000000, 5000000]],
 ];
 
-export default [
+module.exports = [
   {
     title: 'Owner-occupied units',
     highlight: true,

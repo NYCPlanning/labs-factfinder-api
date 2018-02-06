@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Number of grandparents living with own grandchildren under 18 years',
     highlight: true,

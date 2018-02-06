@@ -1,8 +1,8 @@
-import interpolate from '../../utils/interpolate';
-import formula from '../../utils/formula';
-import calculateMedianError from '../../utils/calculate-median-error';
+const interpolate = require('../../utils/interpolate');
+const formula = require('../../utils/formula');
+const calculateMedianError = require('../../utils/calculate-median-error');
 
-export default [
+module.exports = [
   {
     title: 'Median earnings for workers (dollars)',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',

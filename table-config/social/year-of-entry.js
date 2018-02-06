@@ -1,5 +1,5 @@
 
-export default [
+module.exports = [
   {
     title: 'Foreign-born population',
     highlight: true,

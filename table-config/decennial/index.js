@@ -1,18 +1,18 @@
 // @create-index
 
-import asianSubgroup from './asian-subgroup';
-import relationshipToHeadOfHouseholdHouseholder from './relationship-to-head-of-household--householder';
-import hispanicSubgroup from './hispanic-subgroup';
-import householdSize from './household-size';
-import householdType from './household-type';
-import housingOccupancy from './housing-occupancy';
-import housingTenure from './housing-tenure';
-import mutuallyExclusiveRaceHispanicOrigin from './mutually-exclusive-race---hispanic-origin';
-import populationDensity from './population-density';
-import sexAndAge from './sex-and-age';
-import tenureByAgeOfHouseholder from './tenure-by-age-of-householder';
+const asianSubgroup = ('./asian-subgroup');
+const relationshipToHeadOfHouseholdHouseholder = ('./relationship-to-head-of-household--householder');
+const hispanicSubgroup = ('./hispanic-subgroup');
+const householdSize = ('./household-size');
+const householdType = ('./household-type');
+const housingOccupancy = ('./housing-occupancy');
+const housingTenure = ('./housing-tenure');
+const mutuallyExclusiveRaceHispanicOrigin = ('./mutually-exclusive-race---hispanic-origin');
+const populationDensity = ('./population-density');
+const sexAndAge = ('./sex-and-age');
+const tenureByAgeOfHouseholder = ('./tenure-by-age-of-householder');
 
-export default {
+module.exports = {
   asianSubgroup,
   relationshipToHeadOfHouseholdHouseholder,
   hispanicSubgroup,
