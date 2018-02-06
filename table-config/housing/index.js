@@ -1,20 +1,20 @@
 // @create-index
 
-import grossRentAsAPercentageOfHouseholdIncomeGrapi from './gross-rent-as-a-percentage-of-household-income--grapi';
-import grossRent from './gross-rent';
-import housingOccupancy from './housing-occupancy';
-import housingTenure from './housing-tenure';
-import mortgageStatus from './mortgage-status';
-import occupantsPerRoom from './occupants-per-room';
-import rooms from './rooms';
-import selectedMonthlyOwnerCostsAsAPercentageOfHouseholdIncomeSmocapi from './selected-monthly-owner-costs-as-a-percentage-of-household-income--smocapi';
-import unitsInStructure from './units-in-structure';
-import value from './value';
-import vehiclesAvailable from './vehicles-available';
-import yearHouseholderMovedIntoUnit from './year-householder-moved-into-unit';
-import yearStructureBuilt from './year-structure-built';
+const grossRentAsAPercentageOfHouseholdIncomeGrapi = require('./gross-rent-as-a-percentage-of-household-income--grapi');
+const grossRent = require('./gross-rent');
+const housingOccupancy = require('./housing-occupancy');
+const housingTenure = require('./housing-tenure');
+const mortgageStatus = require('./mortgage-status');
+const occupantsPerRoom = require('./occupants-per-room');
+const rooms = require('./rooms');
+const selectedMonthlyOwnerCostsAsAPercentageOfHouseholdIncomeSmocapi = require('./selected-monthly-owner-costs-as-a-percentage-of-household-income--smocapi');
+const unitsInStructure = require('./units-in-structure');
+const value = require('./value');
+const vehiclesAvailable = require('./vehicles-available');
+const yearHouseholderMovedIntoUnit = require('./year-householder-moved-into-unit');
+const yearStructureBuilt = require('./year-structure-built');
 
-export default {
+module.exports = {
   grossRentAsAPercentageOfHouseholdIncomeGrapi,
   grossRent,
   housingOccupancy,

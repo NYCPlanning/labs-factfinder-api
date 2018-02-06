@@ -1,21 +1,21 @@
 // @create-index
 
-import ancestry from './ancestry';
-import uSCitizenshipStatus from './u-s--citizenship-status';
-import disabilityStatusOfTheCivilianNoninstitutionalizedPopulation from './disability-status-of-the-civilian-noninstitutionalized-population';
-import educationalAttainmentHighestGradeCompleted from './educational-attainment--highest-grade-completed';
-import grandparents from './grandparents';
-import householdType from './household-type';
-import languageSpokenAtHome from './language-spoken-at-home';
-import maritalStatus from './marital-status';
-import placeOfBirth from './place-of-birth';
-import relationshipToHeadOfHouseholdHouseholder from './relationship-to-head-of-household--householder';
-import residence1YearAgo from './residence-1-year-ago';
-import schoolEnrollment from './school-enrollment';
-import veteranStatus from './veteran-status';
-import yearOfEntry from './year-of-entry';
+const ancestry = require('./ancestry');
+const uSCitizenshipStatus = require('./u-s--citizenship-status');
+const disabilityStatusOfTheCivilianNoninstitutionalizedPopulation = require('./disability-status-of-the-civilian-noninstitutionalized-population');
+const educationalAttainmentHighestGradeCompleted = require('./educational-attainment--highest-grade-completed');
+const grandparents = require('./grandparents');
+const householdType = require('./household-type');
+const languageSpokenAtHome = require('./language-spoken-at-home');
+const maritalStatus = require('./marital-status');
+const placeOfBirth = require('./place-of-birth');
+const relationshipToHeadOfHouseholdHouseholder = require('./relationship-to-head-of-household--householder');
+const residence1YearAgo = require('./residence-1-year-ago');
+const schoolEnrollment = require('./school-enrollment');
+const veteranStatus = require('./veteran-status');
+const yearOfEntry = require('./year-of-entry');
 
-export default {
+module.exports = {
   ancestry,
   uSCitizenshipStatus,
   disabilityStatusOfTheCivilianNoninstitutionalizedPopulation,

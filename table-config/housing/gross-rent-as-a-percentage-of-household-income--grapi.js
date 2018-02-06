@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Occupied units paying rent (excluding units where GRAPI cannot be computed)',
     highlight: true,
