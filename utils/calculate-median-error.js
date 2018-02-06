@@ -1,14 +1,13 @@
-import Ember from 'ember';
-import config from '../config/environment';
-import guessYear from '../utils/guess-year';
+const _ = require('lodash');
+const guessYear = require('../utils/guess-year');
 
-const { get, isArray } = Ember;
+const { get, isArray, clone } = _;
 const { round } = Math;
-const { environment } = config;
+
 const DESIGN_FACTOR = 1.5;
 
-const findCumulativePercentage = function(scenario, sum, index) {
-  const copiedBins = scenario.copy();
+function findCumulativePercentage(scenario, sum, index) {
+  const copiedBins = clone(scenario);
   const slicedBins = copiedBins.slice(0, index);
   const cumulativeSum = slicedBins.reduce(
     (total, { quantity }) => total + quantity,
@@ -16,14 +15,14 @@ const findCumulativePercentage = function(scenario, sum, index) {
   );
 
   return (cumulativeSum / sum) * 100;
-};
+}
 
-export default function calculateMedianError(data, column, options) {
+function calculateMedianError(data, column, options) {
   const { bins, multipleBins, designFactor = DESIGN_FACTOR } = options;
 
   let foundBins = bins;
 
-  const sumKey = (function() {
+  const sumKey = (function computeSumKey() {
     if (column.length === 1) return 'sum';
     return column.replace('_m', '_sum');
   }());
@@ -34,7 +33,7 @@ export default function calculateMedianError(data, column, options) {
   // it's implied that the first bins should be used for the earlier
   // time period, and the last bin should be used for the later
   if (multipleBins) {
-    foundBins = guessYear(data, foundBins, environment);
+    foundBins = guessYear(data, foundBins);
   }
 
   if (!isArray(scenario)) {
@@ -62,18 +61,16 @@ export default function calculateMedianError(data, column, options) {
   const pLower = 50 - standardError;
 
   const upperCategoryIndex =
-    foundBins.findIndex(
-      (_, currentBin) =>
+    foundBins
+      .findIndex((__, currentBin) =>
         round(pUpper) > findCumulativePercentage(scenario, sum, currentBin) &&
-        round(pUpper) < findCumulativePercentage(scenario, sum, currentBin + 1),
-    );
+        round(pUpper) < findCumulativePercentage(scenario, sum, currentBin + 1));
 
   const lowerCategoryIndex =
-    foundBins.findIndex(
-      (_, currentBin) =>
+    foundBins
+      .findIndex((__, currentBin) =>
         round(pLower) > findCumulativePercentage(scenario, sum, currentBin) &&
-        round(pLower) < findCumulativePercentage(scenario, sum, currentBin + 1),
-    );
+        round(pLower) < findCumulativePercentage(scenario, sum, currentBin + 1));
 
   const upperCategory = foundBins[upperCategoryIndex];
   const lowerCategory = foundBins[lowerCategoryIndex];
@@ -116,23 +113,7 @@ export default function calculateMedianError(data, column, options) {
   const standardErrorOfMedian = 0.5 * (upperBound - lowerBound);
   const marginOfError = standardErrorOfMedian * 1.645;
 
-  if (environment === 'development') {
-    console.log( // eslint-disable-line
-      'Environment for Median MOE calculations : \n',
-      '\nDesign Factor: ', designFactor,
-      '\nBins: ', foundBins,
-      '\nEstimates: ', scenario,
-      '\nInputs: ', inputs,
-      '\npUpper: ', pUpper,
-      '\npLower: ', pLower,
-      '\nUpper Category: ', upperCategory,
-      '\nLower Category: ', lowerCategory,
-      '\nUpper Bound: ', upperBound,
-      '\nLower Bound: ', lowerBound,
-      '\nMargin of Error: ', marginOfError,
-      '\nStandard Error: ', standardError,
-    );
-  }
-
   return marginOfError;
 }
+
+module.exports = calculateMedianError;

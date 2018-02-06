@@ -1,21 +1,18 @@
-import Ember from 'ember';
-import FormulaParser from 'npm:hot-formula-parser';
+const FormulaParser = require('hot-formula-parser');
+const _ = require('lodash');
 
-const { get, Logger } = Ember;
+const { get } = _;
 const { Parser } = FormulaParser;
 
-export default function(data, sumKey, rowConfig) {
+function runFormulaFor(data, sumKey, rowConfig) {
   const { formula } = rowConfig;
   const parser = new Parser();
 
   parser.setFunction('GET', ([path]) => get(data, path));
 
-  const { result, error } = parser.parse(formula);
-
-  if (error) {
-    Logger.warn('Special calculation failed: ', result, error, data);
-    return error;
-  }
+  const { result } = parser.parse(formula);
 
   return result;
 }
+
+module.exports = runFormulaFor;

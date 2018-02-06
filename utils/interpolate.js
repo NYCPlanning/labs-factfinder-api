@@ -1,10 +1,9 @@
-import Ember from 'ember';
-import config from '../config/environment';
+const _ = require('lodash');
 
-const { get, isArray } = Ember;
-const { environment } = config;
+const { isArray } = Array;
+const { get } = _;
 
-export default function interpolate(data, sumKey = 'sum', options) {
+function interpolate(data, sumKey = 'sum', options) {
   const { bins, multipleBins } = options;
   let scenario = data;
   let foundBins = bins;
@@ -18,12 +17,6 @@ export default function interpolate(data, sumKey = 'sum', options) {
     // guess which year it is
     const [firstObject] = Object.keys(data) || [];
     const thisYear = get(data, `${firstObject}.dataset`).slice(-4);
-
-    if (environment === 'development') {
-      console.log( // eslint-disable-line
-        'Year Guessed: ', thisYear,
-      );
-    }
 
     if (thisYear === '2000' || thisYear === '2016') {
       foundBins = laterSet;
@@ -95,3 +88,5 @@ export default function interpolate(data, sumKey = 'sum', options) {
 
   return medianOfRanges(scenario);
 }
+
+module.exports = interpolate;

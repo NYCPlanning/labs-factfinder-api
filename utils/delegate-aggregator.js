@@ -1,8 +1,12 @@
+const _ = require('lodash');
+
+const { set } = _;
+
 const noop = () => null;
 
-export default function aggregateSpecialVariable(row, rowConfig, data) {
+function aggregateSpecialVariable(row, rowConfig, data) {
   const { specialCalculations = [] } = rowConfig || {};
-  const resultsObject = {};
+  const mutatedRow = row;
 
   specialCalculations.forEach(({ column, aggregator = noop, options }) => {
     let specialValue;
@@ -11,9 +15,10 @@ export default function aggregateSpecialVariable(row, rowConfig, data) {
     } catch (err) {
       console.log('Error with ', column, options, 'Stack trace: ', err); // eslint-disable-line
     }
-
-    row.set(column, specialValue);
+    set(mutatedRow, column, specialValue);
   });
 
-  return resultsObject;
+  return mutatedRow;
 }
+
+module.exports = aggregateSpecialVariable;

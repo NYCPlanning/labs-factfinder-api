@@ -1,11 +1,17 @@
 const express = require('express');
+const _ = require('lodash');
 const carto = require('../utils/carto');
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
 const buildDecennialSQL = require('../query-helpers/decennial');
-const tableConfig = require('../table-config');
+const tableConfigs = require('../table-config');
+const delegateAggregator = require('../utils/delegate-aggregator');
+const nestProfile = require('../utils/nest-profile');
 
 const router = express.Router();
+const {
+  get, set, camelCase, find, merge,
+} = _;
 
 const tableNames = [
   'population_density',
@@ -44,14 +50,33 @@ router.get('/:id/:profile', (req, res) => {
       // match.geoids is an array of geoids to query with
       carto.SQL(buildProfileSQL(profile, match.geoids, 0), 'json', 'post')
         .then((data) => {
-          console.log(tableConfig)
+          const fullDataset = nestProfile(data, 'dataset', 'variable');
+          return data
+            .map((row) => {
+              let rowWithConfig = row;
+              const { category, variable, dataset } = row;
+              const categoryNormalized = camelCase(category);
+              const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
+              rowWithConfig.rowConfig = find(variables, ['data', variable]) || {};
+              rowWithConfig.special = !!get(rowWithConfig, 'rowConfig.special');
 
-          const categoryNormalized = category.camelize();
-          const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
-          const foundVariable = variables.findBy('data', variableName);
+              // if the row is "special" and the number of geoids in the
+              // selection are greater than 1
+              // then, delete the unneeded special calculations data
+              if (rowWithConfig.special && (match.geoids.length > 1)) {
+                const currentYear = get(fullDataset, dataset);
+                const newRowObject = delegateAggregator(rowWithConfig, rowWithConfig.rowConfig, currentYear);
+                rowWithConfig = merge(newRowObject, rowWithConfig);
+              }
 
-
-
+              return rowWithConfig;
+            })
+            .map((row) => {
+              if (row.special) {
+                set(row, 'rowConfig.specialCalculations', null);
+              }
+              return row;
+            });
         })
         .then((data) => {
           res.send(data);

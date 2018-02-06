@@ -1,7 +1,7 @@
-import Ember from 'ember';
+const _ = require('lodash');
 
 const { isArray } = Array;
-const { get } = Ember;
+const { get, isNaN, copy } = _;
 
 const operations = ['divide', 'subtract', 'add', 'multiply'];
 const operators = {
@@ -11,13 +11,13 @@ const operators = {
   subtract(a, b) { return a - b; },
 };
 
-const isOperator = function(step) {
+function isOperator(step) {
   return operations.any(op => op === step);
-};
+}
 
-const calculator = function(data, sumColumn = 'sum', rowConfig) {
+function calculator(data, sumColumn = 'sum', rowConfig) {
   const { procedure } = rowConfig;
-  const currentProcedure = procedure.copy();
+  const currentProcedure = copy(procedure);
 
   // impute values, replacing their signifiers with their signifieds
   currentProcedure.forEach((step, i) => {
@@ -47,6 +47,6 @@ const calculator = function(data, sumColumn = 'sum', rowConfig) {
 
       return operation(first, second);
     }, firstValue);
-};
+}
 
-export default calculator;
+module.exports = calculator;
