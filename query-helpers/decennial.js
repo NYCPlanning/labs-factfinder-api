@@ -3,7 +3,7 @@ function stringifyArray(array) {
   return `'${array.join("','")}'`;
 }
 
-const buildSQL = function buildSQL(tablename, ids, comparator = 0) {
+const buildSQL = function buildSQL(tablename, ids, compare) {
   const idStrings = stringifyArray(ids);
 
   return `
@@ -45,7 +45,7 @@ const buildSQL = function buildSQL(tablename, ids, comparator = 0) {
     comparison_selection AS (
       SELECT *
       FROM ${tablename}
-      WHERE geoid IN ('${comparator}')
+      WHERE geoid IN ('${compare}')
     ),
 
     comparison_enriched_selection AS (

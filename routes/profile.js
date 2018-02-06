@@ -29,11 +29,13 @@ const tableNames = [
 
 router.get('/:id/decennial', (req, res) => {
   const { id: _id } = req.params;
+  const { compare = 0 } = req.query;
+
   Selection.findOne({ _id })
     .then((match) => {
       // match.geoids is an array of geoids to query with
       const apiCalls = tableNames.map((tableName) => { // eslint-disable-line
-        return carto.SQL(buildDecennialSQL(`decennial_${tableName}`, match.geoids, 0));
+        return carto.SQL(buildDecennialSQL(`decennial_${tableName}`, match.geoids, compare), 'json', 'post');
       });
 
       Promise.all(apiCalls)
@@ -45,10 +47,12 @@ router.get('/:id/decennial', (req, res) => {
 
 router.get('/:id/:profile', (req, res) => {
   const { id: _id, profile } = req.params;
+  const { compare = 0 } = req.query;
+
   Selection.findOne({ _id })
     .then((match) => {
       // match.geoids is an array of geoids to query with
-      carto.SQL(buildProfileSQL(profile, match.geoids, 0), 'json', 'post')
+      carto.SQL(buildProfileSQL(profile, match.geoids, compare), 'json', 'post')
         .then((data) => {
           const fullDataset = nestProfile(data, 'dataset', 'variable');
 
