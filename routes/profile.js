@@ -8,6 +8,7 @@ const router = express.Router();
 
 const tableNames = [
   'population_density',
+  'sex_age',
   'mutually_exclusive_race',
   'hispanic_subgroup',
   'asian_subgroup',
