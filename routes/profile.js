@@ -3,6 +3,7 @@ const carto = require('../utils/carto');
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
 const buildDecennialSQL = require('../query-helpers/decennial');
+const tableConfig = require('../table-config');
 
 const router = express.Router();
 
@@ -42,6 +43,16 @@ router.get('/:id/:profile', (req, res) => {
     .then((match) => {
       // match.geoids is an array of geoids to query with
       carto.SQL(buildProfileSQL(profile, match.geoids, 0), 'json', 'post')
+        .then((data) => {
+          console.log(tableConfig)
+
+          const categoryNormalized = category.camelize();
+          const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
+          const foundVariable = variables.findBy('data', variableName);
+
+
+
+        })
         .then((data) => {
           res.send(data);
         });
