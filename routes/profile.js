@@ -96,22 +96,22 @@ function buildSQL(profile, ids, comparator = 0) {
         GROUP BY variable, dataset, base
       )
 
-
-
     SELECT
       base,
       base_m,
       base_sum,
       base_dataset,
+      regexp_replace(lower(base_dataset), '[^A-Za-z0-9]', '_', 'g') AS base_dataset,
       category,
       comparison_base_m,
       comparison_base_sum,
-      comparison_base_dataset,
+      regexp_replace(lower(comparison_base_dataset), '[^A-Za-z0-9]', '_', 'g') AS comparison_base_dataset,
       comparison_cv,
       comparison_m,
       comparison_sum,
       cv,
       dataset,
+      regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
       m,
       sum,
       variable AS variablename,
@@ -158,7 +158,7 @@ router.get('/:id/:profile', (req, res) => {
   Selection.findOne({ _id })
     .then((match) => {
       // match.geoids is an array of geoids to query with
-      carto.SQL(buildSQL(profile, match.geoids, 0))
+      carto.SQL(buildSQL(profile, match.geoids, 0), 'json', 'post')
         .then((data) => {
           res.send(data);
         });
