@@ -3,6 +3,7 @@ const _ = require('lodash');
 const carto = require('../utils/carto');
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
+const buildProfileSingleSQL = require('../query-helpers/profile-single');
 const buildDecennialSQL = require('../query-helpers/decennial');
 const tableConfigs = require('../table-config');
 const delegateAggregator = require('../utils/delegate-aggregator');
@@ -53,8 +54,14 @@ router.get('/:id/:profile', (req, res) => {
 
   Selection.findOne({ _id })
     .then((match) => {
+      let SQL = buildProfileSQL(profile, match.geoids, compare)
+      if (match.geoids.length === 1) {
+        SQL = buildProfileSingleSQL(profile, geoids[0], compare)
+      }
+
+
       // match.geoids is an array of geoids to query with
-      carto.SQL(buildProfileSQL(profile, match.geoids, compare), 'json', 'post')
+      carto.SQL(SQL, 'json', 'post')
         .then((data) => {
           const fullDataset = nestProfile(data, 'dataset', 'variable');
 
