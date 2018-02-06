@@ -11,7 +11,7 @@ const nestProfile = require('../utils/nest-profile');
 
 const router = express.Router();
 const {
-  get, set, camelCase, find, merge,
+  get, set, camelCase, find, merge, clone,
 } = _;
 
 const tableNames = [
@@ -83,12 +83,6 @@ router.get('/:id/:profile', (req, res) => {
               }
 
               return rowWithConfig;
-            })
-            .map((row) => {
-              if (row.special) {
-                set(row, 'rowConfig.specialCalculations', null);
-              }
-              return row;
             });
         })
         .then((data) => {
