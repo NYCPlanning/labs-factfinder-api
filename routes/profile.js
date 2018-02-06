@@ -51,6 +51,7 @@ router.get('/:id/:profile', (req, res) => {
       carto.SQL(buildProfileSQL(profile, match.geoids, 0), 'json', 'post')
         .then((data) => {
           const fullDataset = nestProfile(data, 'dataset', 'variable');
+
           return data
             .map((row) => {
               let rowWithConfig = row;
