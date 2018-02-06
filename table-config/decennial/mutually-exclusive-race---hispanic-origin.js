@@ -2,30 +2,30 @@ module.exports = [
   {
     highlight: true,
     title: 'Total population',
-    data: 'pop3',
+    variable: 'pop3',
   },
   {
     title: 'Hispanic/Latino (of any race)',
-    data: 'hsp1',
+    variable: 'hsp1',
   },
   {
     title: 'White nonhispanic',
-    data: 'wnh',
+    variable: 'wnh',
   },
   {
     title: 'Black/African American nonhispanic',
-    data: 'bnh',
+    variable: 'bnh',
   },
   {
     title: 'Asian nonhispanic',
-    data: 'anh',
+    variable: 'anh',
   },
   {
     title: 'Some other race nonhispanic',
-    data: 'onh',
+    variable: 'onh',
   },
   {
     title: 'Nonhispanic of two or more races',
-    data: 'twoplnh',
+    variable: 'twoplnh',
   },
 ];

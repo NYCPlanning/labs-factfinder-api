@@ -1,15 +1,15 @@
 module.exports = [{
   title: 'Population 1 year and over',
   highlight: true,
-  data: 'pop1pl',
+  variable: 'pop1pl',
 },
 {
   title: 'Same house',
-  data: 'smhs',
+  variable: 'smhs',
 },
 {
   title: 'Lived in a different house',
-  data: 'dfhs1',
+  variable: 'dfhs1',
 },
 {
   divider: true,
@@ -17,34 +17,34 @@ module.exports = [{
 {
   title: 'Population 1 year and over that lived in a different house',
   highlight: true,
-  data: 'dfhs2',
+  variable: 'dfhs2',
 },
 {
   title: 'Different house in the U.S.',
-  data: 'dfhsus',
+  variable: 'dfhsus',
 },
 {
   indent: 2,
   title: 'Same county',
-  data: 'dfhssmcnt',
+  variable: 'dfhssmcnt',
 },
 {
   indent: 2,
   title: 'Different county',
-  data: 'dfhsdfcnt',
+  variable: 'dfhsdfcnt',
 },
 {
   indent: 4,
   title: 'Within New York City',
-  data: 'dhdfcntnyc',
+  variable: 'dhdfcntnyc',
 },
 {
   indent: 4,
   title: 'Outside New York City',
-  data: 'dhnonyc',
+  variable: 'dhnonyc',
 },
 {
   title: 'Abroad',
-  data: 'abroad',
+  variable: 'abroad',
 },
 ];

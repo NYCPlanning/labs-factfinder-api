@@ -2,41 +2,41 @@ module.exports = [
   {
     title: 'All families',
     highlight: true,
-    data: 'fampvu',
+    variable: 'fampvu',
   },
   {
     title: 'Below poverty',
-    data: 'fambwpv',
+    variable: 'fambwpv',
   },
   {
     title: 'Population for whom poverty status is determined',
     highlight: true,
-    data: 'poppvu1',
+    variable: 'poppvu1',
   },
   {
     title: 'Below poverty',
-    data: 'pbwpv',
+    variable: 'pbwpv',
   },
   {
     indent: 1,
     title: 'Under 18 years',
     highlight: true,
-    data: 'pu18pvu',
+    variable: 'pu18pvu',
   },
   {
     indent: 1,
     title: 'Below poverty',
-    data: 'pu18bwpv',
+    variable: 'pu18bwpv',
   },
   {
     indent: 1,
     title: '65 years and over',
     highlight: true,
-    data: 'p65plpvu',
+    variable: 'p65plpvu',
   },
   {
     indent: 1,
     title: 'Below poverty',
-    data: 'p65plbwpv',
+    variable: 'p65plbwpv',
   },
 ];

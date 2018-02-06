@@ -11,7 +11,7 @@ const nestProfile = require('../utils/nest-profile');
 
 const router = express.Router();
 const {
-  get, set, camelCase, find, merge, clone,
+  get, camelCase, find, merge,
 } = _;
 
 const tableNames = [
@@ -28,6 +28,40 @@ const tableNames = [
   'household_size',
 ];
 
+const buildOrderedResponse = (data, profile) => {
+  const tableConfig = get(tableConfigs, `${profile}`) || [];
+
+  return Object.keys(tableConfig).map(tableId => ({
+    tableId,
+    rows: tableConfig[tableId].map(rowConfig => find(data, ['variable', rowConfig.variable])),
+  }));
+};
+
+const appendRowConfig = (data, profile, match) => {
+  const fullDataset = nestProfile(data, 'dataset', 'variable');
+
+  return data
+    .map((row) => {
+      let rowWithConfig = row;
+      const { category, variable, dataset } = row;
+      const categoryNormalized = camelCase(category);
+      const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
+      rowWithConfig.rowConfig = find(variables, ['variable', variable]) || {};
+      rowWithConfig.special = !!get(rowWithConfig, 'rowConfig.special');
+
+      // if the row is "special" and the number of geoids in the
+      // selection are greater than 1
+      // then, delete the unneeded special calculations data
+      if (rowWithConfig.special && (match.geoids.length > 1)) {
+        const currentYear = get(fullDataset, dataset);
+        const newRowObject = delegateAggregator(rowWithConfig, rowWithConfig.rowConfig, currentYear);
+        rowWithConfig = merge(newRowObject, rowWithConfig);
+      }
+
+      return rowWithConfig;
+    });
+};
+
 // handle decennial profile route
 router.get('/:id/decennial', (req, res) => {
   const { id: _id } = req.params;
@@ -41,8 +75,11 @@ router.get('/:id/decennial', (req, res) => {
       });
 
       Promise.all(apiCalls)
-        .then((responses) => {
-          res.send(responses.reduce((a, b) => a.concat(b)));
+        .then(responses => responses.reduce((a, b) => a.concat(b)))
+        .then(data => appendRowConfig(data, 'decennial', match))
+        .then(data => buildOrderedResponse(data, 'decennial'))
+        .then((data) => {
+          res.send(data);
         });
     });
 });
@@ -61,30 +98,8 @@ router.get('/:id/:profile', (req, res) => {
 
       // match.geoids is an array of geoids to query with
       carto.SQL(SQL, 'json', 'post')
-        .then((data) => {
-          const fullDataset = nestProfile(data, 'dataset', 'variable');
-
-          return data
-            .map((row) => {
-              let rowWithConfig = row;
-              const { category, variable, dataset } = row;
-              const categoryNormalized = camelCase(category);
-              const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
-              rowWithConfig.rowConfig = find(variables, ['data', variable]) || {};
-              rowWithConfig.special = !!get(rowWithConfig, 'rowConfig.special');
-
-              // if the row is "special" and the number of geoids in the
-              // selection are greater than 1
-              // then, delete the unneeded special calculations data
-              if (rowWithConfig.special && (match.geoids.length > 1)) {
-                const currentYear = get(fullDataset, dataset);
-                const newRowObject = delegateAggregator(rowWithConfig, rowWithConfig.rowConfig, currentYear);
-                rowWithConfig = merge(newRowObject, rowWithConfig);
-              }
-
-              return rowWithConfig;
-            });
-        })
+        .then(data => appendRowConfig(data, profile, match))
+        .then(data => buildOrderedResponse(data, profile))
         .then((data) => {
           res.send(data);
         });

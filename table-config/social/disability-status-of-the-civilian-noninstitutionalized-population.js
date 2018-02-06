@@ -2,41 +2,41 @@ module.exports = [
   {
     title: 'Total civilian noninstitutionalized population',
     highlight: true,
-    data: 'cvnipop1',
+    variable: 'cvnipop1',
   },
   {
     title: 'With a disability',
-    data: 'cvnid',
+    variable: 'cvnid',
   },
   {
     indent: 1,
     title: 'With a hearing difficulty',
-    data: 'cvnid_hrg',
+    variable: 'cvnid_hrg',
   },
   {
     indent: 1,
     title: 'With a vision difficulty',
-    data: 'cvnid_vsn',
+    variable: 'cvnid_vsn',
   },
   {
     indent: 1,
     title: 'With a cognitive difficulty',
-    data: 'cvnid_cog',
+    variable: 'cvnid_cog',
   },
   {
     indent: 1,
     title: 'With an ambulatory difficulty',
-    data: 'cvnid_amb',
+    variable: 'cvnid_amb',
   },
   {
     indent: 1,
     title: 'With a self-care difficulty',
-    data: 'cvnid_scr',
+    variable: 'cvnid_scr',
   },
   {
     indent: 1,
     title: 'With an independent living difficulty',
-    data: 'cvnid_ild',
+    variable: 'cvnid_ild',
   },
   {
     divider: true,
@@ -44,36 +44,36 @@ module.exports = [
   {
     title: 'Under 18 years',
     highlight: true,
-    data: 'cvniu18_1',
+    variable: 'cvniu18_1',
   },
   {
     title: 'With a disability',
-    data: 'cvniu18d',
+    variable: 'cvniu18d',
   },
   {
     indent: 1,
     title: 'With a hearing difficulty',
-    data: 'cu18dhrg',
+    variable: 'cu18dhrg',
   },
   {
     indent: 1,
     title: 'With a vision difficulty',
-    data: 'cu18dvsn',
+    variable: 'cu18dvsn',
   },
   {
     indent: 1,
     title: 'With a cognitive difficulty',
-    data: 'cu18dcog',
+    variable: 'cu18dcog',
   },
   {
     indent: 1,
     title: 'With an ambulatory difficulty',
-    data: 'cu18damb',
+    variable: 'cu18damb',
   },
   {
     indent: 1,
     title: 'With a self-care difficulty',
-    data: 'cu18dscr',
+    variable: 'cu18dscr',
   },
   {
     divider: true,
@@ -81,41 +81,41 @@ module.exports = [
   {
     title: '18 to 64 years',
     highlight: true,
-    data: 'cni1864_1',
+    variable: 'cni1864_1',
   },
   {
     title: 'With a disability',
-    data: 'cni18t64d',
+    variable: 'cni18t64d',
   },
   {
     indent: 1,
     title: 'With a hearing difficulty',
-    data: 'c1864dhrg',
+    variable: 'c1864dhrg',
   },
   {
     indent: 1,
     title: 'With a vision difficulty',
-    data: 'c1864dvsn',
+    variable: 'c1864dvsn',
   },
   {
     indent: 1,
     title: 'With a cognitive difficulty',
-    data: 'c1864dcog',
+    variable: 'c1864dcog',
   },
   {
     indent: 1,
     title: 'With an ambulatory difficulty',
-    data: 'c1864damb',
+    variable: 'c1864damb',
   },
   {
     indent: 1,
     title: 'With a self-care difficulty',
-    data: 'c1864dscr',
+    variable: 'c1864dscr',
   },
   {
     indent: 1,
     title: 'With an independent living difficulty',
-    data: 'c1864dild',
+    variable: 'c1864dild',
   },
   {
     divider: true,
@@ -123,40 +123,40 @@ module.exports = [
   {
     title: '65 years and over',
     highlight: true,
-    data: 'cvni65pl',
+    variable: 'cvni65pl',
   },
   {
     title: 'With a disability',
-    data: 'cvni65pld',
+    variable: 'cvni65pld',
   },
   {
     indent: 1,
     title: 'With a hearing difficulty',
-    data: 'c65pldhrg',
+    variable: 'c65pldhrg',
   },
   {
     indent: 1,
     title: 'With a vision difficulty',
-    data: 'c65pldvsn',
+    variable: 'c65pldvsn',
   },
   {
     indent: 1,
     title: 'With a cognitive difficulty',
-    data: 'c65pldcog',
+    variable: 'c65pldcog',
   },
   {
     indent: 1,
     title: 'With an ambulatory difficulty',
-    data: 'c65pldamb',
+    variable: 'c65pldamb',
   },
   {
     indent: 1,
     title: 'With a self-care difficulty',
-    data: 'c65pldscr',
+    variable: 'c65pldscr',
   },
   {
     indent: 1,
     title: 'With an independent living difficulty',
-    data: 'c65pldild',
+    variable: 'c65pldild',
   },
 ];

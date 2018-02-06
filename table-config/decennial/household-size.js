@@ -2,34 +2,34 @@ module.exports = [
   {
     highlight: true,
     title: 'Total occupied housing units',
-    data: 'ochu_4',
+    variable: 'ochu_4',
   },
   {
     title: '1-person household',
-    data: 'hh1person',
+    variable: 'hh1person',
   },
   {
     title: '2-person household',
-    data: 'hh2ppl',
+    variable: 'hh2ppl',
   },
   {
     title: '3-person household',
-    data: 'hh3ppl',
+    variable: 'hh3ppl',
   },
   {
     title: '4-person household',
-    data: 'hh4ppl',
+    variable: 'hh4ppl',
   },
   {
     title: '5-person household',
-    data: 'hh5ppl',
+    variable: 'hh5ppl',
   },
   {
     title: '6-person household',
-    data: 'hh6ppl',
+    variable: 'hh6ppl',
   },
   {
     title: '7-or-more person household',
-    data: 'hh7plppl',
+    variable: 'hh7plppl',
   },
 ];

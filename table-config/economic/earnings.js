@@ -6,7 +6,7 @@ module.exports = [
   {
     title: 'Median earnings for workers (dollars)',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
-    data: 'mdewrk',
+    variable: 'mdewrk',
     special: true,
     specialCalculations: [
       {
@@ -142,7 +142,7 @@ module.exports = [
   {
     title: 'Median earnings for male full-time, year-round workers (dollars)',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
-    data: 'mdemftwrk',
+    variable: 'mdemftwrk',
     special: true,
     specialCalculations: [
       {
@@ -278,7 +278,7 @@ module.exports = [
   {
     title: 'Median earnings for female full-time, year-round workers (dollars)',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
-    data: 'mdefftwrk',
+    variable: 'mdefftwrk',
     special: true,
     specialCalculations: [
       {

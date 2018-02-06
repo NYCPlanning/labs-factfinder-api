@@ -2,58 +2,58 @@ module.exports = [
   {
     title: 'Civilian employed population 16 years and over',
     highlight: true,
-    data: 'cvem16pl3',
+    variable: 'cvem16pl3',
   },
   {
     title: 'Agriculture, forestry, fishing and hunting, and mining',
-    data: 'agffhm',
+    variable: 'agffhm',
   },
   {
     title: 'Construction',
-    data: 'constctn',
+    variable: 'constctn',
   },
   {
     title: 'Manufacturing',
-    data: 'mnfctrng',
+    variable: 'mnfctrng',
   },
   {
     title: 'Wholesale trade',
-    data: 'whlsale',
+    variable: 'whlsale',
   },
   {
     title: 'Retail trade',
-    data: 'retail',
+    variable: 'retail',
   },
   {
     title: 'Transportation and warehousing, and utilities',
-    data: 'trwhut',
+    variable: 'trwhut',
   },
   {
     title: 'Information',
-    data: 'info',
+    variable: 'info',
   },
   {
     title: 'Finance and insurance, and real estate and rental and leasing',
-    data: 'fire',
+    variable: 'fire',
   },
   {
     title: 'Professional, scientific, and management, and administrative and waste management services',
-    data: 'prfsmgawm',
+    variable: 'prfsmgawm',
   },
   {
     title: 'Educational services, and health care and social assistance',
-    data: 'edhlthcsa',
+    variable: 'edhlthcsa',
   },
   {
     title: 'Arts, entertainment, and recreation, and accommodation, and food services',
-    data: 'artenrafs',
+    variable: 'artenrafs',
   },
   {
     title: 'Other services, except public administration',
-    data: 'othnotpa',
+    variable: 'othnotpa',
   },
   {
     title: 'Public administration',
-    data: 'pubadmin',
+    variable: 'pubadmin',
   },
 ];

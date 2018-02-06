@@ -4,75 +4,75 @@ module.exports = [
   {
     highlight: true,
     title: 'Total population',
-    data: 'pop4',
+    variable: 'pop4',
   },
   {
     title: 'In households',
-    data: 'popinhh',
+    variable: 'popinhh',
   },
   {
     indent: 1,
     title: 'In family households',
-    data: 'popinfhh',
+    variable: 'popinfhh',
   },
   {
     indent: 2,
     title: 'Householder',
-    data: 'hhldr',
+    variable: 'hhldr',
   },
   {
     indent: 2,
     title: 'Spouse',
-    data: 'spouse',
+    variable: 'spouse',
   },
   {
     indent: 2,
     title: 'Own child under 18 years',
-    data: 'owncu18',
+    variable: 'owncu18',
   },
   {
     indent: 2,
     title: 'Other relatives',
-    data: 'othrrel',
+    variable: 'othrrel',
   },
   {
     indent: 2,
     title: 'Nonrelatives',
-    data: 'nonrel',
+    variable: 'nonrel',
   },
   {
     indent: 3,
     title: 'Unmarried partner',
-    data: 'nrelumptnr',
+    variable: 'nrelumptnr',
   },
   {
     indent: 1,
     title: 'In nonfamily households',
-    data: 'nonfamhh',
+    variable: 'nonfamhh',
   },
   {
     indent: 2,
     title: 'Householder',
-    data: 'nfhhldr',
+    variable: 'nfhhldr',
   },
   {
     indent: 2,
     title: 'Nonrelatives',
-    data: 'nfnonrel',
+    variable: 'nfnonrel',
   },
   {
     indent: 3,
     title: 'Unmarried partner',
-    data: 'nfunmptnr',
+    variable: 'nfunmptnr',
   },
   {
     title: 'In group quarters',
-    data: 'ingrpqtrs',
+    variable: 'ingrpqtrs',
   },
   {
     indent: 1,
     title: 'Institutionalized',
-    data: 'institlzd',
+    variable: 'institlzd',
   },
   {
     divider: true,
@@ -80,7 +80,7 @@ module.exports = [
   {
     title: 'Average household size',
     tooltip: 'Household population divided by number of households',
-    data: 'avghhsz',
+    variable: 'avghhsz',
     decimal: 2,
     special: true,
     specialCalculations: [
@@ -103,7 +103,7 @@ module.exports = [
   {
     title: 'Average family size',
     tooltip: 'Population in family households, minus nonrelatives in family households, divded by number of family households',
-    data: 'avgfamsz',
+    variable: 'avgfamsz',
     decimal: 2,
     special: true,
     specialCalculations: [
@@ -129,47 +129,47 @@ module.exports = [
   {
     highlight: true,
     title: 'Total persons under 18 years',
-    data: 'popu18',
+    variable: 'popu18',
   },
   {
     title: 'Householder or spouse',
-    data: 'hhldru18',
+    variable: 'hhldru18',
   },
   {
     title: 'Own child',
-    data: 'ownchu18',
+    variable: 'ownchu18',
   },
   {
     indent: 1,
     title: 'In married-couple family',
-    data: 'ocinmcfu18',
+    variable: 'ocinmcfu18',
   },
   {
     indent: 1,
     title: 'In other family',
-    data: 'ocinofu18',
+    variable: 'ocinofu18',
   },
   {
     indent: 2,
     title: 'Female householder',
-    data: 'ocinfhhu18',
+    variable: 'ocinfhhu18',
   },
   {
     title: 'Other relatives',
-    data: 'orelu18',
+    variable: 'orelu18',
   },
   {
     indent: 1,
     title: 'Grandchild',
-    data: 'grndchu18',
+    variable: 'grndchu18',
   },
   {
     title: 'Nonrelatives',
-    data: 'nonrelu18',
+    variable: 'nonrelu18',
   },
   {
     title: 'In group quarters',
-    data: 'ingqu18',
+    variable: 'ingqu18',
   },
   {
     divider: true,
@@ -177,58 +177,58 @@ module.exports = [
   {
     highlight: true,
     title: 'Total persons 65 years and over',
-    data: 'pop65pl_2',
+    variable: 'pop65pl_2',
   },
   {
     title: 'In family households',
-    data: 'infmhh65p',
+    variable: 'infmhh65p',
   },
   {
     indent: 1,
     title: 'Householder',
-    data: 'ifhhldr65p',
+    variable: 'ifhhldr65p',
   },
   {
     indent: 1,
     title: 'Spouse',
-    data: 'ifsps65p',
+    variable: 'ifsps65p',
   },
   {
     indent: 1,
     title: 'Other relatives',
-    data: 'iforel65p',
+    variable: 'iforel65p',
   },
   {
     indent: 1,
     title: 'Nonrelatives',
-    data: 'ifnrel65p',
+    variable: 'ifnrel65p',
   },
   {
     title: 'In nonfamily households',
-    data: 'innfmhh65p',
+    variable: 'innfmhh65p',
   },
   {
     indent: 1,
     title: 'Householder',
-    data: 'infhhlr65p',
+    variable: 'infhhlr65p',
   },
   {
     indent: 2,
     title: 'Living alone',
-    data: 'inflval65p',
+    variable: 'inflval65p',
   },
   {
     indent: 1,
     title: 'Nonrelatives',
-    data: 'infnrel65p',
+    variable: 'infnrel65p',
   },
   {
     title: 'In group quarters',
-    data: 'ingq65p',
+    variable: 'ingq65p',
   },
   {
     indent: 1,
     title: 'Institutionalized',
-    data: 'instgq65p',
+    variable: 'instgq65p',
   },
 ];

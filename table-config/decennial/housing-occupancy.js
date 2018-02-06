@@ -4,40 +4,40 @@ module.exports = [
   {
     highlight: true,
     title: 'Total housing units',
-    data: 'hunits',
+    variable: 'hunits',
   },
   {
     title: 'Occupied housing units',
-    data: 'ochu_1',
+    variable: 'ochu_1',
   },
   {
     title: 'Vacant housing units',
-    data: 'vachus',
+    variable: 'vachus',
   },
   {
     indent: 1,
     title: 'For rent',
-    data: 'vhufrnt',
+    variable: 'vhufrnt',
   },
   {
     indent: 1,
     title: 'For sale only',
-    data: 'vhufslo',
+    variable: 'vhufslo',
   },
   {
     indent: 1,
     title: 'Rented or sold, not occupied',
-    data: 'vhurosnoc',
+    variable: 'vhurosnoc',
   },
   {
     indent: 1,
     title: 'For seasonal, recreational, or occasional use',
-    data: 'vhufsroou',
+    variable: 'vhufsroou',
   },
   {
     indent: 1,
     title: 'Other vacant',
-    data: 'vhuothvc',
+    variable: 'vhuothvc',
   },
   {
     divider: true,
@@ -45,7 +45,7 @@ module.exports = [
   {
     title: 'Homeowner vacancy rate (percent)',
     tooltip: 'Number of vacant units "for sale only," divided by sum of owner-occupied units and vacant units "for sale only," multiplied by 100. (Used definition from 2000 for consistency in measuring change.)',
-    data: 'hmownrvcrt',
+    variable: 'hmownrvcrt',
     decimal: 1,
     special: true,
     specialCalculations: [
@@ -68,7 +68,7 @@ module.exports = [
   {
     title: 'Rental vacancy rate (percent)',
     tooltip: 'Number of vacant units "for rent," divided by sum of renter-occupied units and vacant units "for rent," multiplied by 100. (Used definition from 2000 for consistency in measuring change.)',
-    data: 'rntvcrt',
+    variable: 'rntvcrt',
     decimal: 1,
     special: true,
     specialCalculations: [

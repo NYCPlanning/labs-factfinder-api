@@ -57,40 +57,40 @@ module.exports = [
   {
     title: 'Occupied units paying rent',
     highlight: true,
-    data: 'ochuprnt1',
+    variable: 'ochuprnt1',
   },
   {
     title: 'Less than $500',
-    data: 'gru500',
+    variable: 'gru500',
   },
   {
     title: '$500 to $999',
-    data: 'gr500t999',
+    variable: 'gr500t999',
   },
   {
     title: '$1,000 to $1499',
-    data: 'gr1kt14k',
+    variable: 'gr1kt14k',
   },
   {
     title: '$1,500 to $1,999',
-    data: 'gr15kt19k',
+    variable: 'gr15kt19k',
   },
   {
     title: '$2,000 to $2,499',
-    data: 'gr20kt24k',
+    variable: 'gr20kt24k',
   },
   {
     title: '$2,500 to $2,999',
-    data: 'gr25kt29k',
+    variable: 'gr25kt29k',
   },
   {
     title: '$3,000 or more',
-    data: 'gr3kpl',
+    variable: 'gr3kpl',
   },
   {
     title: 'Median (dollars)',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top-coded values',
-    data: 'mdgr',
+    variable: 'mdgr',
     special: true,
     specialCalculations: [
       {
@@ -148,7 +148,7 @@ module.exports = [
   },
   {
     title: 'No rent paid',
-    data: 'grnorntpd',
+    variable: 'grnorntpd',
     special: true,
   },
 ];

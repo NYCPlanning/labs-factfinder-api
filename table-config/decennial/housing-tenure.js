@@ -4,15 +4,15 @@ module.exports = [
   {
     highlight: true,
     title: 'Occupied housing units',
-    data: 'ochu_2',
+    variable: 'ochu_2',
   },
   {
     title: 'Owner-occupied housing units',
-    data: 'oochu',
+    variable: 'oochu',
   },
   {
     title: 'Renter-occupied housing units',
-    data: 'rochu_1',
+    variable: 'rochu_1',
   },
   {
     divider: true,
@@ -20,7 +20,7 @@ module.exports = [
   {
     title: 'Average household size of owner-occupied units',
     tooltip: 'Number of people living in owner-occupied housing units, divided by number of owner-occupied housing units',
-    data: 'avhhszooc',
+    variable: 'avhhszooc',
     decimal: 2,
     special: true,
     specialCalculations: [
@@ -43,7 +43,7 @@ module.exports = [
   {
     title: 'Average household size of renter-occupied units',
     tooltip: 'Number of people living in renter-occupied housing units, divided by number of renter-occupied housing units',
-    data: 'avhhszroc',
+    variable: 'avhhszroc',
     decimal: 2,
     special: true,
     specialCalculations: [

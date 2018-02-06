@@ -2,35 +2,35 @@ module.exports = [
   {
     title: 'Population 16 years and over',
     highlight: true,
-    data: 'pop16pl',
+    variable: 'pop16pl',
   },
   {
     title: 'In labor force',
-    data: 'lf',
+    variable: 'lf',
   },
   {
     title: 'Civilian labor force',
     indent: 1,
-    data: 'cvlf1',
+    variable: 'cvlf1',
   },
   {
     title: 'Employed',
     indent: 2,
-    data: 'cvem16pl1',
+    variable: 'cvem16pl1',
   },
   {
     title: 'Unemployed',
     indent: 2,
-    data: 'cvlfuem1',
+    variable: 'cvlfuem1',
   },
   {
     title: 'Armed Forces',
     indent: 1,
-    data: 'lfarmdf',
+    variable: 'lfarmdf',
   },
   {
     title: 'Not in labor force',
-    data: 'nlf1',
+    variable: 'nlf1',
   },
   {
     divider: true,
@@ -38,11 +38,11 @@ module.exports = [
   {
     title: 'Civilian labor force',
     highlight: true,
-    data: 'cvlf2',
+    variable: 'cvlf2',
   },
   {
     title: 'Unemployed (percent equivalent to unemployment rate)',
-    data: 'cvlfuem2',
+    variable: 'cvlfuem2',
   },
   {
     divider: true,
@@ -50,21 +50,21 @@ module.exports = [
   {
     title: 'Females 16 years and over',
     highlight: true,
-    data: 'f16pl',
+    variable: 'f16pl',
   },
   {
     title: 'In labor force',
-    data: 'f16pllf',
+    variable: 'f16pllf',
   },
   {
     title: 'Civilian labor force',
     indent: 1,
-    data: 'f16plcvlf',
+    variable: 'f16plcvlf',
   },
   {
     title: 'Employed',
     indent: 2,
-    data: 'f16plclfe',
+    variable: 'f16plclfe',
   },
   {
     divider: true,
@@ -72,11 +72,11 @@ module.exports = [
   {
     title: 'Own children under 6 years',
     highlight: true,
-    data: 'ochu6',
+    variable: 'ochu6',
   },
   {
     title: 'All parents in family in labor force',
-    data: 'ochu6plf',
+    variable: 'ochu6plf',
   },
   {
     divider: true,
@@ -84,10 +84,10 @@ module.exports = [
   {
     title: 'Own children 6 to 17 years',
     highlight: true,
-    data: 'och6t17',
+    variable: 'och6t17',
   },
   {
     title: 'All parents in family in labor force',
-    data: 'oc6t17plf',
+    variable: 'oc6t17plf',
   },
 ];

@@ -6,48 +6,48 @@ module.exports = [
   {
     title: 'Total housing units',
     highlight: true,
-    data: 'hu4',
+    variable: 'hu4',
   },
   {
     title: '1 room',
-    data: 'rms1',
+    variable: 'rms1',
   },
   {
     title: '2 rooms',
-    data: 'rms2',
+    variable: 'rms2',
   },
   {
     title: '3 rooms',
-    data: 'rms3',
+    variable: 'rms3',
   },
   {
     title: '4 rooms',
-    data: 'rms4',
+    variable: 'rms4',
   },
   {
     title: '5 rooms',
-    data: 'rms5',
+    variable: 'rms5',
   },
   {
     title: '6 rooms',
-    data: 'rms6',
+    variable: 'rms6',
   },
   {
     title: '7 rooms',
-    data: 'rms7',
+    variable: 'rms7',
   },
   {
     title: '8 rooms',
-    data: 'rms8',
+    variable: 'rms8',
   },
   {
     title: '9 rooms or more',
-    data: 'rms9pl',
+    variable: 'rms9pl',
   },
   {
     title: 'Median rooms',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top-coded values',
-    data: 'mdrms',
+    variable: 'mdrms',
     special: true,
     decimal: 1,
     specialCalculations: [

@@ -5,31 +5,31 @@ module.exports = [
   {
     title: 'Workers 16 years and over',
     highlight: true,
-    data: 'wrkr16pl',
+    variable: 'wrkr16pl',
   },
   {
     title: 'Car, truck, or van -- drove alone',
-    data: 'cw_drvaln',
+    variable: 'cw_drvaln',
   },
   {
     title: 'Car, truck, or van -- carpooled',
-    data: 'cw_crpld',
+    variable: 'cw_crpld',
   },
   {
     title: 'Public transportation',
-    data: 'cw_pbtrns',
+    variable: 'cw_pbtrns',
   },
   {
     title: 'Walked',
-    data: 'cw_wlkd',
+    variable: 'cw_wlkd',
   },
   {
     title: 'Other means',
-    data: 'cw_oth',
+    variable: 'cw_oth',
   },
   {
     title: 'Worked at home',
-    data: 'cw_wrkdhm',
+    variable: 'cw_wrkdhm',
   },
   {
     divider: true,
@@ -37,7 +37,7 @@ module.exports = [
   {
     title: 'Mean travel time to work (minutes)',
     tooltip: 'Aggregate travel time to work, divided by workers 16 years and over who did not work at home',
-    data: 'mntrvtm',
+    variable: 'mntrvtm',
     special: true,
     specialCalculations: [
       {

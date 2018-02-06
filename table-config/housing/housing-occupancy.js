@@ -5,15 +5,15 @@ module.exports = [
   {
     title: 'Total housing units',
     highlight: true,
-    data: 'hu1',
+    variable: 'hu1',
   },
   {
     title: 'Occupied housing units',
-    data: 'ochu1',
+    variable: 'ochu1',
   },
   {
     title: 'Vacant housing units',
-    data: 'vachu',
+    variable: 'vachu',
   },
   {
     divider: true,
@@ -21,7 +21,7 @@ module.exports = [
   {
     title: 'Homeowner vacancy rate',
     tooltip: 'Number of vacant units “for sale only,” divided by sum of owner-occupied units, vacant units that are “for sale only,” and vacant units that have been sold but not yet occupied. Quotient is multiplied by 100.',
-    data: 'hovacrt',
+    variable: 'hovacrt',
     special: true,
     decimal: 1,
     specialCalculations: [
@@ -72,7 +72,7 @@ module.exports = [
   {
     title: 'Rental vacancy rate',
     tooltip: 'Number of vacant units “for rent,” divided by sum of renter-occupied units, vacant units that are “for rent,” and vacant units that have been rented but not yet occupied. Quotient is multiplied by 100.',
-    data: 'rntvacrt',
+    variable: 'rntvacrt',
     special: true,
     decimal: 1,
     specialCalculations: [

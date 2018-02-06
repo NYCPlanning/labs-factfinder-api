@@ -3,10 +3,10 @@ module.exports = [
   {
     title: 'Foreign-born population',
     highlight: true,
-    data: 'fb4',
+    variable: 'fb4',
   },
   {
     title: 'Entered 2000 or later',
-    data: 'fb2000ltr',
+    variable: 'fb2000ltr',
   },
 ];

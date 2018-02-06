@@ -2,26 +2,26 @@ module.exports = [
   {
     title: 'Civilian employed population 16 years and over',
     highlight: true,
-    data: 'cvem16pl2',
+    variable: 'cvem16pl2',
   },
   {
     title: 'Management, business, science, and arts',
-    data: 'mgbsciart',
+    variable: 'mgbsciart',
   },
   {
     title: 'Service',
-    data: 'srvc',
+    variable: 'srvc',
   },
   {
     title: 'Sales and office',
-    data: 'salesoff',
+    variable: 'salesoff',
   },
   {
     title: 'Natural resources, construction, and maintenance',
-    data: 'nrcnstmnt',
+    variable: 'nrcnstmnt',
   },
   {
     title: 'Production, transportation, and material moving',
-    data: 'prdtrnsmm',
+    variable: 'prdtrnsmm',
   },
 ];

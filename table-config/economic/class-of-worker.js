@@ -1,22 +1,22 @@
 module.exports = [  {
     title: 'Civilian employed population 16 years and over',
     highlight: true,
-    data: 'cvem16pl4',
+    variable: 'cvem16pl4',
   },
   {
     title: 'Private wage and salary workers',
-    data: 'prvwswrkr',
+    variable: 'prvwswrkr',
   },
   {
     title: 'Government workers',
-    data: 'gvtwrkr',
+    variable: 'gvtwrkr',
   },
   {
     title: 'Self-employed workers in own not incorporated business',
-    data: 'slfemninc',
+    variable: 'slfemninc',
   },
   {
     title: 'Unpaid family workers',
-    data: 'updfmwrkr',
+    variable: 'updfmwrkr',
   },
 ];

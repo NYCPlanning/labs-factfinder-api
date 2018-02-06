@@ -2,14 +2,14 @@ module.exports = [
   {
     title: 'Owner-occupied units',
     highlight: true,
-    data: 'oochu3',
+    variable: 'oochu3',
   },
   {
     title: 'Housing units with a mortgage',
-    data: 'huwmrtg',
+    variable: 'huwmrtg',
   },
   {
     title: 'Housing units without a mortgage',
-    data: 'hunomrtg1',
+    variable: 'hunomrtg1',
   },
 ];

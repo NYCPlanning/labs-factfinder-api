@@ -2,14 +2,14 @@ module.exports = [
   {
     title: 'Foreign-born population',
     highlight: true,
-    data: 'fb3',
+    variable: 'fb3',
   },
   {
     title: 'Naturalized U.S. citizen',
-    data: 'fbntlzd',
+    variable: 'fbntlzd',
   },
   {
     title: 'Not a U.S. citizen',
-    data: 'fbnotczn',
+    variable: 'fbnotczn',
   },
 ];

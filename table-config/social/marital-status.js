@@ -2,27 +2,27 @@ module.exports = [
   {
     title: 'Males 15 years and over',
     highlight: true,
-    data: 'ms_m15pl',
+    variable: 'ms_m15pl',
   },
   {
     title: 'Never married',
-    data: 'ms_mnvmrd',
+    variable: 'ms_mnvmrd',
   },
   {
     title: 'Now married, except separated',
-    data: 'ms_mmrdsp',
+    variable: 'ms_mmrdsp',
   },
   {
     title: 'Separated',
-    data: 'ms_msp',
+    variable: 'ms_msp',
   },
   {
     title: 'Widowed',
-    data: 'ms_mwd',
+    variable: 'ms_mwd',
   },
   {
     title: 'Divorced',
-    data: 'ms_mdvcd',
+    variable: 'ms_mdvcd',
   },
   {
     divider: true,
@@ -30,26 +30,26 @@ module.exports = [
   {
     title: 'Females 15 years and over',
     highlight: true,
-    data: 'ms_f15pl',
+    variable: 'ms_f15pl',
   },
   {
     title: 'Never married',
-    data: 'ms_fnvmrd',
+    variable: 'ms_fnvmrd',
   },
   {
     title: 'Now married, except separated',
-    data: 'ms_fmrdsp',
+    variable: 'ms_fmrdsp',
   },
   {
     title: 'Separated',
-    data: 'ms_fsp',
+    variable: 'ms_fsp',
   },
   {
     title: 'Widowed',
-    data: 'ms_fwd',
+    variable: 'ms_fwd',
   },
   {
     title: 'Divorced',
-    data: 'ms_fdvcd',
+    variable: 'ms_fdvcd',
   },
 ];

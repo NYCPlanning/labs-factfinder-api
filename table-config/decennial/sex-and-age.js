@@ -4,17 +4,17 @@ module.exports = [
   {
     title: 'Total population',
     highlight: true,
-    data: 'pop2',
+    variable: 'pop2',
   },
   {
     title: 'Male',
     classNames: '',
-    data: 'male',
+    variable: 'male',
   },
   {
     title: 'Female',
     classNames: '',
-    data: 'fem',
+    variable: 'fem',
   },
   {
     divider: true,
@@ -22,92 +22,92 @@ module.exports = [
   {
     title: 'Under 5 years',
     classNames: '',
-    data: 'popu5',
+    variable: 'popu5',
   },
   {
     title: '5 to 9 years',
     classNames: '',
-    data: 'pop5t9',
+    variable: 'pop5t9',
   },
   {
     title: '10 to 14 years',
     classNames: '',
-    data: 'pop10t14',
+    variable: 'pop10t14',
   },
   {
     title: '15 to 19 years',
     classNames: '',
-    data: 'pop15t19',
+    variable: 'pop15t19',
   },
   {
     title: '20 to 24 years',
     classNames: '',
-    data: 'pop20t24',
+    variable: 'pop20t24',
   },
   {
     title: '25 to 29 years',
     classNames: '',
-    data: 'pop25t29',
+    variable: 'pop25t29',
   },
   {
     title: '30 to 34 years',
     classNames: '',
-    data: 'pop30t34',
+    variable: 'pop30t34',
   },
   {
     title: '35 to 39 years',
     classNames: '',
-    data: 'pop35t39',
+    variable: 'pop35t39',
   },
   {
     title: '40 to 44 years',
     classNames: '',
-    data: 'pop40t44',
+    variable: 'pop40t44',
   },
   {
     title: '45 to 49 years',
     classNames: '',
-    data: 'pop45t49',
+    variable: 'pop45t49',
   },
   {
     title: '50 to 54 years',
     classNames: '',
-    data: 'pop50t54',
+    variable: 'pop50t54',
   },
   {
     title: '55 to 59 years',
     classNames: '',
-    data: 'pop55t59',
+    variable: 'pop55t59',
   },
   {
     title: '60 to 64 years',
     classNames: '',
-    data: 'pop60t64',
+    variable: 'pop60t64',
   },
   {
     title: '65 to 69 years',
     classNames: '',
-    data: 'pop65t69',
+    variable: 'pop65t69',
   },
   {
     title: '70 to 74 years',
     classNames: '',
-    data: 'pop70t74',
+    variable: 'pop70t74',
   },
   {
     title: '75 to 79 years',
     classNames: '',
-    data: 'pop75t79',
+    variable: 'pop75t79',
   },
   {
     title: '80 to 84 years',
     classNames: '',
-    data: 'pop80t84',
+    variable: 'pop80t84',
   },
   {
     title: '85 years and over',
     classNames: '',
-    data: 'pop85pl',
+    variable: 'pop85pl',
   },
   {
     divider: true,
@@ -116,7 +116,7 @@ module.exports = [
     title: 'Median age (years)',
     tooltip: 'Medians are calculated using linear interpolation, which may result in top-coded values',
     classNames: '',
-    data: 'mdage',
+    variable: 'mdage',
     special: true,
     decimal: 1,
     specialCalculations: [
@@ -179,28 +179,28 @@ module.exports = [
   },
   {
     title: 'Under 18 years',
-    data: 'popu18',
+    variable: 'popu18',
   },
   {
     title: '21 years and over',
-    data: 'pop21pl',
+    variable: 'pop21pl',
   },
   {
     title: '62 years and over',
-    data: 'pop62pl',
+    variable: 'pop62pl',
   },
   {
     title: '65 years and over',
-    data: 'pop65pl_1',
+    variable: 'pop65pl_1',
   },
   {
     indent: 1,
     title: 'Male',
-    data: 'pop65plm',
+    variable: 'pop65plm',
   },
   {
     indent: 1,
     title: 'Female',
-    data: 'pop65plf',
+    variable: 'pop65plf',
   },
 ];
