@@ -90,61 +90,71 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         GROUP BY variable, dataset, base
       )
 
-
-
     SELECT
-      base,
-      base_m,
-      base_sum,
-      regexp_replace(lower(base_dataset), '[^A-Za-z0-9]', '_', 'g') AS base_dataset,
-      category,
-      comparison_base_m,
-      comparison_base_sum,
-      regexp_replace(lower(comparison_base_dataset), '[^A-Za-z0-9]', '_', 'g') AS comparison_base_dataset,
-      comparison_cv,
-      comparison_m,
-      comparison_sum,
-      cv,
-      regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
-      m,
-      sum,
-      variable AS variablename,
-
-      ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent,
-
+      *,
       CASE
-        WHEN (POWER(comparison_m, 2) %2D POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2)) < 0
-          THEN (1 / NULLIF(comparison_base_sum,0)) * SQRT(POWER(comparison_m, 2) %2B POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2))
-        ELSE (1 / NULLIF(comparison_base_sum,0)) * SQRT(POWER(comparison_m, 2) %2D POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2))
-      END as comparison_percent_m,
-
-      ENCODE(CONVERT_TO(variable || dataset, 'UTF-8'), 'base64') As id,
-
-      ROUND((SUM / NULLIF(base_sum,0))::numeric, 4) as percent,
-
+        WHEN ABS(SQRT(POWER(m / 1.645, 2) %2B POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
+        ELSE true
+      END AS significant,
       CASE
-        WHEN (POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
-          THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2B POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-        ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-      END as percent_m,
+        WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) %2B POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+        ELSE true
+      END AS percent_significant
+    FROM (
+      SELECT
+        base,
+        base_m,
+        base_sum,
+        regexp_replace(lower(base_dataset), '[^A-Za-z0-9]', '_', 'g') AS base_dataset,
+        category,
+        comparison_base_m,
+        comparison_base_sum,
+        regexp_replace(lower(comparison_base_dataset), '[^A-Za-z0-9]', '_', 'g') AS comparison_base_dataset,
+        comparison_cv,
+        comparison_m,
+        comparison_sum,
+        cv,
+        regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
+        m,
+        sum,
+        variable AS variablename,
 
-      regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
+        ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent,
 
-      regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable
-    FROM main_numbers
+        CASE
+          WHEN (POWER(comparison_m, 2) %2D POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2)) < 0
+            THEN (1 / NULLIF(comparison_base_sum,0)) * SQRT(POWER(comparison_m, 2) %2B POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2))
+          ELSE (1 / NULLIF(comparison_base_sum,0)) * SQRT(POWER(comparison_m, 2) %2D POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2))
+        END as comparison_percent_m,
 
-    INNER JOIN comparison_main_numbers
-      ON main_numbers.variable = comparison_main_numbers.comparison_variable
-      AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
+        ENCODE(CONVERT_TO(variable || dataset, 'UTF-8'), 'base64') As id,
 
-    LEFT OUTER JOIN base_numbers
-      ON main_numbers.base = base_numbers.base_join
-      AND main_numbers.dataset = base_numbers.base_dataset
+        ROUND((SUM / NULLIF(base_sum,0))::numeric, 4) as percent,
 
-    LEFT OUTER JOIN comparison_base_numbers
-      ON main_numbers.base = comparison_base_numbers.comparison_base_join
-      AND dataset = comparison_base_numbers.comparison_base_dataset
+        CASE
+          WHEN (POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
+            THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2B POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
+          ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
+        END as percent_m,
+
+        regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
+
+        regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable
+      FROM main_numbers
+
+      INNER JOIN comparison_main_numbers
+        ON main_numbers.variable = comparison_main_numbers.comparison_variable
+        AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
+
+      LEFT OUTER JOIN base_numbers
+        ON main_numbers.base = base_numbers.base_join
+        AND main_numbers.dataset = base_numbers.base_dataset
+
+      LEFT OUTER JOIN comparison_base_numbers
+        ON main_numbers.base = comparison_base_numbers.comparison_base_join
+        AND dataset = comparison_base_numbers.comparison_base_dataset
+      ) a
   `;
 };
 
-module.exports = buildSQL
+module.exports = buildSQL;
