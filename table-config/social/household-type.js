@@ -1,5 +1,5 @@
-import calculator from '../../utils/calculator';
-import formula from '../../utils/formula';
+const calculator = require('../../utils/calculator');
+const formula = require('../../utils/formula');
 
 export default [
   {
