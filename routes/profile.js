@@ -54,11 +54,10 @@ router.get('/:id/:profile', (req, res) => {
 
   Selection.findOne({ _id })
     .then((match) => {
-      let SQL = buildProfileSQL(profile, match.geoids, compare)
+      let SQL = buildProfileSQL(profile, match.geoids, compare);
       if (match.geoids.length === 1) {
-        SQL = buildProfileSingleSQL(profile, geoids[0], compare)
+        SQL = buildProfileSingleSQL(profile, match.geoids[0], compare);
       }
-
 
       // match.geoids is an array of geoids to query with
       carto.SQL(SQL, 'json', 'post')
