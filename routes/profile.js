@@ -27,6 +27,7 @@ const tableNames = [
   'household_size',
 ];
 
+// handle decennial profile route
 router.get('/:id/decennial', (req, res) => {
   const { id: _id } = req.params;
   const { compare = 0 } = req.query;
@@ -45,6 +46,7 @@ router.get('/:id/decennial', (req, res) => {
     });
 });
 
+// handle all other profile routes
 router.get('/:id/:profile', (req, res) => {
   const { id: _id, profile } = req.params;
   const { compare = 0 } = req.query;
