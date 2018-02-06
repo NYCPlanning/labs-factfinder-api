@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Population 3 years and over enrolled in school',
     highlight: true,

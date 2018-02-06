@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Population for whom poverty status is determined',
     highlight: true,

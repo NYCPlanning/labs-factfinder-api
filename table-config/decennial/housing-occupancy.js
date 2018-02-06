@@ -1,6 +1,6 @@
-import formula from '../../utils/formula';
+const formula = require('../../utils/formula');
 
-export default [
+module.exports = [
   {
     highlight: true,
     title: 'Total housing units',

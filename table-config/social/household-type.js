@@ -1,7 +1,7 @@
 import calculator from '../../utils/calculator';
 import formula from '../../utils/formula';
 
-export default [
+module.exports = [
   {
     title: 'Total households',
     highlight: true,

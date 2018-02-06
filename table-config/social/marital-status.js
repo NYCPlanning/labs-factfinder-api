@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Males 15 years and over',
     highlight: true,

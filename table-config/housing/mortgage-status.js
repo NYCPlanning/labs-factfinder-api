@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Owner-occupied units',
     highlight: true,

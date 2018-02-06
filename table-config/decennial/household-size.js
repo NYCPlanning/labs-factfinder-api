@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     highlight: true,
     title: 'Total occupied housing units',

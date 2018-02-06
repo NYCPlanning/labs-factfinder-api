@@ -1,9 +1,9 @@
-import interpolate from '../../utils/interpolate';
-import calculateMedianError from '../../utils/calculate-median-error';
-import calculator from '../../utils/calculator';
-import formula from '../../utils/formula';
+const interpolate = require ('../../utils/interpolate');
+const calculateMedianError = require ('../../utils/calculate-median-error');
+const calculator = require ('../../utils/calculator');
+const formula = require ('../../utils/formula');
 
-export default [
+module.exports = [
   {
     title: 'Total households',
     highlight: true,

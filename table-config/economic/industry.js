@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Civilian employed population 16 years and over',
     highlight: true,

@@ -1,7 +1,7 @@
-import calculator from '../../utils/calculator';
-import formula from '../../utils/formula';
+const calculator = require('../../utils/calculator');
+const formula = require('../../utils/formula');
 
-export default [
+module.exports = [
   {
     title: 'Workers 16 years and over',
     highlight: true,

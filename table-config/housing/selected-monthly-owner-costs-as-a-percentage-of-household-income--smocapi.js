@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Housing units with a mortgage (excluding units where SMOCAPI cannot be computed)',
     highlight: true,

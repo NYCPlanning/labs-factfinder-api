@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     title: 'Civilian noninstitutionalized population',
     highlight: true,

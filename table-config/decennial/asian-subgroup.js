@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     highlight: true,
     title: 'Asian alone or in combination',

@@ -1,6 +1,6 @@
-import interpolate from '../../utils/interpolate';
+const interpolate = require('../../utils/interpolate');
 
-export default [
+module.exports = [
   {
     title: 'Total population',
     highlight: true,
