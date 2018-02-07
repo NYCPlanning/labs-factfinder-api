@@ -1,5 +1,6 @@
 const express = require('express');
 const _ = require('lodash');
+const cwait = require('cwait');
 const carto = require('../utils/carto');
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
@@ -9,6 +10,7 @@ const tableConfigs = require('../table-config');
 const delegateAggregator = require('../utils/delegate-aggregator');
 const nestProfile = require('../utils/nest-profile');
 
+const { TaskQueue } = cwait;
 const router = express.Router();
 const {
   get, camelCase, find, merge,
@@ -69,10 +71,12 @@ router.get('/:id/decennial', (req, res) => {
 
   Selection.findOne({ _id })
     .then((match) => {
+      // Create queue and limit # of concu
+      const queue = new TaskQueue(Promise, 2);
       // match.geoids is an array of geoids to query with
-      const apiCalls = tableNames.map((tableName) => { // eslint-disable-line
+      const apiCalls = tableNames.map(queue.wrap((tableName) => { // eslint-disable-line
         return carto.SQL(buildDecennialSQL(`decennial_${tableName}`, match.geoids, compare), 'json', 'post');
-      });
+      }));
 
       Promise.all(apiCalls)
         .then(responses => responses.reduce((a, b) => a.concat(b)))
@@ -80,7 +84,8 @@ router.get('/:id/decennial', (req, res) => {
         .then(data => buildOrderedResponse(data, 'decennial'))
         .then((data) => {
           res.send(data);
-        });
+        })
+        .catch((error) => { res.status(500).send({ error }); });
     });
 });
 
