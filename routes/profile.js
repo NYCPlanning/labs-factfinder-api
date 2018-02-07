@@ -41,7 +41,9 @@ const buildOrderedResponse = (data, profile) => {
 
   return Object.keys(tableConfig).map(tableId => ({
     tableId,
-    rows: tableConfig[tableId].map(rowConfig => find(data, ['variable', rowConfig.variable])),
+    rows: tableConfig[tableId]
+      .filter(rowConfig => rowConfig.variable)
+      .map(rowConfig => find(data, ['variable', rowConfig.variable])),
   }));
 };
 
