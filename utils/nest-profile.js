@@ -4,7 +4,7 @@ const d3collection = require('d3-collection');
 const { get } = _;
 const { nest } = d3collection;
 
-function nestProfile(data, ...keys) {
+function nestProfile(data, method = 'object', ...keys) {
   const { length } = keys;
   let allKeys = ['dataset', 'category', 'variable'];
 
@@ -17,8 +17,7 @@ function nestProfile(data, ...keys) {
       (nesting, currentKey) => nesting.key(d => get(d, currentKey)),
       nest(),
     )
-    .rollup(d => d[0])
-    .object(data);
+    .rollup(d => d[0])[method](data);
 }
 
 module.exports = nestProfile;

@@ -9,9 +9,11 @@ const buildDecennialSQL = require('../query-helpers/decennial');
 const tableConfigs = require('../table-config');
 const delegateAggregator = require('../utils/delegate-aggregator');
 const nestProfile = require('../utils/nest-profile');
+const d3collection = require('d3-collection');
 
 const { TaskQueue } = cwait;
 const router = express.Router();
+const { nest } = d3collection;
 
 router.use((req, res, next) => {
   res.setHeader('Cache-Control', 'public, max-age=2592000');
@@ -38,17 +40,27 @@ const tableNames = [
 
 const buildOrderedResponse = (data, profile) => {
   const tableConfig = get(tableConfigs, `${profile}`) || [];
+  const fullDataset = nest()
+    .key(d => get(d, 'category'))
+    .entries(data)
+    .map((nestedTable) => {
+      const newTableObject = {};
+      newTableObject.tableId = nestedTable.key;
+      newTableObject.rows = nestedTable.values;
+      return newTableObject;
+    });
 
-  return Object.keys(tableConfig).map(tableId => ({
+  const foundTableRowGroupings = Object.keys(tableConfig).map(tableId => ({
     tableId,
     rows: tableConfig[tableId]
       .filter(rowConfig => rowConfig.variable)
       .map(rowConfig => find(data, ['variable', rowConfig.variable])),
   }));
+  return merge(foundTableRowGroupings, fullDataset);
 };
 
 const appendRowConfig = (data, profile, match) => {
-  const fullDataset = nestProfile(data, 'dataset', 'variable');
+  const fullDataset = nestProfile(data, 'object', 'dataset', 'variable');
 
   return data
     .map((row) => {
@@ -58,7 +70,7 @@ const appendRowConfig = (data, profile, match) => {
       const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
       rowWithConfig.rowConfig = find(variables, ['variable', variable]) || {};
       rowWithConfig.special = !!get(rowWithConfig, 'rowConfig.special');
-
+      rowWithConfig.category = categoryNormalized;
       // if the row is "special" and the number of geoids in the
       // selection are greater than 1
       // then, delete the unneeded special calculations data
