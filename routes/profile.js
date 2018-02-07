@@ -12,6 +12,12 @@ const nestProfile = require('../utils/nest-profile');
 
 const { TaskQueue } = cwait;
 const router = express.Router();
+
+router.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'public, max-age=2592000');
+  next();
+});
+
 const {
   get, camelCase, find, merge,
 } = _;
