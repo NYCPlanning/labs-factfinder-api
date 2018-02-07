@@ -39,7 +39,7 @@ const summaryLevels = {
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       borocode::text,
-      neighborhoods || ' - ' || puma || ' (approx. ' || cd || ')' as geolabel,
+      neighborhoods || ' - ' || puma || ' (approx. ' || puma_roughcd_equiv || ')' as geolabel,
       puma AS geoid
     FROM nyc_puma
   `,
