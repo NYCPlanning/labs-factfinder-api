@@ -3,8 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
+const compression = require('compression');
 
 const app = express();
+app.use(compression());
 const connection = mongoose.connect(process.env.MONGO_URI);
 
 autoIncrement.initialize(connection);
