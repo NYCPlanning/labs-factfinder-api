@@ -17,6 +17,11 @@ You will need the following things properly installed on your computer.
 
 ## Architecture
 
+### Caching
+The dokku plugin `nginx-cache` via [https://github.com/koalalorenzo/dokku-nginx-cache](https://github.com/koalalorenzo/dokku-nginx-cache) is enabled for this app, but nginx won't cache if expressjs is not returning a cache-control header.
+
+The `profile` routes contain simple middleware that adds `Cache-control` headers to responses with `max-age=2592000` (30 days).
+
 ### Routes
 
 - `/search` - gets results that match a string passed in as query parameter `q`.  Returns various search result types:
