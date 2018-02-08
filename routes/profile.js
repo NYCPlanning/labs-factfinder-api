@@ -101,7 +101,7 @@ router.get('/:id/decennial', (req, res) => {
       Promise.all(apiCalls)
         .then(responses => responses.reduce((a, b) => a.concat(b)))
         .then(data => appendRowConfig(data, 'decennial', match))
-        .then(data => buildOrderedResponse(data, 'decennial'))
+        // .then(data => buildOrderedResponse(data, 'decennial'))
         .then((data) => {
           res.send(data);
         })
@@ -124,7 +124,7 @@ router.get('/:id/:profile', (req, res) => {
       // match.geoids is an array of geoids to query with
       carto.SQL(SQL, 'json', 'post')
         .then(data => appendRowConfig(data, profile, match))
-        .then(data => buildOrderedResponse(data, profile))
+        // .then(data => buildOrderedResponse(data, profile))
         .then((data) => {
           res.send(data);
         });

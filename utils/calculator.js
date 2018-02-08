@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const { isArray } = Array;
-const { get, isNaN, copy } = _;
+const { get, isNaN, clone } = _;
 
 const operations = ['divide', 'subtract', 'add', 'multiply'];
 const operators = {
@@ -12,12 +12,12 @@ const operators = {
 };
 
 function isOperator(step) {
-  return operations.any(op => op === step);
+  return operations.some(op => op === step);
 }
 
 function calculator(data, sumColumn = 'sum', rowConfig) {
   const { procedure } = rowConfig;
-  const currentProcedure = copy(procedure);
+  const currentProcedure = clone(procedure);
 
   // impute values, replacing their signifiers with their signifieds
   currentProcedure.forEach((step, i) => {
