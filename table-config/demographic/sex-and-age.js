@@ -275,6 +275,13 @@ module.exports = [
           formula: '((GET("mdage.comparison_m")/ 1.645) / GET("mdage.comparison_sum") * 100)',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdage.sum") - GET("mdage.comparison_sum"))',
+        },
+      },
     ],
   },
   {

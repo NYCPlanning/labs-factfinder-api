@@ -76,24 +76,30 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
     )
 
     SELECT *,
-    ENCODE(CONVERT_TO(variable || year, 'UTF-8'), 'base64') As id,
-    'decennial' AS profile,
-    regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-    regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
-    true AS significant,
-    'y' || year as year,
-    ROUND((sum / NULLIF(base_sum,0))::numeric, 4) as percent,
-    ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent
-    FROM main_numbers
-    INNER JOIN comparison_main_numbers
-      ON main_numbers.variable = comparison_main_numbers.comparison_variable
-      AND main_numbers.year = comparison_main_numbers.comparison_year
-    LEFT OUTER JOIN base_numbers
-      ON main_numbers.relation = base_numbers.base_variable
-      AND main_numbers.year = base_numbers.base_year
-    LEFT OUTER JOIN comparison_base_numbers
-      ON main_numbers.relation = comparison_base_numbers.comparison_base_variable
-      AND main_numbers.year = comparison_base_numbers.comparison_base_year
+      (sum - comparison_sum) AS difference_sum,
+      (percent - comparison_percent) AS difference_percent 
+    FROM ( 
+      SELECT *,
+        ENCODE(CONVERT_TO(variable || year, 'UTF-8'), 'base64') As id,
+        'decennial' AS profile,
+        regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
+        regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
+        true AS significant,
+        'y' || year as year,
+        ROUND((sum / NULLIF(base_sum,0))::numeric, 4) as percent,
+        ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent
+
+        FROM main_numbers
+        INNER JOIN comparison_main_numbers
+          ON main_numbers.variable = comparison_main_numbers.comparison_variable
+          AND main_numbers.year = comparison_main_numbers.comparison_year
+        LEFT OUTER JOIN base_numbers
+          ON main_numbers.relation = base_numbers.base_variable
+          AND main_numbers.year = base_numbers.base_year
+        LEFT OUTER JOIN comparison_base_numbers
+          ON main_numbers.relation = comparison_base_numbers.comparison_base_variable
+          AND main_numbers.year = comparison_base_numbers.comparison_base_year 
+    ) precalculations
   `;
 };
 
