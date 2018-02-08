@@ -103,13 +103,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
     FROM (
       SELECT
         base,
-        base_m,
-        base_sum,
-        regexp_replace(lower(base_dataset), '[^A-Za-z0-9]', '_', 'g') AS base_dataset,
         category,
-        comparison_base_m,
-        comparison_base_sum,
-        regexp_replace(lower(comparison_base_dataset), '[^A-Za-z0-9]', '_', 'g') AS comparison_base_dataset,
         comparison_cv,
         comparison_m,
         comparison_sum,
@@ -117,9 +111,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
         m,
         sum,
-
         variable AS variablename,
-
         ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent,
 
         CASE
