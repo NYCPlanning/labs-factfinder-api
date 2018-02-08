@@ -117,6 +117,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
         m,
         sum,
+
         variable AS variablename,
 
         ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent,
@@ -136,6 +137,18 @@ const buildSQL = function buildSQL(profile, ids, compare) {
             THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2B POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
           ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
         END as percent_m,
+
+        CASE 
+          WHEN ((cv < 20) OR (sum = 0))
+            THEN true
+          ELSE false
+        END as is_reliable,
+
+        CASE 
+          WHEN ((comparison_cv < 20) OR (sum = 0))
+            THEN true
+          ELSE false
+        END as comparison_is_reliable,
 
         regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
 
