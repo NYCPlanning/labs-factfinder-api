@@ -16,7 +16,7 @@ const router = express.Router();
 const { nest } = d3collection;
 
 router.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'public, max-age=2592000');
+  res.setHeader('Cache-Control', 'public, max-age=0');
   next();
 });
 
