@@ -67,6 +67,20 @@ module.exports = [
           formula: '((((GET("avghhsooc.comparison_cv"))/(100))*1.645))*(GET("avghhsooc.comparison_sum"))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_m"),2))',
+        },
+      },      
     ],
   },
   {
@@ -118,6 +132,20 @@ module.exports = [
           formula: '((((GET("avghhsroc.comparison_cv"))/(100))*1.645))*(GET("avghhsroc.comparison_sum"))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_m"),2))',
+        },
+      },      
     ],
   },
 ];
