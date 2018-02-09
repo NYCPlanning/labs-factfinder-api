@@ -26,6 +26,20 @@ module.exports = [
           formula: '(GET("pop1.comparison_sum"))/(GET("landacres.comparison_sum"))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("popperacre.sum") - GET("popperacre.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("popperacre.m"),2) + POWER(GET("popperacre.comparison_m"),2))',
+        },
+      },      
     ],
   },
 ];
