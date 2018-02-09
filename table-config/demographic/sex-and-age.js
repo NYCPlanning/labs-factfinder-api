@@ -282,6 +282,13 @@ module.exports = [
           formula: '(GET("mdage.sum") - GET("mdage.comparison_sum"))',
         },
       },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_m"),2))',
+        },
+      },
     ],
   },
   {
