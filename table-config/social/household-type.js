@@ -123,6 +123,13 @@ module.exports = [
           formula: '((((GET("avghhsz.comparison_cv"))/(100))*(1.645))*(GET("avghhsz.comparison_sum")))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsz.sum") - GET("avghhsz.comparison_sum"))',
+        },
+      },      
     ],
   },
   {
@@ -174,6 +181,13 @@ module.exports = [
           formula: '((((GET("avgfmsz.comparison_cv"))/(100))*(1.645))*(GET("avgfmsz.comparison_sum")))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avgfmsz.sum") - GET("avgfmsz.comparison_sum"))',
+        },
+      },      
     ],
   },
   {
