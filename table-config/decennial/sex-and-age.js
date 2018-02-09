@@ -1,4 +1,5 @@
 const interpolate = require('../../utils/interpolate');
+const formula = require('../../utils/formula');
 
 module.exports = [
   {
@@ -185,7 +186,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {

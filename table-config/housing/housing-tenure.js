@@ -80,7 +80,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -145,7 +145,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
 ];

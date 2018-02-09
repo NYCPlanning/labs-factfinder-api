@@ -113,7 +113,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("rntvcrt.m"),2) + POWER(GET("rntvcrt.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
 ];

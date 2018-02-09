@@ -1,5 +1,5 @@
-const calculator = require ('../../utils/calculator');
-const formula = require ('../../utils/formula');
+const calculator = require('../../utils/calculator');
+const formula = require('../../utils/formula');
 
 module.exports = [
   {
@@ -80,7 +80,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -145,7 +145,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
 ];
