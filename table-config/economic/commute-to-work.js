@@ -82,6 +82,20 @@ module.exports = [
           formula: '((((GET("mntrvtm.comparison_cv"))/(100))*(1.645))*(GET("mntrvtm.comparison_sum")))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mntrvtm.sum") - GET("mntrvtm.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mntrvtm.m"),2) + POWER(GET("mntrvtm.comparison_m"),2))',
+        },
+      },      
     ],
     decimal: 1,
   },
