@@ -38,6 +38,20 @@ module.exports = [
           formula: '(GET("popoochu.comparison_sum"))/(GET("oochu.comparison_sum"))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avhhszooc.m"),2) + POWER(GET("avhhszooc.comparison_m"),2))',
+        },
+      },      
     ],
   },
   {
@@ -61,6 +75,20 @@ module.exports = [
           formula: '(GET("poprochu.comparison_sum"))/(GET("rochu_1.comparison_sum"))',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avhhszroc.m"),2) + POWER(GET("avhhszroc.comparison_m"),2))',
+        },
+      },      
     ],
   },
 ];
