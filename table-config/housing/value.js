@@ -151,6 +151,20 @@ module.exports = [
           formula: '((GET("mdvl.comparison_m")/ 1.645) / GET("mdvl.comparison_sum") * 100)',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdvl.sum") - GET("mdvl.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.comparison_m"),2))',
+        },
+      },      
     ],
   },
 ];

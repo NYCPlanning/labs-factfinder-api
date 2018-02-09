@@ -141,6 +141,20 @@ module.exports = [
           formula: '((GET("mdgr.comparison_m")/ 1.645) / GET("mdgr.comparison_sum") * 100)',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdgr.sum") - GET("mdgr.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.comparison_m"),2))',
+        },
+      },      
     ],
   },
   {

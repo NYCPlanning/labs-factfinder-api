@@ -63,6 +63,20 @@ module.exports = [
           formula: '((GET("vhufslo.comparison_sum"))/((GET("vhufslo.comparison_sum"))+(GET("oochu1.comparison_sum"))))*100',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("hmownrvcrt.sum") - GET("hmownrvcrt.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("hmownrvcrt.m"),2) + POWER(GET("hmownrvcrt.comparison_m"),2))',
+        },
+      },      
     ],
   },
   {
@@ -86,6 +100,20 @@ module.exports = [
           formula: '((GET("vhufrnt.comparison_sum"))/((GET("vhufrnt.comparison_sum"))+(GET("rochu_3.comparison_sum"))))*100',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("rntvcrt.sum") - GET("rntvcrt.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("rntvcrt.m"),2) + POWER(GET("rntvcrt.comparison_m"),2))',
+        },
+      },      
     ],
   },
 ];

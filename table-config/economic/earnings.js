@@ -137,6 +137,20 @@ module.exports = [
           formula: '((GET("mdewrk.comparison_m")/ 1.645) / GET("mdewrk.comparison_sum") * 100)',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdewrk.sum") - GET("mdewrk.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_m"),2))',
+        },
+      },      
     ],
   },
   {
@@ -273,6 +287,20 @@ module.exports = [
           formula: '((GET("mdemftwrk.comparison_m")/ 1.645) / GET("mdemftwrk.comparison_sum") * 100)',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_m"),2))',
+        },
+      },      
     ],
   },
   {
@@ -409,6 +437,20 @@ module.exports = [
           formula: '((GET("mdefftwrk.comparison_m")/ 1.645) / GET("mdefftwrk.comparison_sum") * 100)',
         },
       },
+      {
+        column: 'difference_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.comparison_sum"))',
+        },
+      },
+      {
+        column: 'difference_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_m"),2))',
+        },
+      },      
     ],
   },
 ];
