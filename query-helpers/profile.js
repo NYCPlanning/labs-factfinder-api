@@ -114,16 +114,16 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           SELECT
             -- comparison_sum --
             sum(e) AS comparison_sum,
-            
+
             -- comparison_m --
             sqrt(sum(power(m, 2))) AS comparison_m,
-            
+
             -- comparison_join --
             base AS comparison_join,
-            
+
             -- comparison_variable --
             variable AS comparison_variable,
-            
+
             -- comparison_dataset --
             dataset AS comparison_dataset
           FROM comparison_enriched_selection
@@ -135,13 +135,13 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         SELECT
           -- comparison_base_sum --
           sum(e) AS comparison_base_sum,
-          
+
           -- comparison_base_m --
           sqrt(sum(power(m, 2))) AS comparison_base_m,
-          
+
           -- comparison_base_join --
           base AS comparison_base_join,
-          
+
           -- comparison_base_dataset --
           dataset AS comparison_base_dataset
         FROM comparison_enriched_selection
@@ -163,6 +163,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         ELSE true
       END AS percent_significant,
 
+      -- difference_sum --
       (sum - comparison_sum) AS difference_sum,
 
       -- difference_percent --
@@ -173,7 +174,9 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           (percent - comparison_percent) * 100
       END AS difference_percent,
 
+      -- difference_m --
       (SQRT((POWER(m, 2) %2B POWER(comparison_m, 2)))) AS difference_m,
+      -- difference_percent_m --
       (SQRT((POWER(percent_m * 100, 2) %2B POWER(comparison_percent_m * 100, 2)))) AS difference_percent_m,
 
       -- change_percentage_point --
