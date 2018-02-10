@@ -6,7 +6,7 @@ function stringifyArray(array) {
 const buildSQL = function buildSQL(tablename, ids, compare) {
   const idStrings = stringifyArray(ids);
 
-  return `
+  return /**/`
     WITH
     filtered_selection AS (
       SELECT *
