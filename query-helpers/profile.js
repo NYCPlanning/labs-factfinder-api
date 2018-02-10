@@ -95,7 +95,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       comparison_selection AS (
         SELECT *
         FROM ${profile}
-        WHERE geoid IN ('${compare}')
+        WHERE geoid = '${compare}'
       ),
 
       comparison_enriched_selection AS (
@@ -107,16 +107,23 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       comparison_main_numbers AS (
         SELECT
-          *,
-          -- comparison_cv --
-          (((comparison_m / 1.645) / comparison_sum) * 100) AS comparison_cv
+          *
         FROM (
           SELECT
             -- comparison_sum --
-            sum(e) AS comparison_sum,
+            e AS comparison_sum,
 
             -- comparison_m --
-            sqrt(sum(power(m, 2))) AS comparison_m,
+            m AS comparison_m,
+
+            -- percent --
+            p AS comparison_percent,
+
+            -- comparison_percent_m --
+            z AS comparison_percent_m,
+
+            -- comparison_cv --
+            c AS comparison_cv,
 
             -- comparison_join --
             base AS comparison_join,
@@ -127,26 +134,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
             -- comparison_dataset --
             dataset AS comparison_dataset
           FROM comparison_enriched_selection
-          GROUP BY variable, dataset, base
         ) x
-      ),
-
-      comparison_base_numbers AS (
-        SELECT
-          -- comparison_base_sum --
-          sum(e) AS comparison_base_sum,
-
-          -- comparison_base_m --
-          sqrt(sum(power(m, 2))) AS comparison_base_m,
-
-          -- comparison_base_join --
-          base AS comparison_base_join,
-
-          -- comparison_base_dataset --
-          dataset AS comparison_base_dataset
-        FROM comparison_enriched_selection
-        WHERE base = variable
-        GROUP BY variable, dataset, base
       )
 
     SELECT
@@ -176,6 +164,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- difference_m --
       (SQRT((POWER(m, 2) %2B POWER(comparison_m, 2)))) AS difference_m,
+      
       -- difference_percent_m --
       (SQRT((POWER(percent_m * 100, 2) %2B POWER(comparison_percent_m * 100, 2)))) AS difference_percent_m,
 
@@ -270,16 +259,8 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         comparison_cv,
         comparison_m,
         comparison_sum,
-
-        -- comparison_percent --
-        ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) AS comparison_percent,
-
-        -- comparison_percent_m --
-        CASE
-          WHEN (POWER(comparison_m, 2) %2D POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2)) < 0
-            THEN (1 / NULLIF(comparison_base_sum,0)) * SQRT(POWER(comparison_m, 2) %2B POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2))
-          ELSE (1 / NULLIF(comparison_base_sum,0)) * SQRT(POWER(comparison_m, 2) %2D POWER(comparison_sum / NULLIF(comparison_base_sum,0), 2) * POWER(comparison_base_m, 2))
-        END AS comparison_percent_m,
+        comparison_percent_m,
+        comparison_percent,
 
         -- comparison_is_reliable --
         CASE 
@@ -325,11 +306,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       LEFT OUTER JOIN base_numbers
         ON main_numbers.base = base_numbers.base_join
         AND main_numbers.dataset = base_numbers.base_dataset
-
-      LEFT OUTER JOIN comparison_base_numbers
-        ON main_numbers.base = comparison_base_numbers.comparison_base_join
-        AND dataset = comparison_base_numbers.comparison_base_dataset
-      ) a
+    ) precalculations
   `;
 };
 
