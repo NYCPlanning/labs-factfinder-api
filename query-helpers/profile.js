@@ -6,7 +6,11 @@ function stringifyArray(array) {
 const buildSQL = function buildSQL(profile, ids, compare) {
   const idStrings = stringifyArray(ids);
 
-  return `
+  // WARNING: although our Carto backend will prevent any 
+  // malicious SQL injection, maintainers might consider 
+  // migrating to Postgres which would make it very easy for 
+  // malicious code to be inserted
+  return /*ssjssql*/`
     WITH
       filtered_selection AS (
         SELECT *
