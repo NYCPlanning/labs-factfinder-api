@@ -5,7 +5,7 @@ function stringifyArray(array) {
 
 const buildSQL = function buildSQL(profile, ids, compare) {
   const idStrings = stringifyArray(ids);
-
+  // const { length } = idStrings;
   // WARNING: although our Carto backend will prevent any
   // malicious SQL injection, maintainers might consider
   // migrating to Postgres which would make it very easy for
@@ -47,6 +47,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           SELECT
             -- sum --
             sum(e) AS sum,
+
             -- m --
             sqrt(sum(power(m, 2))) AS m,
 
