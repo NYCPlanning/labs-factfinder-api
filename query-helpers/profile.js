@@ -117,11 +117,11 @@ const buildSQL = function buildSQL(profile, ids, compare) {
             -- comparison_m --
             m AS comparison_m,
 
-            -- percent --
-            p AS comparison_percent,
+            -- comparison_percent --
+            (p / 100) AS comparison_percent,
 
             -- comparison_percent_m --
-            z AS comparison_percent_m,
+            (z / 100) AS comparison_percent_m,
 
             -- comparison_cv --
             c AS comparison_cv,
@@ -229,7 +229,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         cv,
 
         -- percent --
-        ROUND((SUM / NULLIF(base_sum,0))::numeric, 4) AS percent,
+        ROUND((sum / NULLIF(base_sum,0))::numeric, 4) AS percent,
 
         -- previous_percent --
         ROUND((previous_sum / NULLIF(previous_base_sum,0))::numeric, 4) AS previous_percent,
