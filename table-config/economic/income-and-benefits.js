@@ -1,7 +1,7 @@
-const interpolate = require ('../../utils/interpolate');
-const calculateMedianError = require ('../../utils/calculate-median-error');
-const calculator = require ('../../utils/calculator');
-const formula = require ('../../utils/formula');
+const interpolate = require('../../utils/interpolate');
+const calculateMedianError = require('../../utils/calculate-median-error');
+const calculator = require('../../utils/calculator');
+const formula = require('../../utils/formula');
 
 module.exports = [
   {
