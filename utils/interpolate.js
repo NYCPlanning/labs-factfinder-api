@@ -43,11 +43,6 @@ function interpolate(data, sumKey = 'sum', options) {
     });
   }
 
-
-  if (referenceSumKey === 'previous_sum') {
-    console.log(scenario);
-  }
-
   const medianOfRanges = (ranges) => {
     const rangeGroups = (() => {
       let upper = 0;
