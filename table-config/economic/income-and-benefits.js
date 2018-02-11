@@ -81,6 +81,13 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: formula,
+        options: {
+          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.sum"), GET("mdhhinc.sum") * 1.1005))',
+        },
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
@@ -103,13 +110,6 @@ module.exports = [
             ['hi150t199', [150000, 199999]],
             ['hhi200pl', [200000, 9999999]],
           ],
-        },
-      },
-      {
-        column: 'sum',
-        aggregator: formula,
-        options: {
-          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.sum"), GET("mdhhinc.sum") * 1.1005))',
         },
       },
       {
