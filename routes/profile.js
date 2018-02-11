@@ -143,7 +143,7 @@ router.get('/:id/:profile', (req, res) => {
       // match.geoids is an array of geoids to query with
       // carto.SQL(SQL, 'json', 'post')
       client.connect();
-      console.log(SQL);
+
       client
         .query(SQL)
         .then(data => appendRowConfig(data.rows, profile, match))
