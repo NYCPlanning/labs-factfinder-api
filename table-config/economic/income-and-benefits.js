@@ -106,6 +106,20 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: formula,
+        options: {
+          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.sum"), GET("mdhhinc.sum") * 1.1005))',
+        },
+      },
+      {
+        column: 'm',
+        aggregator: formula,
+        options: {
+          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.m"), GET("mdhhinc.m") * 1.1005))',
+        },
+      },
+      {
         column: 'cv',
         aggregator: formula,
         options: {
@@ -137,6 +151,13 @@ module.exports = [
         },
       },
       {
+        column: 'comparison_sum',
+        aggregator: formula,
+        options: {
+          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.comparison_sum"), GET("mdhhinc.comparison_sum") * 1.1005))',
+        },
+      },
+      {
         column: 'comparison_m',
         aggregator: calculateMedianError,
         options: {
@@ -159,6 +180,13 @@ module.exports = [
             ['hi150t199', [150000, 199999]],
             ['hhi200pl', [200000, 9999999]],
           ],
+        },
+      },
+      {
+        column: 'comparison_m',
+        aggregator: formula,
+        options: {
+          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.comparison_m"), GET("mdhhinc.comparison_m") * 1.1005))',
         },
       },
       {
