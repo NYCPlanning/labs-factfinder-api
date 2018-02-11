@@ -8,6 +8,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdewrk',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -150,7 +151,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -158,6 +159,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdemftwrk',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -300,7 +302,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -308,6 +310,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdefftwrk',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',

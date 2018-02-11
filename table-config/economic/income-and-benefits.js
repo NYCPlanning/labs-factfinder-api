@@ -54,6 +54,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdhhinc',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -180,7 +181,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdhhinc.m"),2) + POWER(GET("mdhhinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -188,6 +189,7 @@ module.exports = [
     tooltip: 'Aggregate household income in the past 12 months, divided by total households',
     variable: 'mnhhinc',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -323,6 +325,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdfaminc',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -465,6 +468,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdnfinc',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -602,6 +606,7 @@ module.exports = [
     tooltip: 'Aggregate income in the past 12 months, divided by total population',
     variable: 'percapinc',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
