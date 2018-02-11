@@ -102,6 +102,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top-coded values',
     variable: 'mdvl',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
