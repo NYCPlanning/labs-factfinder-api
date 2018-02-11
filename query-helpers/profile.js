@@ -142,13 +142,13 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       *,
       -- significant --
       CASE
-        WHEN ABS(SQRT(POWER(m / 1.645, 2) %2B POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
+        WHEN ABS(SQRT(POWER(m / 1.645, 2) + POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
         ELSE true
       END AS significant,
 
       -- percent_significant --
       CASE
-        WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) %2B POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+        WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) + POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
         ELSE true
       END AS percent_significant,
 
@@ -164,10 +164,10 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       END AS difference_percent,
 
       -- difference_m --
-      (SQRT((POWER(m, 2) %2B POWER(comparison_m, 2)))) AS difference_m,
+      (SQRT((POWER(m, 2) + POWER(comparison_m, 2)))) AS difference_m,
       
       -- difference_percent_m --
-      (SQRT((POWER(percent_m * 100, 2) %2B POWER(comparison_percent_m * 100, 2)))) AS difference_percent_m,
+      (SQRT((POWER(percent_m * 100, 2) + POWER(comparison_percent_m * 100, 2)))) AS difference_percent_m,
 
       -- change_percentage_point --
       CASE
@@ -178,7 +178,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       -- change_percentage_point_m --
       CASE
         WHEN is_most_recent THEN
-          (SQRT((POWER(previous_percent_m, 2) %2B POWER(percent_m, 2))))
+          (SQRT((POWER(previous_percent_m, 2) + POWER(percent_m, 2))))
       END AS change_percentage_point_m,
 
       -- change_significant --
@@ -199,7 +199,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- change_percentage_point_significant --
       CASE
-        WHEN (ABS((SQRT((POWER(previous_percent_m, 2) %2B POWER(percent_m, 2))))) < (percent - previous_percent)) THEN
+        WHEN (ABS((SQRT((POWER(previous_percent_m, 2) + POWER(percent_m, 2))))) < (percent - previous_percent)) THEN
           TRUE
         ELSE
           FALSE
@@ -238,16 +238,16 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
         -- percent_m --
         CASE
-          WHEN (POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
-            THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2B POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-          ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) %2D POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
+          WHEN (POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
+            THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) + POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
+          ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
         END AS percent_m,
 
         -- previous_percent_m --
         CASE
-          WHEN (POWER(previous_m, 2) %2D POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2)) < 0
-            THEN (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) %2B POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
-          ELSE (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) %2D POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
+          WHEN (POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2)) < 0
+            THEN (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) + POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
+          ELSE (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
         END AS previous_percent_m,
 
         -- is_reliable --
@@ -279,7 +279,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         -- change_m --
         CASE
           WHEN is_most_recent THEN
-            ABS(SQRT(POWER(m, 2) %2B POWER(previous_m, 2)))
+            ABS(SQRT(POWER(m, 2) + POWER(previous_m, 2)))
         END AS change_m,
 
         -- change_percent --
@@ -294,7 +294,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
             ABS(sum / NULLIF(previous_sum,0)) 
             * SQRT(
               (POWER(m / 1.645, 2) / POWER(sum, 2))
-              %2B (POWER(previous_m / 1.645, 2) / POWER(previous_sum, 2))
+              + (POWER(previous_m / 1.645, 2) / POWER(previous_sum, 2))
             ) * 1.645
         END AS change_percent_m
 
