@@ -2,6 +2,7 @@ const interpolate = require ('../../utils/interpolate');
 const calculateMedianError = require ('../../utils/calculate-median-error');
 const calculator = require ('../../utils/calculator');
 const formula = require ('../../utils/formula');
+const inflate = require('../../utils/inflate');
 
 module.exports = [
   {
@@ -80,6 +81,10 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: inflate,
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
@@ -103,6 +108,10 @@ module.exports = [
             ['hhi200pl', [200000, 9999999]],
           ],
         },
+      },
+      {
+        column: 'm',
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -180,7 +189,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdhhinc.m"),2) + POWER(GET("mdhhinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -195,6 +204,10 @@ module.exports = [
         options: {
           procedure: ['aghhinc.sum', 'divide', 'hh.sum'],
         },
+      },
+      {
+        column: 'sum',
+        aggregator: inflate,
       },
       {
         column: 'comparison_sum',
@@ -225,6 +238,10 @@ module.exports = [
         },
       },
       {
+        column: 'm',
+        aggregator: inflate,
+      },
+      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -244,7 +261,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mnhhinc.m"),2) + POWER(GET("mnhhinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -349,6 +366,10 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: inflate,
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
@@ -372,6 +393,10 @@ module.exports = [
             ['fami200pl', [200000, 9999999]],
           ],
         },
+      },
+      {
+        column: 'm',
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -449,7 +474,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdfaminc.m"),2) + POWER(GET("mdfaminc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -491,6 +516,10 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: inflate,
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
@@ -514,6 +543,10 @@ module.exports = [
             ['nfi200pl', [200000, 9999999]],
           ],
         },
+      },
+      {
+        column: 'm',
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -591,7 +624,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdnfinc.m"),2) + POWER(GET("mdnfinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -609,6 +642,10 @@ module.exports = [
         options: {
           procedure: ['agip15pl.sum', 'divide', 'pop_6.sum'],
         },
+      },
+      {
+        column: 'sum',
+        aggregator: inflate,
       },
       {
         column: 'comparison_sum',
@@ -639,6 +676,10 @@ module.exports = [
         },
       },
       {
+        column: 'm',
+        aggregator: inflate,
+      },
+      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -658,7 +699,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("percapinc.m"),2) + POWER(GET("percapinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
 ];
