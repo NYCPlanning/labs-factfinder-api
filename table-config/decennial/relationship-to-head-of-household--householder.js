@@ -99,6 +99,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("popinhh.previous_sum"))/(GET("hh1.previous_sum"))',
+        },
+      },
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -106,12 +113,12 @@ module.exports = [
         },
       },
       {
-        column: 'difference_m',
+        column: 'change_sum',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_m"),2))',
+          formula: '(GET("avghhsz.sum") - GET("avghhsz.previous_sum"))',
         },
-      },      
+      },
     ],
   },
   {
@@ -136,6 +143,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("popinfam.previous_sum"))/(GET("fam1.previous_sum"))',
+        },
+      },
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -143,12 +157,12 @@ module.exports = [
         },
       },
       {
-        column: 'difference_m',
+        column: 'change_sum',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avgfamsz.m"),2) + POWER(GET("avgfamsz.comparison_m"),2))',
+          formula: '(GET("avgfamsz.sum") - GET("avgfamsz.previous_sum"))',
         },
-      },      
+      },
     ],
   },
   {

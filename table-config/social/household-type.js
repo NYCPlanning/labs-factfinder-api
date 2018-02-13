@@ -96,6 +96,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: calculator,
+        options: {
+          procedure: ['hhpop.previous_sum', 'divide', 'hh1.previous_sum'],
+        },
+      },
+      {
         column: 'cv',
         aggregator: formula,
         options: {
@@ -131,12 +138,26 @@ module.exports = [
         },
       },
       {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsz.sum") - GET("avghhsz.previous_sum"))',
+        },
+      },
+      {
         column: 'difference_m',
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_m"),2))',
         },
-      },      
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.previous_m"),2))',
+        },
+      },
     ],
   },
   {
@@ -201,7 +222,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {

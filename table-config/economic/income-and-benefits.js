@@ -4,6 +4,63 @@ const calculator = require ('../../utils/calculator');
 const formula = require ('../../utils/formula');
 const inflate = require('../../utils/inflate');
 
+const binsForMdhhinc = [
+  ['hhiu10', [0, 9999]],
+  ['hhi10t14', [10000, 14999]],
+  ['hhi15t19', [15000, 19999]],
+  ['hhi20t24', [20000, 24999]],
+  ['hhi25t29', [25000, 29999]],
+  ['hhi30t34', [30000, 34999]],
+  ['hhi35t39', [35000, 39999]],
+  ['hhi40t44', [40000, 44999]],
+  ['hhi45t49', [45000, 49999]],
+  ['hhi50t59', [50000, 59999]],
+  ['hhi60t74', [60000, 74999]],
+  ['hhi75t99', [75000, 99999]],
+  ['hi100t124', [100000, 124999]],
+  ['hi125t149', [125000, 149999]],
+  ['hi150t199', [150000, 199999]],
+  ['hhi200pl', [200000, 9999999]],
+];
+
+const binsForMdfaminc = [
+  ['famiu10', [0, 9999]],
+  ['fami10t14', [10000, 14999]],
+  ['fami15t19', [15000, 19999]],
+  ['fami20t24', [20000, 24999]],
+  ['fami25t29', [25000, 29999]],
+  ['fami30t34', [30000, 34999]],
+  ['fami35t39', [35000, 39999]],
+  ['fami40t44', [40000, 44999]],
+  ['fami45t49', [45000, 49999]],
+  ['fami50t59', [50000, 59999]],
+  ['fami60t74', [60000, 74999]],
+  ['fami75t99', [75000, 99999]],
+  ['fi100t124', [100000, 124999]],
+  ['fi125t149', [125000, 149999]],
+  ['fi150t199', [150000, 199999]],
+  ['fami200pl', [200000, 9999999]],
+];
+
+const binsForMdnfinc = [
+  ['nfmiu10', [0, 9999]],
+  ['nfmi10t14', [10000, 14999]],
+  ['nfmi15t19', [15000, 19999]],
+  ['nfmi20t24', [20000, 24999]],
+  ['nfmi25t29', [25000, 29999]],
+  ['nfmi30t34', [30000, 34999]],
+  ['nfmi35t39', [35000, 39999]],
+  ['nfmi40t44', [40000, 44999]],
+  ['nfmi45t49', [45000, 49999]],
+  ['nfmi50t59', [50000, 59999]],
+  ['nfmi60t74', [60000, 74999]],
+  ['nfmi75t99', [75000, 99999]],
+  ['nf100t124', [100000, 124999]],
+  ['nf125t149', [125000, 149999]],
+  ['nf150t199', [150000, 199999]],
+  ['nfi200pl', [200000, 9999999]],
+];
+
 module.exports = [
   {
     title: 'Total households',
@@ -60,24 +117,7 @@ module.exports = [
         column: 'sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['hhiu10', [0, 9999]],
-            ['hhi10t14', [10000, 14999]],
-            ['hhi15t19', [15000, 19999]],
-            ['hhi20t24', [20000, 24999]],
-            ['hhi25t29', [25000, 29999]],
-            ['hhi30t34', [30000, 34999]],
-            ['hhi35t39', [35000, 39999]],
-            ['hhi40t44', [40000, 44999]],
-            ['hhi45t49', [45000, 49999]],
-            ['hhi50t59', [50000, 59999]],
-            ['hhi60t74', [60000, 74999]],
-            ['hhi75t99', [75000, 99999]],
-            ['hi100t124', [100000, 124999]],
-            ['hi125t149', [125000, 149999]],
-            ['hi150t199', [150000, 199999]],
-            ['hhi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdhhinc,
         },
       },
       {
@@ -89,24 +129,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['hhiu10', [0, 9999]],
-            ['hhi10t14', [10000, 14999]],
-            ['hhi15t19', [15000, 19999]],
-            ['hhi20t24', [20000, 24999]],
-            ['hhi25t29', [25000, 29999]],
-            ['hhi30t34', [30000, 34999]],
-            ['hhi35t39', [35000, 39999]],
-            ['hhi40t44', [40000, 44999]],
-            ['hhi45t49', [45000, 49999]],
-            ['hhi50t59', [50000, 59999]],
-            ['hhi60t74', [60000, 74999]],
-            ['hhi75t99', [75000, 99999]],
-            ['hi100t124', [100000, 124999]],
-            ['hi125t149', [125000, 149999]],
-            ['hi150t199', [150000, 199999]],
-            ['hhi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdhhinc,
         },
       },
       {
@@ -124,24 +147,7 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['hhiu10', [0, 9999]],
-            ['hhi10t14', [10000, 14999]],
-            ['hhi15t19', [15000, 19999]],
-            ['hhi20t24', [20000, 24999]],
-            ['hhi25t29', [25000, 29999]],
-            ['hhi30t34', [30000, 34999]],
-            ['hhi35t39', [35000, 39999]],
-            ['hhi40t44', [40000, 44999]],
-            ['hhi45t49', [45000, 49999]],
-            ['hhi50t59', [50000, 59999]],
-            ['hhi60t74', [60000, 74999]],
-            ['hhi75t99', [75000, 99999]],
-            ['hi100t124', [100000, 124999]],
-            ['hi125t149', [125000, 149999]],
-            ['hi150t199', [150000, 199999]],
-            ['hhi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdhhinc,
         },
       },
       {
@@ -149,24 +155,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['hhiu10', [0, 9999]],
-            ['hhi10t14', [10000, 14999]],
-            ['hhi15t19', [15000, 19999]],
-            ['hhi20t24', [20000, 24999]],
-            ['hhi25t29', [25000, 29999]],
-            ['hhi30t34', [30000, 34999]],
-            ['hhi35t39', [35000, 39999]],
-            ['hhi40t44', [40000, 44999]],
-            ['hhi45t49', [45000, 49999]],
-            ['hhi50t59', [50000, 59999]],
-            ['hhi60t74', [60000, 74999]],
-            ['hhi75t99', [75000, 99999]],
-            ['hi100t124', [100000, 124999]],
-            ['hi125t149', [125000, 149999]],
-            ['hi150t199', [150000, 199999]],
-            ['hhi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdhhinc,
         },
       },
       {
@@ -174,6 +163,21 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '((GET("mdhhinc.comparison_m")/ 1.645) / GET("mdhhinc.comparison_sum") * 100)',
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          bins: binsForMdhhinc,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.5,
+          bins: binsForMdhhinc,
         },
       },
       {
@@ -188,6 +192,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdhhinc.m"),2) + POWER(GET("mdhhinc.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdhhinc.sum") - GET("mdhhinc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdhhinc.m"),2) + POWER(GET("mdhhinc.previous_m"),2))',
         },
       },
     ],
@@ -242,6 +260,17 @@ module.exports = [
         aggregator: inflate,
       },
       {
+        column: 'previous_sum',
+        aggregator: inflate,
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '((((GET("mnhhinc.cv"))/(100))*(1.645))*(GET("mnhhinc.previous_sum")))',
+        },
+      },
+      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -260,6 +289,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mnhhinc.m"),2) + POWER(GET("mnhhinc.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mnhhinc.sum") - GET("mnhhinc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mnhhinc.m"),2) + POWER(GET("mnhhinc.previous_m"),2))',
         },
       },
     ],
@@ -345,24 +388,7 @@ module.exports = [
         column: 'sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdfaminc,
         },
       },
       {
@@ -374,24 +400,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdfaminc,
         },
       },
       {
@@ -409,24 +418,7 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdfaminc,
         },
       },
       {
@@ -434,24 +426,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdfaminc,
         },
       },
       {
@@ -459,6 +434,21 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '((GET("mdfaminc.comparison_m")/ 1.645) / GET("mdfaminc.comparison_sum") * 100)',
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          bins: binsForMdfaminc,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.5,
+          bins: binsForMdfaminc,
         },
       },
       {
@@ -473,6 +463,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdfaminc.m"),2) + POWER(GET("mdfaminc.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdfaminc.sum") - GET("mdfaminc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdfaminc.m"),2) + POWER(GET("mdfaminc.previous_m"),2))',
         },
       },
     ],
@@ -495,24 +499,7 @@ module.exports = [
         column: 'sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['nfmiu10', [0, 9999]],
-            ['nfmi10t14', [10000, 14999]],
-            ['nfmi15t19', [15000, 19999]],
-            ['nfmi20t24', [20000, 24999]],
-            ['nfmi25t29', [25000, 29999]],
-            ['nfmi30t34', [30000, 34999]],
-            ['nfmi35t39', [35000, 39999]],
-            ['nfmi40t44', [40000, 44999]],
-            ['nfmi45t49', [45000, 49999]],
-            ['nfmi50t59', [50000, 59999]],
-            ['nfmi60t74', [60000, 74999]],
-            ['nfmi75t99', [75000, 99999]],
-            ['nf100t124', [100000, 124999]],
-            ['nf125t149', [125000, 149999]],
-            ['nf150t199', [150000, 199999]],
-            ['nfi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdnfinc,
         },
       },
       {
@@ -524,24 +511,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['nfmiu10', [0, 9999]],
-            ['nfmi10t14', [10000, 14999]],
-            ['nfmi15t19', [15000, 19999]],
-            ['nfmi20t24', [20000, 24999]],
-            ['nfmi25t29', [25000, 29999]],
-            ['nfmi30t34', [30000, 34999]],
-            ['nfmi35t39', [35000, 39999]],
-            ['nfmi40t44', [40000, 44999]],
-            ['nfmi45t49', [45000, 49999]],
-            ['nfmi50t59', [50000, 59999]],
-            ['nfmi60t74', [60000, 74999]],
-            ['nfmi75t99', [75000, 99999]],
-            ['nf100t124', [100000, 124999]],
-            ['nf125t149', [125000, 149999]],
-            ['nf150t199', [150000, 199999]],
-            ['nfi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdnfinc,
         },
       },
       {
@@ -559,24 +529,7 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['nfmiu10', [0, 9999]],
-            ['nfmi10t14', [10000, 14999]],
-            ['nfmi15t19', [15000, 19999]],
-            ['nfmi20t24', [20000, 24999]],
-            ['nfmi25t29', [25000, 29999]],
-            ['nfmi30t34', [30000, 34999]],
-            ['nfmi35t39', [35000, 39999]],
-            ['nfmi40t44', [40000, 44999]],
-            ['nfmi45t49', [45000, 49999]],
-            ['nfmi50t59', [50000, 59999]],
-            ['nfmi60t74', [60000, 74999]],
-            ['nfmi75t99', [75000, 99999]],
-            ['nf100t124', [100000, 124999]],
-            ['nf125t149', [125000, 149999]],
-            ['nf150t199', [150000, 199999]],
-            ['nfi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdnfinc,
         },
       },
       {
@@ -584,24 +537,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['nfmiu10', [0, 9999]],
-            ['nfmi10t14', [10000, 14999]],
-            ['nfmi15t19', [15000, 19999]],
-            ['nfmi20t24', [20000, 24999]],
-            ['nfmi25t29', [25000, 29999]],
-            ['nfmi30t34', [30000, 34999]],
-            ['nfmi35t39', [35000, 39999]],
-            ['nfmi40t44', [40000, 44999]],
-            ['nfmi45t49', [45000, 49999]],
-            ['nfmi50t59', [50000, 59999]],
-            ['nfmi60t74', [60000, 74999]],
-            ['nfmi75t99', [75000, 99999]],
-            ['nf100t124', [100000, 124999]],
-            ['nf125t149', [125000, 149999]],
-            ['nf150t199', [150000, 199999]],
-            ['nfi200pl', [200000, 9999999]],
-          ],
+          bins: binsForMdnfinc,
         },
       },
       {
@@ -609,6 +545,21 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '((GET("mdnfinc.comparison_m")/ 1.645) / GET("mdnfinc.comparison_sum") * 100)',
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          bins: binsForMdnfinc,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.5,
+          bins: binsForMdnfinc,
         },
       },
       {
@@ -623,6 +574,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdnfinc.m"),2) + POWER(GET("mdnfinc.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdnfinc.sum") - GET("mdnfinc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdnfinc.m"),2) + POWER(GET("mdnfinc.previous_m"),2))',
         },
       },
     ],
@@ -652,6 +617,13 @@ module.exports = [
         aggregator: calculator,
         options: {
           procedure: ['agip15pl.comparison_sum', 'divide', 'pop_6.comparison_sum'],
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: calculator,
+        options: {
+          procedure: ['agip15pl.previous_sum', 'divide', 'pop_6.previous_sum'],
         },
       },
       {
@@ -687,6 +659,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '((((GET("percapinc.previous_cv"))/(100))*(1.645))*(GET("percapinc.previous_sum")))',
+        },
+      },
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -698,6 +677,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("percapinc.m"),2) + POWER(GET("percapinc.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("percapinc.sum") - GET("percapinc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("percapinc.m"),2) + POWER(GET("percapinc.previous_m"),2))',
         },
       },
     ],

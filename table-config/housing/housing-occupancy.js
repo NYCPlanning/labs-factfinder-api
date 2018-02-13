@@ -40,6 +40,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: calculator,
+        options: {
+          procedure: [['vacsale.previous_sum', 'divide', 'hovacu.previous_sum'], 'multiply', 100],
+        },
+      },
+      {
         column: 'm',
         aggregator: formula,
         options: {
@@ -51,6 +58,13 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'IF(((GET("vacsale.comparison_m")^2)-(( GET("vacsale.comparison_sum") ^2/ GET("hovacu.comparison_sum") ^2)*( GET("hovacu.comparison_m") ^2)))<0,((1/ GET("hovacu.comparison_sum") *(SQRT((GET("vacsale.comparison_m") ^2)+(( GET("vacsale.comparison_sum") ^2/ GET("hovacu.comparison_sum") ^2)*( GET("hovacu.comparison_m") ^2)))))*100),((1/ GET("hovacu.comparison_sum") *(SQRT((GET("vacsale.comparison_m") ^2)-(( GET("vacsale.comparison_sum") ^2/ GET("hovacu.comparison_sum") ^2)*( GET("hovacu.comparison_m") ^2)))))*100))',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: 'IF(((GET("vacsale.previous_m")^2)-(( GET("vacsale.previous_sum") ^2/ GET("hovacu.previous_sum") ^2)*( GET("hovacu.previous_m") ^2)))<0,((1/ GET("hovacu.previous_sum") *(SQRT((GET("vacsale.previous_m") ^2)+(( GET("vacsale.previous_sum") ^2/ GET("hovacu.previous_sum") ^2)*( GET("hovacu.previous_m") ^2)))))*100),((1/ GET("hovacu.previous_sum") *(SQRT((GET("vacsale.previous_m") ^2)-(( GET("vacsale.previous_sum") ^2/ GET("hovacu.previous_sum") ^2)*( GET("hovacu.previous_m") ^2)))))*100))',
         },
       },
       {
@@ -81,6 +95,20 @@ module.exports = [
           formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_m"),2))',
         },
       },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("hovacrt.sum") - GET("hovacrt.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.previous_m"),2))',
+        },
+      },
     ],
   },
   {
@@ -105,6 +133,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: calculator,
+        options: {
+          procedure: [['vacrnt.previous_sum', 'divide', 'rntvacu.previous_sum'], 'multiply', 100],
+        },
+      },
+      {
         column: 'm',
         aggregator: formula,
         options: {
@@ -116,6 +151,13 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'IF(((GET("vacrnt.comparison_m")^2)-(( GET("vacrnt.comparison_sum") ^2/ GET("rntvacu.comparison_sum") ^2)*( GET("rntvacu.comparison_m") ^2)))<0,((1/ GET("rntvacu.comparison_sum") *(SQRT((GET("vacrnt.comparison_m") ^2)+(( GET("vacrnt.comparison_sum") ^2/ GET("rntvacu.comparison_sum") ^2)*( GET("rntvacu.comparison_m") ^2)))))*100),((1/ GET("rntvacu.comparison_sum") *(SQRT((GET("vacrnt.comparison_m") ^2)-(( GET("vacrnt.comparison_sum") ^2/ GET("rntvacu.comparison_sum") ^2)*( GET("rntvacu.comparison_m") ^2)))))*100))',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: 'IF(((GET("vacrnt.previous_m")^2)-(( GET("vacrnt.previous_sum") ^2/ GET("rntvacu.previous_sum") ^2)*( GET("rntvacu.previous_m") ^2)))<0,((1/ GET("rntvacu.previous_sum") *(SQRT((GET("vacrnt.previous_m") ^2)+(( GET("vacrnt.previous_sum") ^2/ GET("rntvacu.previous_sum") ^2)*( GET("rntvacu.previous_m") ^2)))))*100),((1/ GET("rntvacu.previous_sum") *(SQRT((GET("vacrnt.previous_m") ^2)-(( GET("vacrnt.previous_sum") ^2/ GET("rntvacu.previous_sum") ^2)*( GET("rntvacu.previous_m") ^2)))))*100))',
         },
       },
       {
@@ -144,6 +186,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.previous_m"),2))',
         },
       },
     ],

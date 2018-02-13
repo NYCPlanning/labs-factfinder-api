@@ -161,6 +161,23 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          multipleBins: true,
+          bins: [binsMedianValueEarly, binsMedianValueLater],
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.4,
+          multipleBins: true,
+          bins: [binsMedianValueEarly, binsMedianValueLater],
+        },
+      },
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -172,6 +189,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdvl.sum") - GET("mdvl.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.previous_m"),2))',
         },
       },
     ],
