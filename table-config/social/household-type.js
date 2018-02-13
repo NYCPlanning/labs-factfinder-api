@@ -136,7 +136,21 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_m"),2))',
         },
-      },      
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsz.sum") - GET("avghhsz.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.previous_m"),2))',
+        },
+      },
     ],
   },
   {
@@ -201,7 +215,21 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.comparison_m"),2))',
         },
-      },      
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avgfmsz.sum") - GET("avgfmsz.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.previous_m"),2))',
+        },
+      },
     ],
   },
   {
