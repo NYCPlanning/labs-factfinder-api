@@ -6,7 +6,7 @@ const { isArray } = Array;
 const { get, set } = _;
 
 function interpolate(data, sumKey = 'sum', options, variable, row) {
-  const { bins, multipleBins } = options;
+  const { bins, multipleBins, referenceSumKey = sumKey } = options;
   let scenario = data;
   let foundBins = bins;
 
@@ -33,7 +33,7 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
     scenario = foundBins.map((bin) => {
       const [key, range] = bin;
       const [min, max] = range;
-      const sum = get(data, `${key}.${sumKey}`);
+      const sum = get(data, `${key}.${referenceSumKey}`);
 
       return {
         quantity: sum,
@@ -46,6 +46,7 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
   }
 
   const naturalMedian = medianOfRanges(scenario);
+
 
   const { mutatedEstimate: trimmedEstimate, codingThreshold } =
     topBottomCodeEstimate(naturalMedian, row);
