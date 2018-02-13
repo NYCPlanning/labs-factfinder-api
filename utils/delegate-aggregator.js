@@ -12,7 +12,7 @@ function aggregateSpecialVariable(row, rowConfig, allData) {
   specialCalculations.forEach(({ column, aggregator = noop, options }) => {
     let specialValue;
     try {
-      specialValue = aggregator(allData, column, options, variable);
+      specialValue = aggregator(allData, column, options, variable, row);
     } catch (err) {
       console.log('Error with ', column, options, 'Stack trace: ', err); // eslint-disable-line
     }

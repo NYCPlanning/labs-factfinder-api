@@ -1,10 +1,11 @@
 const _ = require('lodash');
 const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
+const medianOfRanges = require('../utils/median-of-ranges');
 
 const { isArray } = Array;
-const { get } = _;
+const { get, set } = _;
 
-function interpolate(data, sumKey = 'sum', options, row) {
+function interpolate(data, sumKey = 'sum', options, variable, row) {
   const { bins, multipleBins } = options;
   let scenario = data;
   let foundBins = bins;
@@ -44,53 +45,16 @@ function interpolate(data, sumKey = 'sum', options, row) {
     });
   }
 
-  const medianOfRanges = (ranges) => {
-    const rangeGroups = (() => {
-      let upper = 0;
+  const naturalMedian = medianOfRanges(scenario);
 
-      return ranges.map((range) => {
-        const lower = upper;
-        upper += range.quantity;
+  const { mutatedEstimate: trimmedEstimate, codingThreshold } =
+    topBottomCodeEstimate(naturalMedian, row);
 
-        return { lower, upper };
-      });
-    })();
+  if (codingThreshold) {
+    set(row, `codingThresholds.${sumKey}`, codingThreshold);
+  }
 
-    const avg = ranges.map(range => range.quantity).reduce((a, b) => a + b) / 2;
-
-    const medianGroupNum = (() => {
-      let groupNum = null;
-
-      rangeGroups.some((group, i) => {
-        if (group.lower <= avg && avg <= group.upper) {
-          groupNum = i;
-          return true;
-        }
-        return false;
-      });
-
-      return groupNum;
-    })();
-
-    const medianRange = ranges[medianGroupNum];
-    const medianRangeGroup = rangeGroups[medianGroupNum];
-
-    const medianLocation = (
-      (avg - medianRangeGroup.lower) / medianRange.quantity
-    );
-
-    const medianLocationMultiplier =
-      Math.abs(medianRange.bounds.upper - medianRange.bounds.lower) + 1;
-
-    const naturalMedian = medianRange.bounds.lower + (medianLocation * medianLocationMultiplier);
-    
-    const trimmedMedian =
-      topBottomCodeEstimate(naturalMedian, row);
-
-    return trimmedMedian;
-  };
-
-  return medianOfRanges(scenario);
+  return trimmedEstimate;
 }
 
 module.exports = interpolate;
