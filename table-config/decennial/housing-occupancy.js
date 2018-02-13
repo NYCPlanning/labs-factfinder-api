@@ -71,24 +71,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_m',
-        aggregator: formula,
-        options: {
-          formula: 'ABS(SQRT(POWER(GET("hmownrvcrt.m"),2) + POWER(GET("hmownrvcrt.comparison_m"),2)))',
-        },
-      },
-      {
         column: 'change_sum',
         aggregator: formula,
         options: {
           formula: '(GET("hmownrvcrt.sum") - GET("hmownrvcrt.previous_sum"))',
-        },
-      },
-      {
-        column: 'change_m',
-        aggregator: formula,
-        options: {
-          formula: 'ABS(SQRT(POWER(GET("hmownrvcrt.m"),2) + POWER(GET("hmownrvcrt.previous_m"),2)))',
         },
       },
     ],
