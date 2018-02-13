@@ -4,7 +4,7 @@ const { set } = _;
 
 const noop = () => null;
 
-function aggregateSpecialVariable(row, rowConfig, data) {
+function aggregateSpecialVariable(row, rowConfig, allData) {
   const { specialCalculations = [] } = rowConfig || {};
   const { variable } = rowConfig;
   const mutatedRow = row;
@@ -12,7 +12,7 @@ function aggregateSpecialVariable(row, rowConfig, data) {
   specialCalculations.forEach(({ column, aggregator = noop, options }) => {
     let specialValue;
     try {
-      specialValue = aggregator(data, column, options, variable);
+      specialValue = aggregator(allData, column, options, variable);
     } catch (err) {
       console.log('Error with ', column, options, 'Stack trace: ', err); // eslint-disable-line
     }

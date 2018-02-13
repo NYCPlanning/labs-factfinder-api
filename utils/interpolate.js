@@ -1,9 +1,10 @@
 const _ = require('lodash');
+const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
 
 const { isArray } = Array;
 const { get } = _;
 
-function interpolate(data, sumKey = 'sum', options) {
+function interpolate(data, sumKey = 'sum', options, row) {
   const { bins, multipleBins } = options;
   let scenario = data;
   let foundBins = bins;
@@ -81,9 +82,12 @@ function interpolate(data, sumKey = 'sum', options) {
     const medianLocationMultiplier =
       Math.abs(medianRange.bounds.upper - medianRange.bounds.lower) + 1;
 
-    const median = medianRange.bounds.lower + (medianLocation * medianLocationMultiplier);
+    const naturalMedian = medianRange.bounds.lower + (medianLocation * medianLocationMultiplier);
+    
+    const trimmedMedian =
+      topBottomCodeEstimate(naturalMedian, row);
 
-    return median;
+    return trimmedMedian;
   };
 
   return medianOfRanges(scenario);
