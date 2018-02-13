@@ -47,7 +47,6 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
 
   const naturalMedian = medianOfRanges(scenario);
 
-
   const { mutatedEstimate: trimmedEstimate, codingThreshold } =
     topBottomCodeEstimate(naturalMedian, row);
 
@@ -55,7 +54,6 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
     Special exception!
     If it's top or bottom coded, the estimates are unreliable.
   */
-
   if (codingThreshold) {
     set(row, `codingThresholds.${sumKey}`, codingThreshold);
     set(row, (sumKey === 'sum' ? 'is_reliable' : 'comparison_is_reliable'), false);
