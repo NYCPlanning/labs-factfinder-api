@@ -43,7 +43,7 @@ function topBottomCodeEstimate(estimate, row) {
 
   if (estimate >= get(codingRule, 'upper')) {
     mutatedEstimate = get(codingRule, 'upper');
-    codingThreshold = 'lower';
+    codingThreshold = 'upper';
   }
 
   return { mutatedEstimate, codingThreshold };
