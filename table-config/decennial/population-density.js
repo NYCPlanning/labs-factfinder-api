@@ -34,24 +34,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_m',
-        aggregator: formula,
-        options: {
-          formula: 'ABS(SQRT(POWER(GET("popperacre.m"),2) + POWER(GET("popperacre.comparison_m"),2)))',
-        },
-      },
-      {
         column: 'change_sum',
         aggregator: formula,
         options: {
           formula: '(GET("popperacre.sum") - GET("popperacre.previous_sum"))',
-        },
-      },
-      {
-        column: 'change_m',
-        aggregator: formula,
-        options: {
-          formula: 'ABS(SQRT(POWER(GET("popperacre.m"),2) + POWER(GET("popperacre.previous_m"),2)))',
         },
       },
     ],
