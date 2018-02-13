@@ -146,9 +146,23 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_m"),2)))',
         },
-      },      
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.sum") - GET("mdrms.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.previous_m"),2)))',
+        },
+      },
     ],
   },
 ];
