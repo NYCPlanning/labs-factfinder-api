@@ -303,7 +303,7 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_m"),2)))',
         },
       },
       {
@@ -317,7 +317,7 @@ module.exports = [
         column: 'change_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.previous_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.previous_m"),2)))',
         },
       },
     ],
