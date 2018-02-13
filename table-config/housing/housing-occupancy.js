@@ -78,7 +78,21 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("hovacrt.sum") - GET("hovacrt.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.previous_m"),2)))',
         },
       },
     ],
@@ -143,7 +157,21 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.previous_m"),2)))',
         },
       },
     ],
