@@ -42,9 +42,9 @@ module.exports = [
     specialCalculations: [
       {
         column: 'sum',
-        aggregator: formula,
+        aggregator: calculator,
         options: {
-          formula: '99929',
+          procedure: ['agttm.sum', 'divide', ['wrkr16pl.sum', 'subtract', 'cw_wrkdhm.sum']],
         },
       },
       {
