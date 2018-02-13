@@ -78,7 +78,21 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.previous_m"),2)))',
         },
       },
     ],
@@ -143,7 +157,21 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.previous_m"),2)))',
         },
       },
     ],
