@@ -46,12 +46,12 @@ module.exports = [
         },
       },
       {
-        column: 'difference_m',
+        column: 'change_sum',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avhhszooc.m"),2) + POWER(GET("avhhszooc.comparison_m"),2))',
+          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.previous_sum"))',
         },
-      },      
+      },
     ],
   },
   {
@@ -83,12 +83,12 @@ module.exports = [
         },
       },
       {
-        column: 'difference_m',
+        column: 'change_sum',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avhhszroc.m"),2) + POWER(GET("avhhszroc.comparison_m"),2))',
+          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.previous_sum"))',
         },
-      },      
+      },
     ],
   },
 ];
