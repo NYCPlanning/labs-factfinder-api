@@ -157,7 +157,35 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdewrk.sum") - GET("mdewrk.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.previous_m"),2)))',
+        },
+      },
+     {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: '((GET("mdewrk.sum") - GET("mdewrk.previous_sum")) / NULLIF(GET("mdewrk.previous_sum"),0))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(GET("mdewrk.sum") / NULLIF(GET("mdewrk.previous_sum"),0)) * SQRT((POWER(GET("mdewrk.m" / 1.645, 2) / POWER(GET("mdewrk.sum", 2)) + (POWER(GET("mdewrk.previous_m" / 1.645, 2) / POWER(GET("mdewrk.previous_sum", 2))) * 1.645',
         },
       },
     ],
@@ -315,7 +343,35 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.previous_m"),2)))',
+        },
+      },
+     {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: '((GET("mdemftwrk.sum") - GET("mdemftwrk.previous_sum")) / NULLIF(GET("mdemftwrk.previous_sum"),0))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(GET("mdemftwrk.sum") / NULLIF(GET("mdemftwrk.previous_sum"),0)) * SQRT((POWER(GET("mdemftwrk.m" / 1.645, 2) / POWER(GET("mdemftwrk.sum", 2)) + (POWER(GET("mdemftwrk.previous_m" / 1.645, 2) / POWER(GET("mdemftwrk.previous_sum", 2))) * 1.645',
         },
       },
     ],
@@ -473,7 +529,35 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.previous_m"),2)))',
+        },
+      },
+     {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: '((GET("mdefftwrk.sum") - GET("mdefftwrk.previous_sum")) / NULLIF(GET("mdefftwrk.previous_sum"),0))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(GET("mdefftwrk.sum") / NULLIF(GET("mdefftwrk.previous_sum"),0)) * SQRT((POWER(GET("mdefftwrk.m" / 1.645, 2) / POWER(GET("mdefftwrk.sum", 2)) + (POWER(GET("mdefftwrk.previous_m" / 1.645, 2) / POWER(GET("mdefftwrk.previous_sum", 2))) * 1.645',
         },
       },
     ],
