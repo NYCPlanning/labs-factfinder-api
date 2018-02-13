@@ -161,7 +161,35 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.comparison_m"),2)))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdgr.sum") - GET("mdgr.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.previous_m"),2)))',
+        },
+      },
+     {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: '((GET("mdgr.sum") - GET("mdgr.previous_sum")) / NULLIF(GET("mdgr.previous_sum"),0))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(GET("mdgr.sum") / NULLIF(GET("mdgr.previous_sum"),0)) * SQRT((POWER(GET("mdgr.m" / 1.645, 2) / POWER(GET("mdgr.sum", 2)) + (POWER(GET("mdgr.previous_m" / 1.645, 2) / POWER(GET("mdgr.previous_sum", 2))) * 1.645',
         },
       },
     ],
