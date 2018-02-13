@@ -93,9 +93,37 @@ module.exports = [
         column: 'difference_m',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mntrvtm.m"),2) + POWER(GET("mntrvtm.comparison_m"),2))',
+          formula: 'ABS(SQRT(POWER(GET("mntrvtm.m"),2) + POWER(GET("mntrvtm.comparison_m"),2)))',
         },
-      },      
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mntrvtm.sum") - GET("mntrvtm.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(SQRT(POWER(GET("mntrvtm.m"),2) + POWER(GET("mntrvtm.previous_m"),2)))',
+        },
+      },
+     {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: '((GET("mntrvtm.sum") - GET("mntrvtm.previous_sum")) / NULLIF(GET("mntrvtm.previous_sum"),0))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: 'ABS(GET("mntrvtm.sum") / NULLIF(GET("mntrvtm.previous_sum"),0)) * SQRT((POWER(GET("mntrvtm.m" / 1.645, 2) / POWER(GET("mntrvtm.sum", 2)) + (POWER(GET("mntrvtm.previous_m" / 1.645, 2) / POWER(GET("mntrvtm.previous_sum", 2))) * 1.645',
+        },
+      }, 
     ],
     decimal: 1,
   },
