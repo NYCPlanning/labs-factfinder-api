@@ -90,6 +90,14 @@ const appendRowConfig = (data, profile, match) => {
       rowWithConfig.rowConfig = find(variables, ['variable', variable]) || {};
       rowWithConfig.special = !!get(rowWithConfig, 'rowConfig.special');
       rowWithConfig.category = categoryNormalized;
+      rowWithConfig.numGeoids = match.geoids.length;
+
+      // this is a special metadata object that lets the client
+      // know which estimates were bottom coded with which direction.
+      // The `delegateAggregator` special function `interpolate`
+      // specifically assigns properties to this object.
+      rowWithConfig.codingThresholds = {};
+
       // if the row is "special" and the number of geoids in the
       // selection are greater than 1
       // then, delete the unneeded special calculations data

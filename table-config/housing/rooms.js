@@ -56,15 +56,15 @@ module.exports = [
         aggregator: interpolate,
         options: {
           bins: [
-            ['rms1', [1, 1]],
-            ['rms2', [2, 2]],
-            ['rms3', [3, 3]],
-            ['rms4', [4, 4]],
-            ['rms5', [5, 5]],
-            ['rms6', [6, 6]],
-            ['rms7', [7, 7]],
-            ['rms8', [8, 8]],
-            ['rms9pl', [9, 9]],
+            ['rms1', [0, 1.499]],
+            ['rms2', [1.5, 2.499]],
+            ['rms3', [2.5, 3.499]],
+            ['rms4', [3.5, 4.499]],
+            ['rms5', [4.5, 5.499]],
+            ['rms6', [5.5, 6.499]],
+            ['rms7', [6.5, 7.499]],
+            ['rms8', [7.5, 8.499]],
+            ['rms9pl', [8.5, 9]],
           ],
         },
       },
@@ -148,7 +148,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
 ];

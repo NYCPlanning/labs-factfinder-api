@@ -1,26 +1,8 @@
-const interpolate = require('../../utils/interpolate');
-const calculateMedianError = require('../../utils/calculate-median-error');
-const calculator = require('../../utils/calculator');
-const formula = require('../../utils/formula');
-
-const binsForMDHHINC = [
-  ['hhiu10', [0, 9999]],
-  ['hhi10t14', [10000, 14999]],
-  ['hhi15t19', [15000, 19999]],
-  ['hhi20t24', [20000, 24999]],
-  ['hhi25t29', [25000, 29999]],
-  ['hhi30t34', [30000, 34999]],
-  ['hhi35t39', [35000, 39999]],
-  ['hhi40t44', [40000, 44999]],
-  ['hhi45t49', [45000, 49999]],
-  ['hhi50t59', [50000, 59999]],
-  ['hhi60t74', [60000, 74999]],
-  ['hhi75t99', [75000, 99999]],
-  ['hi100t124', [100000, 124999]],
-  ['hi125t149', [125000, 149999]],
-  ['hi150t199', [150000, 199999]],
-  ['hhi200pl', [200000, 9999999]],
-];
+const interpolate = require ('../../utils/interpolate');
+const calculateMedianError = require ('../../utils/calculate-median-error');
+const calculator = require ('../../utils/calculator');
+const formula = require ('../../utils/formula');
+const inflate = require('../../utils/inflate');
 
 module.exports = [
   {
@@ -73,36 +55,63 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdhhinc',
     special: true,
-    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
         aggregator: interpolate,
         options: {
-          bins: binsForMDHHINC,
+          bins: [
+            ['mdhhiu10', [0, 9999]],
+            ['mdhhi10t14', [10000, 14999]],
+            ['mdhhi15t19', [15000, 19999]],
+            ['mdhhi20t24', [20000, 24999]],
+            ['mdhhi25t29', [25000, 29999]],
+            ['mdhhi30t34', [30000, 34999]],
+            ['mdhhi35t39', [35000, 39999]],
+            ['mdhhi40t44', [40000, 44999]],
+            ['mdhhi45t49', [45000, 49999]],
+            ['mdhhi50t59', [50000, 59999]],
+            ['mdhhi60t74', [60000, 74999]],
+            ['mdhhi75t99', [75000, 99999]],
+            ['mdhi100t124', [100000, 124999]],
+            ['mdhi125t149', [125000, 149999]],
+            ['mdhi150t199', [150000, 199999]],
+            ['mdhhi200pl', [200000, 9999999]],
+          ],
         },
       },
       {
         column: 'sum',
-        aggregator: formula,
-        options: {
-          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.sum"), -99999999999))',
-        },
+        aggregator: inflate,
       },
       {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: binsForMDHHINC,
+          bins: [
+            ['mdhhiu10', [0, 9999]],
+            ['mdhhi10t14', [10000, 14999]],
+            ['mdhhi15t19', [15000, 19999]],
+            ['mdhhi20t24', [20000, 24999]],
+            ['mdhhi25t29', [25000, 29999]],
+            ['mdhhi30t34', [30000, 34999]],
+            ['mdhhi35t39', [35000, 39999]],
+            ['mdhhi40t44', [40000, 44999]],
+            ['mdhhi45t49', [45000, 49999]],
+            ['mdhhi50t59', [50000, 59999]],
+            ['mdhhi60t74', [60000, 74999]],
+            ['mdhhi75t99', [75000, 99999]],
+            ['mdhi100t124', [100000, 124999]],
+            ['mdhi125t149', [125000, 149999]],
+            ['mdhi150t199', [150000, 199999]],
+            ['mdhhi200pl', [200000, 9999999]],
+          ],
         },
       },
       {
         column: 'm',
-        aggregator: formula,
-        options: {
-          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.m"), GET("mdhhinc.m") * 1.1005))',
-        },
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -115,14 +124,24 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: interpolate,
         options: {
-          bins: binsForMDHHINC,
-        },
-      },
-      {
-        column: 'comparison_sum',
-        aggregator: formula,
-        options: {
-          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.comparison_sum"), GET("mdhhinc.comparison_sum") * 1.1005))',
+          bins: [
+            ['mdhhiu10', [0, 9999]],
+            ['mdhhi10t14', [10000, 14999]],
+            ['mdhhi15t19', [15000, 19999]],
+            ['mdhhi20t24', [20000, 24999]],
+            ['mdhhi25t29', [25000, 29999]],
+            ['mdhhi30t34', [30000, 34999]],
+            ['mdhhi35t39', [35000, 39999]],
+            ['mdhhi40t44', [40000, 44999]],
+            ['mdhhi45t49', [45000, 49999]],
+            ['mdhhi50t59', [50000, 59999]],
+            ['mdhhi60t74', [60000, 74999]],
+            ['mdhhi75t99', [75000, 99999]],
+            ['mdhi100t124', [100000, 124999]],
+            ['mdhi125t149', [125000, 149999]],
+            ['mdhi150t199', [150000, 199999]],
+            ['mdhhi200pl', [200000, 9999999]],
+          ],
         },
       },
       {
@@ -130,14 +149,24 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: binsForMDHHINC,
-        },
-      },
-      {
-        column: 'comparison_m',
-        aggregator: formula,
-        options: {
-          formula: '(IF(GET("mdhhinc.is_most_recent"), GET("mdhhinc.comparison_m"), GET("mdhhinc.comparison_m") * 1.1005))',
+          bins: [
+            ['mdhhiu10', [0, 9999]],
+            ['mdhhi10t14', [10000, 14999]],
+            ['mdhhi15t19', [15000, 19999]],
+            ['mdhhi20t24', [20000, 24999]],
+            ['mdhhi25t29', [25000, 29999]],
+            ['mdhhi30t34', [30000, 34999]],
+            ['mdhhi35t39', [35000, 39999]],
+            ['mdhhi40t44', [40000, 44999]],
+            ['mdhhi45t49', [45000, 49999]],
+            ['mdhhi50t59', [50000, 59999]],
+            ['mdhhi60t74', [60000, 74999]],
+            ['mdhhi75t99', [75000, 99999]],
+            ['mdhi100t124', [100000, 124999]],
+            ['mdhi125t149', [125000, 149999]],
+            ['mdhi150t199', [150000, 199999]],
+            ['mdhhi200pl', [200000, 9999999]],
+          ],
         },
       },
       {
@@ -168,7 +197,6 @@ module.exports = [
     tooltip: 'Aggregate household income in the past 12 months, divided by total households',
     variable: 'mnhhinc',
     special: true,
-    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -176,6 +204,10 @@ module.exports = [
         options: {
           procedure: ['aghhinc.sum', 'divide', 'hh.sum'],
         },
+      },
+      {
+        column: 'sum',
+        aggregator: inflate,
       },
       {
         column: 'comparison_sum',
@@ -206,6 +238,10 @@ module.exports = [
         },
       },
       {
+        column: 'm',
+        aggregator: inflate,
+      },
+      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -225,7 +261,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mnhhinc.m"),2) + POWER(GET("mnhhinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -304,31 +340,34 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdfaminc',
     special: true,
-    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
         aggregator: interpolate,
         options: {
           bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
+            ['mdfamiu10', [0, 9999]],
+            ['mdfami10t14', [10000, 14999]],
+            ['mdfami15t19', [15000, 19999]],
+            ['mdfami20t24', [20000, 24999]],
+            ['mdfami25t29', [25000, 29999]],
+            ['mdfami30t34', [30000, 34999]],
+            ['mdfami35t39', [35000, 39999]],
+            ['mdfami40t44', [40000, 44999]],
+            ['mdfami45t49', [45000, 49999]],
+            ['mdfami50t59', [50000, 59999]],
+            ['mdfami60t74', [60000, 74999]],
+            ['mdfami75t99', [75000, 99999]],
+            ['mdfi100t124', [100000, 124999]],
+            ['mdfi125t149', [125000, 149999]],
+            ['mdfi150t199', [150000, 199999]],
+            ['mdfami200pl', [200000, 9999999]],
           ],
         },
+      },
+      {
+        column: 'sum',
+        aggregator: inflate,
       },
       {
         column: 'm',
@@ -336,24 +375,28 @@ module.exports = [
         options: {
           designFactor: 1.5,
           bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
+            ['mdfamiu10', [0, 9999]],
+            ['mdfami10t14', [10000, 14999]],
+            ['mdfami15t19', [15000, 19999]],
+            ['mdfami20t24', [20000, 24999]],
+            ['mdfami25t29', [25000, 29999]],
+            ['mdfami30t34', [30000, 34999]],
+            ['mdfami35t39', [35000, 39999]],
+            ['mdfami40t44', [40000, 44999]],
+            ['mdfami45t49', [45000, 49999]],
+            ['mdfami50t59', [50000, 59999]],
+            ['mdfami60t74', [60000, 74999]],
+            ['mdfami75t99', [75000, 99999]],
+            ['mdfi100t124', [100000, 124999]],
+            ['mdfi125t149', [125000, 149999]],
+            ['mdfi150t199', [150000, 199999]],
+            ['mdfami200pl', [200000, 9999999]],
           ],
         },
+      },
+      {
+        column: 'm',
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -367,22 +410,22 @@ module.exports = [
         aggregator: interpolate,
         options: {
           bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
+            ['mdfamiu10', [0, 9999]],
+            ['mdfami10t14', [10000, 14999]],
+            ['mdfami15t19', [15000, 19999]],
+            ['mdfami20t24', [20000, 24999]],
+            ['mdfami25t29', [25000, 29999]],
+            ['mdfami30t34', [30000, 34999]],
+            ['mdfami35t39', [35000, 39999]],
+            ['mdfami40t44', [40000, 44999]],
+            ['mdfami45t49', [45000, 49999]],
+            ['mdfami50t59', [50000, 59999]],
+            ['mdfami60t74', [60000, 74999]],
+            ['mdfami75t99', [75000, 99999]],
+            ['mdfi100t124', [100000, 124999]],
+            ['mdfi125t149', [125000, 149999]],
+            ['mdfi150t199', [150000, 199999]],
+            ['mdfami200pl', [200000, 9999999]],
           ],
         },
       },
@@ -392,22 +435,22 @@ module.exports = [
         options: {
           designFactor: 1.5,
           bins: [
-            ['famiu10', [0, 9999]],
-            ['fami10t14', [10000, 14999]],
-            ['fami15t19', [15000, 19999]],
-            ['fami20t24', [20000, 24999]],
-            ['fami25t29', [25000, 29999]],
-            ['fami30t34', [30000, 34999]],
-            ['fami35t39', [35000, 39999]],
-            ['fami40t44', [40000, 44999]],
-            ['fami45t49', [45000, 49999]],
-            ['fami50t59', [50000, 59999]],
-            ['fami60t74', [60000, 74999]],
-            ['fami75t99', [75000, 99999]],
-            ['fi100t124', [100000, 124999]],
-            ['fi125t149', [125000, 149999]],
-            ['fi150t199', [150000, 199999]],
-            ['fami200pl', [200000, 9999999]],
+            ['mdfamiu10', [0, 9999]],
+            ['mdfami10t14', [10000, 14999]],
+            ['mdfami15t19', [15000, 19999]],
+            ['mdfami20t24', [20000, 24999]],
+            ['mdfami25t29', [25000, 29999]],
+            ['mdfami30t34', [30000, 34999]],
+            ['mdfami35t39', [35000, 39999]],
+            ['mdfami40t44', [40000, 44999]],
+            ['mdfami45t49', [45000, 49999]],
+            ['mdfami50t59', [50000, 59999]],
+            ['mdfami60t74', [60000, 74999]],
+            ['mdfami75t99', [75000, 99999]],
+            ['mdfi100t124', [100000, 124999]],
+            ['mdfi125t149', [125000, 149999]],
+            ['mdfi150t199', [150000, 199999]],
+            ['mdfami200pl', [200000, 9999999]],
           ],
         },
       },
@@ -431,7 +474,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdfaminc.m"),2) + POWER(GET("mdfaminc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -447,7 +490,6 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdnfinc',
     special: true,
-    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -474,6 +516,10 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: inflate,
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
@@ -497,6 +543,10 @@ module.exports = [
             ['nfi200pl', [200000, 9999999]],
           ],
         },
+      },
+      {
+        column: 'm',
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -574,7 +624,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdnfinc.m"),2) + POWER(GET("mdnfinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -585,7 +635,6 @@ module.exports = [
     tooltip: 'Aggregate income in the past 12 months, divided by total population',
     variable: 'percapinc',
     special: true,
-    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -593,6 +642,10 @@ module.exports = [
         options: {
           procedure: ['agip15pl.sum', 'divide', 'pop_6.sum'],
         },
+      },
+      {
+        column: 'sum',
+        aggregator: inflate,
       },
       {
         column: 'comparison_sum',
@@ -623,6 +676,10 @@ module.exports = [
         },
       },
       {
+        column: 'm',
+        aggregator: inflate,
+      },
+      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -642,7 +699,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("percapinc.m"),2) + POWER(GET("percapinc.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
 ];

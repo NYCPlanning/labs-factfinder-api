@@ -1,6 +1,7 @@
 const interpolate = require('../../utils/interpolate');
 const formula = require('../../utils/formula');
 const calculateMedianError = require('../../utils/calculate-median-error');
+const inflate = require('../../utils/inflate');
 
 const binsMedianEarlySet = [
   ['ru100', [0, 99]],
@@ -103,6 +104,10 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: inflate,
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
@@ -110,6 +115,10 @@ module.exports = [
           multipleBins: true,
           bins: [binsMedianEarlySet, binsMedianLaterSet],
         },
+      },
+      {
+        column: 'm',
+        aggregator: inflate,
       },
       {
         column: 'cv',
@@ -155,7 +164,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
