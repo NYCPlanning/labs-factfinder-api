@@ -11,6 +11,7 @@ module.exports = [
     variable: 'popperacre',
     decimal: 1,
     special: true,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
