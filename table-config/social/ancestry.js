@@ -235,7 +235,7 @@ module.exports = [
   },
   {
     title: 'New Zealander',
-    variable: 'nzealnder',
+    variable: 'nzealnd',
   },
   {
     title: 'Northern European',
