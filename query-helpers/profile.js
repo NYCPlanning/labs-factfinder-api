@@ -279,7 +279,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         -- change_m --
         CASE
           WHEN is_most_recent THEN
-            ABS(SQRT(POWER(m, 2) %2B POWER(previous_m, 2)))
+            ABS(SQRT(POWER(coalesce(m, 0), 2) %2B POWER(coalesce(previous_m, 0), 2)))
         END AS change_m,
 
         -- change_percent --
