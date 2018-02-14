@@ -101,13 +101,13 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       *,
       -- significant --
       CASE
-        WHEN ABS(SQRT(POWER(m / 1.645, 2) %2B POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
+        WHEN ABS(SQRT(POWER(m / 1.645, 2) + POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
         ELSE true
       END AS significant,
 
       -- percent_significant --
       CASE
-        WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) %2B POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+        WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) + POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
         ELSE true
       END AS percent_significant,
 
@@ -123,10 +123,10 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       END AS difference_percent,
 
       -- difference_m --
-      (SQRT((POWER(coalesce(m, 0), 2) %2B POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
+      (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
 
       -- difference_percent_m --
-      (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) %2B POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
+      (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) + POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
 
       -- change_percentage_point --
       CASE
@@ -137,7 +137,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       -- change_percentage_point_m --
       CASE
         WHEN is_most_recent THEN
-          (SQRT((POWER(coalesce(previous_percent_m, 0), 2) %2B POWER(coalesce(percent_m, 0), 2))))
+          (SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))
       END AS change_percentage_point_m,
 
       -- change_significant --
@@ -158,7 +158,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
       -- change_percentage_point_significant --
       CASE
-        WHEN (ABS((SQRT((POWER(previous_percent_m, 2) %2B POWER(percent_m, 2))))) < (percent - previous_percent)) THEN
+        WHEN (ABS((SQRT((POWER(previous_percent_m, 2) + POWER(percent_m, 2))))) < (percent - previous_percent)) THEN
           TRUE
         ELSE
           FALSE
@@ -177,10 +177,10 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
 
         -- significant --
-        CASE WHEN ABS(SQRT(POWER(m / 1.645, 2) %2B POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - e) THEN false ELSE true END AS significant,
+        CASE WHEN ABS(SQRT(POWER(m / 1.645, 2) + POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - e) THEN false ELSE true END AS significant,
 
         -- percent_significant --
-        CASE WHEN ABS(SQRT(POWER((ROUND(z::numeric, 4) / 100) / 1.645, 2) %2B POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - p) THEN false ELSE true END AS percent_significant,
+        CASE WHEN ABS(SQRT(POWER((ROUND(z::numeric, 4) / 100) / 1.645, 2) + POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - p) THEN false ELSE true END AS percent_significant,
 
         -- is_reliable --
         CASE
@@ -205,7 +205,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         -- change_m --
         CASE
           WHEN is_most_recent THEN
-            ABS(SQRT(POWER(coalesce(m, 0), 2) %2B POWER(coalesce(previous_m, 0), 2)))
+            ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_m, 0), 2)))
         END as change_m,
 
         -- change_percent --
@@ -220,7 +220,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
             ABS(sum / NULLIF(previous_sum,0))
             * SQRT(
               (POWER(m / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
-              %2B (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
+              + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
             ) * 1.645
         END as change_percent_m
       FROM
