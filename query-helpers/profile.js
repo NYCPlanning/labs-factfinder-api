@@ -31,15 +31,15 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
           -- cv --
           (((m / 1.645) / NULLIF(SUM,0)) * 100) AS cv,
-          
+
           -- previous_sum --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(sum) over (order by variable, dataset)
           END AS previous_sum,
 
           -- previous_m --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(m) over (order by variable, dataset)
           END AS previous_m
@@ -73,19 +73,19 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         SELECT
           -- base_sum --
           sum(e) AS base_sum,
-          
+
           -- base_m --
           sqrt(sum(power(m, 2))) AS base_m,
-          
+
           -- base_join --
           max(base) AS base_join,
-          
+
           -- base_dataset --
           max(dataset) AS base_dataset,
-          
+
           -- previous_base_sum --
           lag(sum(e)) over (order by variable, dataset) AS previous_base_sum,
-          
+
           -- previous_base_m --
           lag(sqrt(sum(power(m, 2)))) over (order by variable, dataset) AS previous_base_m
         FROM enriched_selection
@@ -156,7 +156,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       (sum - comparison_sum) AS difference_sum,
 
       -- difference_percent --
-      CASE 
+      CASE
         WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
           0
         ELSE
@@ -164,10 +164,10 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       END AS difference_percent,
 
       -- difference_m --
-      (SQRT((POWER(m, 2) %2B POWER(comparison_m, 2)))) AS difference_m,
-      
+      (SQRT((POWER(coalesce(m, 0), 2) %2B POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
+
       -- difference_percent_m --
-      (SQRT((POWER(percent_m * 100, 2) %2B POWER(comparison_percent_m * 100, 2)))) AS difference_percent_m,
+      (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) %2B POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
 
       -- change_percentage_point --
       CASE
@@ -178,7 +178,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       -- change_percentage_point_m --
       CASE
         WHEN is_most_recent THEN
-          (SQRT((POWER(previous_percent_m, 2) %2B POWER(percent_m, 2))))
+          (SQRT((POWER(coalesce(previous_percent_m, 0), 2) %2B POWER(coalesce(percent_m, 0), 2))))
       END AS change_percentage_point_m,
 
       -- change_significant --
@@ -210,17 +210,17 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         -- id --
         ENCODE(CONVERT_TO(variable || dataset, 'UTF-8'), 'base64') AS id,
         base,
-        
+
         -- variablename --
         variable AS variablename,
         category,
-        
+
         -- dataset --
         regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
-        
+
         -- profile --
         regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
-        
+
         -- variable --
         regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
         is_most_recent,
@@ -251,7 +251,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         END AS previous_percent_m,
 
         -- is_reliable --
-        CASE 
+        CASE
           WHEN (cv < 20)
             THEN true
           ELSE false
@@ -264,7 +264,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         comparison_percent,
 
         -- comparison_is_reliable --
-        CASE 
+        CASE
           WHEN (comparison_cv < 20)
             THEN true
           ELSE false
@@ -291,7 +291,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         -- change_percent_m --
         CASE
           WHEN is_most_recent THEN
-            ABS(sum / NULLIF(previous_sum,0)) 
+            ABS(sum / NULLIF(previous_sum,0))
             * SQRT(
               (POWER(m / 1.645, 2) / POWER(sum, 2))
               %2B (POWER(previous_m / 1.645, 2) / POWER(previous_sum, 2))

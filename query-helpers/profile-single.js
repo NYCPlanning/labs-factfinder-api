@@ -17,29 +17,29 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       ),
 
       main_numbers AS (
-        SELECT 
+        SELECT
           *,
 
           -- previous_sum --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(sum) over (order by variable, dataset)
           END as previous_sum,
 
           -- previous_percent --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(p / 100) over (order by variable, dataset)
           END as previous_percent,
 
           -- previous_m --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(m) over (order by variable, dataset)
           END as previous_m,
 
           -- previous_percent_m --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(z) over (order by variable, dataset)
           END as previous_percent_m
@@ -79,7 +79,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       ),
 
       comparison_main_numbers AS (
-        SELECT 
+        SELECT
           -- comparison_sum --
           e as comparison_sum,
           -- comparison_cv --
@@ -104,7 +104,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         WHEN ABS(SQRT(POWER(m / 1.645, 2) %2B POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
         ELSE true
       END AS significant,
-      
+
       -- percent_significant --
       CASE
         WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) %2B POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
@@ -115,7 +115,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       (sum - comparison_sum) AS difference_sum,
 
       -- difference_percent --
-      CASE 
+      CASE
         WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
           0
         ELSE
@@ -123,10 +123,10 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       END AS difference_percent,
 
       -- difference_m --
-      (SQRT((POWER(m, 2) %2B POWER(comparison_m, 2)))) AS difference_m,
+      (SQRT((POWER(coalesce(m, 0), 2) %2B POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
 
       -- difference_percent_m --
-      (SQRT((POWER(percent_m * 100, 2) %2B POWER(comparison_percent_m * 100, 2)))) AS difference_percent_m,
+      (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) %2B POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
 
       -- change_percentage_point --
       CASE
@@ -137,7 +137,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       -- change_percentage_point_m --
       CASE
         WHEN is_most_recent THEN
-          (SQRT((POWER(previous_percent_m, 2) %2B POWER(percent_m, 2))))
+          (SQRT((POWER(coalesce(previous_percent_m, 0), 2) %2B POWER(coalesce(percent_m, 0), 2))))
       END AS change_percentage_point_m,
 
       -- change_significant --
@@ -175,49 +175,49 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
         -- variable --
         regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-  
+
         -- significant --
         CASE WHEN ABS(SQRT(POWER(m / 1.645, 2) %2B POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - e) THEN false ELSE true END AS significant,
-  
+
         -- percent_significant --
         CASE WHEN ABS(SQRT(POWER((ROUND(z::numeric, 4) / 100) / 1.645, 2) %2B POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - p) THEN false ELSE true END AS percent_significant,
-  
+
         -- is_reliable --
-        CASE 
+        CASE
           WHEN (cv < 20)
             THEN true
           ELSE false
         END as is_reliable,
-  
+
         -- comparison_is_reliable --
-        CASE 
+        CASE
           WHEN (comparison_cv < 20)
             THEN true
           ELSE false
         END as comparison_is_reliable,
-  
+
         -- change_sum --
         CASE
           WHEN is_most_recent THEN
             sum - previous_sum
         END as change_sum,
-        
+
         -- change_m --
         CASE
           WHEN is_most_recent THEN
             ABS(SQRT(POWER(coalesce(m, 0), 2) %2B POWER(coalesce(previous_m, 0), 2)))
         END as change_m,
-        
+
         -- change_percent --
         CASE
           WHEN is_most_recent THEN
             ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4)
         END as change_percent,
-        
+
         -- change_percent_m --
         CASE
           WHEN is_most_recent THEN
-            ABS(sum / NULLIF(previous_sum,0)) 
+            ABS(sum / NULLIF(previous_sum,0))
             * SQRT(
               (POWER(m / 1.645, 2) / POWER(sum, 2))
               %2B (POWER(previous_m / 1.645, 2) / POWER(previous_sum, 2))
