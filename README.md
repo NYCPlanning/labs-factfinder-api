@@ -12,7 +12,7 @@ You will need the following things properly installed on your computer.
 
 - Clone this repo `https://github.com/NYCPlanning/labs-factfinder-api.git`
 - Install Dependencies `npm install`
-- Create `.env` file based on `.env-example` with your mapzen api key and mongo uri
+- Create `.env` file based on `.env-example` with your mongo uri
 - Start the server `npm run devstart`
 
 ## Architecture
@@ -25,7 +25,7 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
 ### Routes
 
 - `/search` - gets results that match a string passed in as query parameter `q`.  Returns various search result types:
-  - `mapzen` - mapzen autocomplete api results
+  - `geosearch` - autocomplete API results
   - `nta` - neighborhoods that match the input query
   - `puma` - pumas that match the input query
   - `tract` - tracts that match the input query
@@ -48,7 +48,7 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
 ## Backend services
 
 - **Carto** - Carto instance with MapPLUTO and other Zoning-related datasets
-- **mapzen search api** - Mapzen autocomplete search results
+- **NYC GeoSearch API** - Autocomplete search results
 - **mongolab** - cloud-hosted mongodb service
 
 ## Testing and checks
