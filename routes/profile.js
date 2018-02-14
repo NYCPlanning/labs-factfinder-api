@@ -82,6 +82,7 @@ const appendRowConfig = (data, profile, match) => {
       // if the row is "special" and the number of geoids in the
       // selection are greater than 1
       // then, delete the unneeded special calculations data
+
       if (rowWithConfig.special && (match.geoids.length > 1)) {
         const currentYear = get(fullDataset, dataset);
         const newRowObject = delegateAggregator(rowWithConfig, rowWithConfig.rowConfig, currentYear);
