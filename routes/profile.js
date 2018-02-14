@@ -121,17 +121,16 @@ router.get('/:id/decennial', (req, res) => {
 
   Selection.findOne({ _id })
     .then((match) => {
-      // Create queue and limit # of concu
-      const queue = new TaskQueue(Promise, 2);
-      // match.geoids is an array of geoids to query with
-      const apiCalls = tableNames.map(queue.wrap((tableName) => { // eslint-disable-line
-        return carto.SQL(buildDecennialSQL(`decennial_${tableName}`, match.geoids, compare), 'json', 'post');
-      }));
+      const SQL = buildDecennialSQL(match.geoids, compare)
 
-      Promise.all(apiCalls)
-        .then(responses => responses.reduce((a, b) => a.concat(b)))
-        .then(data => appendRowConfig(data, 'decennial', match))
-        // .then(data => buildOrderedResponse(data, 'decennial'))
+      // match.geoids is an array of geoids to query with
+      // carto.SQL(SQL, 'json', 'post')
+      client.connect();
+
+      client
+        .query(SQL)
+        .then(data => appendRowConfig(data.rows, profile, match))
+        // .then(data => buildOrderedResponse(data, profile))
         .then((data) => {
           res.send(data);
         })

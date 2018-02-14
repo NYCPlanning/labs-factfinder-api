@@ -3,14 +3,14 @@ function stringifyArray(array) {
   return `'${array.join("','")}'`;
 }
 
-const buildSQL = function buildSQL(tablename, ids, compare) {
+const buildSQL = function buildSQL(ids, compare) {
   const idStrings = stringifyArray(ids);
 
   return /**/`
     WITH
       filtered_selection AS (
         SELECT *
-        FROM ${tablename}
+        FROM decennial
         WHERE geoid IN (${idStrings})
       ),
 
@@ -22,26 +22,26 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
       ),
 
       main_numbers AS (
-        SELECT 
+        SELECT
           *,
           -- previous_sum --
-          CASE 
+          CASE
             WHEN is_most_recent THEN
               lag(sum) over (order by variable, year)
           END as previous_sum
         FROM (
           SELECT
-            
+
             -- sum --
             sum(value) AS sum,
-            
+
             -- relation --
             max(relation) AS relation,
-            
+
             -- category --
             max(category) AS category,
             variable,
-            
+
             -- is_most_recent --
             CASE
               WHEN max(year) over () = year THEN
@@ -57,16 +57,16 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
 
       base_numbers AS (
         SELECT
-          
+
           -- base_sum --
           sum(value) AS base_sum,
-          
+
           -- previous_base_sum --
           lag(sum(value)) over (order by variable, year) AS previous_base_sum,
-          
+
           -- base_variable --
           variable AS base_variable,
-          
+
           -- base_year --
           year AS base_year
         FROM enriched_selection
@@ -76,7 +76,7 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
 
       comparison_selection AS (
         SELECT *
-        FROM ${tablename}
+        FROM decennial
         WHERE geoid IN ('${compare}')
       ),
 
@@ -89,16 +89,16 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
 
       comparison_main_numbers AS (
         SELECT
-          
+
           -- comparison_sum --
           sum(value) AS comparison_sum,
-          
+
           -- comparison_relation --
           max(relation) AS comparison_relation,
-          
+
           -- comparison_variable --
           variable AS comparison_variable,
-          
+
           -- comparison_year --
           year AS comparison_year
         FROM comparison_enriched_selection
@@ -107,13 +107,13 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
 
       comparison_base_numbers AS (
         SELECT
-          
+
           -- comparison_base_sum --
           sum(value) AS comparison_base_sum,
-          
+
           -- comparison_base_variable --
           variable AS comparison_base_variable,
-          
+
           -- comparison_base_year --
           year AS comparison_base_year
         FROM comparison_enriched_selection
@@ -122,51 +122,51 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
       )
 
     SELECT *,
-      
+
       -- difference_sum --
       (sum - comparison_sum) AS difference_sum,
-      
+
       -- difference_percent --
       (percent - comparison_percent) AS difference_percent,
-      
+
       -- change_sum --
       (sum - previous_sum) AS change_sum,
-      
+
       -- change_percent --
       ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4) AS change_percent,
-      
+
       -- change_percentage_point --
       percent - previous_percent AS change_percentage_point
-    FROM ( 
+    FROM (
       SELECT *,
-        
+
         -- id --
         ENCODE(CONVERT_TO(variable || year, 'UTF-8'), 'base64') As id,
-        
+
         -- profile --
         'decennial' AS profile,
-        
+
         -- variable --
         regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-        
+
         -- category --
         regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
-        
+
         -- significant --
         true AS significant,
-        
+
         -- year --
         'y' || year as year,
-        
+
         -- dataset --
         'y' || year as dataset,
-        
+
         -- percent --
         ROUND((sum / NULLIF(base_sum,0))::numeric, 4) as percent,
-        
+
         -- previous_percent --
         ROUND((previous_sum / NULLIF(previous_base_sum,0))::numeric, 4) as previous_percent,
-        
+
         -- comparison_percent --
         ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent
 
@@ -179,7 +179,7 @@ const buildSQL = function buildSQL(tablename, ids, compare) {
           AND main_numbers.year = base_numbers.base_year
         LEFT OUTER JOIN comparison_base_numbers
           ON main_numbers.relation = comparison_base_numbers.comparison_base_variable
-          AND main_numbers.year = comparison_base_numbers.comparison_base_year 
+          AND main_numbers.year = comparison_base_numbers.comparison_base_year
     ) precalculations
   `;
 };
