@@ -202,7 +202,7 @@ module.exports = [
         column: 'sum',
         aggregator: calculator,
         options: {
-          procedure: ['aghhinc.sum', 'divide', 'hh.sum'],
+          procedure: ['aghhinc.sum', 'divide', 'hh2.sum'],
         },
       },
       {
@@ -213,7 +213,7 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: calculator,
         options: {
-          procedure: ['aghhinc.comparison_sum', 'divide', 'hh.comparison_sum'],
+          procedure: ['aghhinc.comparison_sum', 'divide', 'hh2.comparison_sum'],
         },
       },
       {
