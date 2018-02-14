@@ -17,7 +17,9 @@ const { TaskQueue } = cwait;
 const router = express.Router();
 const { nest } = d3collection;
 
-const client = new Client();
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
 
 const { connection } = client;
 connection.parseE = PgError.parse;
