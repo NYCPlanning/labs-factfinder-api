@@ -12,8 +12,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       enriched_selection AS (
         SELECT *
         FROM filtered_selection
-        INNER JOIN support_factfinder_metadata
-          ON support_factfinder_metadata.variablename = filtered_selection.variable
+        INNER JOIN factfinder_metadata
+          ON factfinder_metadata.variablename = filtered_selection.variable
       ),
 
       main_numbers AS (
@@ -74,8 +74,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       comparison_enriched_selection AS (
         SELECT *
         FROM comparison_selection
-        INNER JOIN support_factfinder_metadata
-          ON support_factfinder_metadata.variablename = comparison_selection.variable
+        INNER JOIN factfinder_metadata
+          ON factfinder_metadata.variablename = comparison_selection.variable
       ),
 
       comparison_main_numbers AS (
