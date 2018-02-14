@@ -12,8 +12,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       enriched_selection AS (
         SELECT *
         FROM filtered_selection
-        INNER JOIN support_fact_finder_metadata_v3
-          ON support_fact_finder_metadata_v3.variablename = filtered_selection.variable
+        INNER JOIN support_factfinder_metadata
+          ON support_factfinder_metadata.variablename = filtered_selection.variable
       ),
 
       main_numbers AS (
@@ -74,8 +74,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       comparison_enriched_selection AS (
         SELECT *
         FROM comparison_selection
-        INNER JOIN support_fact_finder_metadata_v3
-          ON support_fact_finder_metadata_v3.variablename = comparison_selection.variable
+        INNER JOIN support_factfinder_metadata
+          ON support_factfinder_metadata.variablename = comparison_selection.variable
       ),
 
       comparison_main_numbers AS (
@@ -219,8 +219,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           WHEN is_most_recent THEN
             ABS(sum / NULLIF(previous_sum,0)) 
             * SQRT(
-              (POWER(m / 1.645, 2) / POWER(sum, 2))
-              %2B (POWER(previous_m / 1.645, 2) / POWER(previous_sum, 2))
+              (POWER(m / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
+              %2B (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 4))
             ) * 1.645
         END as change_percent_m
       FROM
