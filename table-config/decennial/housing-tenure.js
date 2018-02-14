@@ -23,6 +23,7 @@ module.exports = [
     variable: 'avhhszooc',
     decimal: 2,
     special: true,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -60,6 +61,7 @@ module.exports = [
     variable: 'avhhszroc',
     decimal: 2,
     special: true,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',

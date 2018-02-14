@@ -24,6 +24,7 @@ module.exports = [
     variable: 'hovacrt',
     special: true,
     decimal: 1,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -89,6 +90,7 @@ module.exports = [
     variable: 'rntvacrt',
     special: true,
     decimal: 1,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',

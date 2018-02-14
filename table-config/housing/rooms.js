@@ -50,6 +50,7 @@ module.exports = [
     variable: 'mdrms',
     special: true,
     decimal: 1,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',

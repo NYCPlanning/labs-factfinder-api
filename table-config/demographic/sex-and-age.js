@@ -134,6 +134,7 @@ module.exports = [
     variable: 'mdage',
     special: true,
     decimal: 1,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',

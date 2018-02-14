@@ -48,6 +48,7 @@ module.exports = [
     variable: 'hmownrvcrt',
     decimal: 1,
     special: true,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -85,6 +86,7 @@ module.exports = [
     variable: 'rntvcrt',
     decimal: 1,
     special: true,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
