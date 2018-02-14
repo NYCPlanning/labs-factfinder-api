@@ -10,10 +10,31 @@ const tableConfigs = require('../table-config');
 const delegateAggregator = require('../utils/delegate-aggregator');
 const nestProfile = require('../utils/nest-profile');
 const d3collection = require('d3-collection');
+const { Client } = require('pg');
+const PgError = require('pg-error');
 
 const { TaskQueue } = cwait;
 const router = express.Router();
 const { nest } = d3collection;
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const { connection } = client;
+connection.parseE = PgError.parse;
+connection.parseN = PgError.parse;
+
+function emitPgError(err) {
+  switch (err.severity) {
+    case 'ERROR':
+    case 'FATAL':
+    case 'PANIC': return this.emit('error', err);
+    default: return this.emit('notice', err);
+  }
+}
+
+connection.on('PgError', emitPgError);
 
 router.use((req, res, next) => {
   res.setHeader('Cache-Control', 'public, max-age=0');
@@ -131,8 +152,12 @@ router.get('/:id/:profile', (req, res) => {
       }
 
       // match.geoids is an array of geoids to query with
-      carto.SQL(SQL, 'json', 'post')
-        .then(data => appendRowConfig(data, profile, match))
+      // carto.SQL(SQL, 'json', 'post')
+      client.connect();
+
+      client
+        .query(SQL)
+        .then(data => appendRowConfig(data.rows, profile, match))
         // .then(data => buildOrderedResponse(data, profile))
         .then((data) => {
           res.send(data);

@@ -9,6 +9,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdewrk',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -167,6 +168,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdemftwrk',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -325,6 +327,7 @@ module.exports = [
     tooltip: 'Medians are calculated using linear interpolation, which may result in top- and bottom-coded values',
     variable: 'mdefftwrk',
     special: true,
+    adjustForInflation: true,
     specialCalculations: [
       {
         column: 'sum',
