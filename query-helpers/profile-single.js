@@ -29,7 +29,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           -- previous_percent --
           CASE 
             WHEN is_most_recent THEN
-              lag(p) over (order by variable, dataset)
+              lag(p / 100) over (order by variable, dataset)
           END as previous_percent,
 
           -- previous_m --
