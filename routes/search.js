@@ -1,6 +1,6 @@
 const express = require('express');
 
-const mapzen = require('../search-helpers/mapzen');
+const geosearch = require('../search-helpers/geosearch');
 const neighborhoodTabulationArea = require('../search-helpers/neighborhood-tabulation-area');
 const puma = require('../search-helpers/puma');
 const tract = require('../search-helpers/tract');
@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
   const { q } = req.query;
 
   Promise.all([
-    mapzen(q),
+    geosearch(q),
     neighborhoodTabulationArea(q),
     puma(q),
     tract(q),
