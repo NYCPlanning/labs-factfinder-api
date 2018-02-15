@@ -119,7 +119,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
           0
         ELSE
-          (coalesce(percent, 0) - comparison_percent) * 100
+          (coalesce(percent, 0) - (coalesce(comparison_percent,0)) * 100
       END AS difference_percent,
 
       -- difference_m --
@@ -219,7 +219,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           WHEN is_most_recent THEN
             ABS(sum / NULLIF(previous_sum,0))
             * SQRT(
-              (POWER(m / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
+              (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
               + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
             ) * 1.645
         END as change_percent_m
