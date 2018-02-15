@@ -112,7 +112,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -150,7 +150,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avgfamsz.m"),2) + POWER(GET("avgfamsz.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
@@ -159,7 +159,7 @@ module.exports = [
   {
     highlight: true,
     title: 'Total persons under 18 years',
-    variable: 'popu18',
+    variable: 'popu18_2',
   },
   {
     title: 'Householder or spouse',
