@@ -87,7 +87,7 @@ const invalidCompare = (compare) => {
 
 router.get('/:id/:profile', (req, res) => {
   const { id: _id, profile } = req.params;
-  const { compare = 0 } = req.query;
+  const { compare = '0' } = req.query;
 
   // validate compare
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
