@@ -160,7 +160,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
         WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
           0
         ELSE
-          (coalesce(percent, 0) - comparison_percent) * 100
+          (coalesce(percent, 0) - (coalesce(comparison_percent,0)) * 100
       END AS difference_percent,
 
       -- difference_m --
