@@ -1,7 +1,8 @@
 const express = require('express');
 const _ = require('lodash');
-const cwait = require('cwait');
-const carto = require('../utils/carto');
+const { Client } = require('pg');
+const PgError = require('pg-error');
+
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
 const buildProfileSingleSQL = require('../query-helpers/profile-single');
@@ -9,13 +10,8 @@ const buildDecennialSQL = require('../query-helpers/decennial');
 const tableConfigs = require('../table-config');
 const delegateAggregator = require('../utils/delegate-aggregator');
 const nestProfile = require('../utils/nest-profile');
-const d3collection = require('d3-collection');
-const { Client } = require('pg');
-const PgError = require('pg-error');
 
-const { TaskQueue } = cwait;
 const router = express.Router();
-const { nest } = d3collection;
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -44,41 +40,6 @@ router.use((req, res, next) => {
 const {
   get, camelCase, find, merge,
 } = _;
-
-const tableNames = [
-  'population_density',
-  'sex_age',
-  'mutually_exclusive_race',
-  'hispanic_subgroup',
-  'asian_subgroup',
-  'relationship_head_householder',
-  'household_type',
-  'housing_occupancy',
-  'housing_tenure',
-  'tenure_by_age',
-  'household_size',
-];
-
-const buildOrderedResponse = (data, profile) => {
-  const tableConfig = get(tableConfigs, `${profile}`) || [];
-  const fullDataset = nest()
-    .key(d => get(d, 'category'))
-    .entries(data)
-    .map((nestedTable) => {
-      const newTableObject = {};
-      newTableObject.tableId = nestedTable.key;
-      newTableObject.rows = nestedTable.values;
-      return newTableObject;
-    });
-
-  const foundTableRowGroupings = Object.keys(tableConfig).map(tableId => ({
-    tableId,
-    rows: tableConfig[tableId]
-      .filter(rowConfig => rowConfig.variable)
-      .map(rowConfig => find(data, ['variable', rowConfig.variable])),
-  }));
-  return merge(foundTableRowGroupings, fullDataset);
-};
 
 const appendRowConfig = (data, profile, match) => {
   const fullDataset = nestProfile(data, 'object', 'dataset', 'variable');
@@ -114,50 +75,45 @@ const appendRowConfig = (data, profile, match) => {
     });
 };
 
-// handle decennial profile route
-router.get('/:id/decennial', (req, res) => {
-  const { id: _id } = req.params;
-  const { compare = 0 } = req.query;
+const invalidCompare = (compare) => {
+  const cityOrBoro = compare.match(/[0-5]{1}/);
+  const nta = compare.match(/[A-Z]{2}[0-9]{2}/);
+  const puma = compare.match(/[0-9]{4}/);
 
-  Selection.findOne({ _id })
-    .then((match) => {
-      const SQL = buildDecennialSQL(match.geoids, compare)
+  if (cityOrBoro || nta || puma) return false;
+  return true;
+};
 
-      // match.geoids is an array of geoids to query with
-      // carto.SQL(SQL, 'json', 'post')
-      client.connect();
 
-      client
-        .query(SQL)
-        .then(data => appendRowConfig(data.rows, 'decennial', match))
-        // .then(data => buildOrderedResponse(data, profile))
-        .then((data) => {
-          res.send(data);
-        })
-        .catch((error) => { res.status(500).send({ error }); });
-    });
-});
-
-// handle all other profile routes
 router.get('/:id/:profile', (req, res) => {
   const { id: _id, profile } = req.params;
-  const { compare = 0 } = req.query;
+  const { compare = '0' } = req.query;
+
+  // validate compare
+  if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
+
+  // validate profile
+  const validProfiles = ['decennial', 'demographic', 'social', 'economic', 'housing'];
+  if (validProfiles.indexOf(profile) === -1) res.status(500).send({ error: 'invalid profile' });
 
   Selection.findOne({ _id })
     .then((match) => {
-      let SQL = buildProfileSQL(profile, match.geoids, compare);
-      if (match.geoids.length === 1) {
+      let SQL;
+
+      if (profile === 'decennial') {
+        SQL = buildDecennialSQL(match.geoids, compare);
+      } else if (match.geoids.length === 1) {
         SQL = buildProfileSingleSQL(profile, match.geoids[0], compare);
+      } else {
+        SQL = buildProfileSQL(profile, match.geoids, compare);
       }
 
       // match.geoids is an array of geoids to query with
-      // carto.SQL(SQL, 'json', 'post')
       client.connect();
 
       client
         .query(SQL)
         .then(data => appendRowConfig(data.rows, profile, match))
-        // .then(data => buildOrderedResponse(data, profile))
         .then((data) => {
           res.send(data);
         })
