@@ -24,22 +24,22 @@ module.exports = [{
   variable: 'dfhsus',
 },
 {
-  indent: 2,
+  indent: 1,
   title: 'Same county',
   variable: 'dfhssmcnt',
 },
 {
-  indent: 2,
+  indent: 1,
   title: 'Different county',
   variable: 'dfhsdfcnt',
 },
 {
-  indent: 4,
+  indent: 2,
   title: 'Within New York City',
   variable: 'dhdfcntnyc',
 },
 {
-  indent: 4,
+  indent: 2,
   title: 'Outside New York City',
   variable: 'dhnonyc',
 },
