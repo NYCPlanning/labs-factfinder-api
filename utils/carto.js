@@ -35,9 +35,8 @@ const Carto = {
     return rp(fetchOptions)
       .then((response) => {
         const obj = JSON.parse(response);
-        console.log('SQL error ', obj.error);
+        if (obj.error) console.log('SQL error ', obj.error);
         return obj.rows ? obj.rows : obj;
-        // throw new Error('Not found');
       })
       .catch((reason) => {
         console.log(reason);
