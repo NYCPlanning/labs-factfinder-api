@@ -183,7 +183,7 @@ module.exports = [
         column: 'previous_m',
         aggregator: calculateMedianError,
         options: {
-          designFactor: 1.6,
+          designFactor: 1.5,
           bins: binsForMdhhinc,
         },
       },
@@ -193,7 +193,7 @@ module.exports = [
         options: {
           formula: '(GET("mdhhinc.previous_m") * 1.1005)',
         },
-      },      
+      },
       {
         column: 'difference_sum',
         aggregator: formula,
@@ -273,9 +273,9 @@ module.exports = [
         column: 'previous_sum',
         aggregator: formula,
         options: {
-          formula: '(GET("aghhinc.previous_sum") * 1.1005)',
+          formula: '(GET("mnhhinc.previous_sum") * 1.1005)',
         },
-      },        
+      },
       {
         column: 'cv',
         aggregator: formula,
@@ -305,10 +305,6 @@ module.exports = [
         },
       },
       {
-        column: 'm',
-        aggregator: inflate,
-      },
-      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -322,13 +318,6 @@ module.exports = [
           formula: '((((GET("mnhhinc.previous_cv"))/(100))*(1.645))*(GET("mnhhinc.previous_sum")))',
         },
       },
-      {
-        column: 'previous_m',
-        aggregator: formula,
-        options: {
-          formula: '(GET("mnhhinc.previous_m") * 1.1005)',
-        },
-      },      
       {
         column: 'difference_sum',
         aggregator: formula,
@@ -370,7 +359,7 @@ module.exports = [
         options: {
           formula: '((SQRT((GET("mnhhinc.m")^2)+((GET("mnhhinc.sum")/GET("mnhhinc.previous_sum"))^2*GET("mnhhinc.previous_m")^2)))/GET("mnhhinc.previous_sum"))',
         },
-      },      
+      },
     ],
   },
   {
@@ -520,7 +509,7 @@ module.exports = [
         column: 'previous_m',
         aggregator: calculateMedianError,
         options: {
-          designFactor: 1.6,
+          designFactor: 1.5,
           bins: binsForMdfaminc,
         },
       },
@@ -530,7 +519,7 @@ module.exports = [
         options: {
           formula: '(GET("mdfaminc.previous_m") * 1.1005)',
         },
-      },      
+      },
       {
         column: 'difference_sum',
         aggregator: formula,
@@ -572,7 +561,7 @@ module.exports = [
         options: {
           formula: '((SQRT((GET("mdfaminc.m")^2)+((GET("mdfaminc.sum")/GET("mdfaminc.previous_sum"))^2*GET("mdfaminc.previous_m")^2)))/GET("mdfaminc.previous_sum"))',
         },
-      },      
+      },
     ],
   },
   {
@@ -659,7 +648,7 @@ module.exports = [
         column: 'previous_m',
         aggregator: calculateMedianError,
         options: {
-          designFactor: 1.6,
+          designFactor: 1.5,
           bins: binsForMdnfinc,
         },
       },
@@ -669,7 +658,7 @@ module.exports = [
         options: {
           formula: '(GET("mdnfinc.previous_m") * 1.1005)',
         },
-      },      
+      },
       {
         column: 'difference_sum',
         aggregator: formula,
@@ -711,7 +700,7 @@ module.exports = [
         options: {
           formula: '((SQRT((GET("mdnfinc.m")^2)+((GET("mdnfinc.sum")/GET("mdnfinc.previous_sum"))^2*GET("mdnfinc.previous_m")^2)))/GET("mdnfinc.previous_sum"))',
         },
-      },      
+      },
     ],
   },
   {
@@ -754,7 +743,7 @@ module.exports = [
         options: {
           formula: '(GET("percapinc.previous_sum") * 1.1005)',
         },
-      },      
+      },
       {
         column: 'cv',
         aggregator: formula,
@@ -784,10 +773,6 @@ module.exports = [
         },
       },
       {
-        column: 'm',
-        aggregator: inflate,
-      },
-      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -801,13 +786,6 @@ module.exports = [
           formula: '((((GET("percapinc.previous_cv"))/(100))*(1.645))*(GET("percapinc.previous_sum")))',
         },
       },
-      {
-        column: 'previous_m',
-        aggregator: formula,
-        options: {
-          formula: '(GET("percapinc.previous_m") * 1.1005)',
-        },
-      },      
       {
         column: 'difference_sum',
         aggregator: formula,
@@ -849,7 +827,7 @@ module.exports = [
         options: {
           formula: '((SQRT((GET("percapinc.m")^2)+((GET("percapinc.sum")/GET("percapinc.previous_sum"))^2*GET("percapinc.previous_m")^2)))/GET("percapinc.previous_sum"))',
         },
-      },      
+      },
     ],
   },
 ];
