@@ -11,6 +11,12 @@ function aggregateSpecialVariable(row, rowConfig, allData) {
 
   specialCalculations.forEach(({ column, aggregator = noop, options }) => {
     let specialValue;
+
+    /*
+      Skip special calculations if it's a single geography
+    */
+    if ((column.indexOf('comparison') === 0)) return;
+
     try {
       specialValue = aggregator(allData, column, options, variable, row);
     } catch (err) {

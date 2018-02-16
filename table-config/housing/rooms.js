@@ -108,11 +108,25 @@ module.exports = [
         },
       },
       {
+        column: 'comparison_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.comparison_sum") / 1000)',
+        },
+      },
+      {
         column: 'comparison_m',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
           bins: binsForMdrms,
+        },
+      },
+      {
+        column: 'comparison_m',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.comparison_m") / 1000)',
         },
       },
       {
