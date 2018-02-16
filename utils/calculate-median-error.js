@@ -47,6 +47,8 @@ function calculateMedianError(data, column, options) {
     });
   }
 
+  if (scenario.some(obj => obj.quantity === null)) return;
+
   const sum = scenario.reduce(
     (total, { quantity }) => total + quantity,
     0,

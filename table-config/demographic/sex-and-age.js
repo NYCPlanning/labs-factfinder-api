@@ -2,7 +2,7 @@ const interpolate = require('../../utils/interpolate');
 const formula = require('../../utils/formula');
 const calculateMedianError = require('../../utils/calculate-median-error');
 
-const binsForMDAGE = [
+const binsForMdAge = [
   ['mdpop0t4', [0, 4]],
   ['mdpop5t9', [5, 9]],
   ['mdpop10t14', [10, 14]],
@@ -166,15 +166,14 @@ module.exports = [
         column: 'sum',
         aggregator: interpolate,
         options: {
-          bins: binsForMDAGE,
+          bins: binsForMdAge,
         },
       },
       {
         column: 'previous_sum',
         aggregator: interpolate,
         options: {
-          referenceSumKey: 'previous_sum',
-          bins: binsForMDAGE,
+          bins: binsForMdAge,
         },
       },
       {
@@ -182,7 +181,15 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.1,
-          bins: binsForMDAGE,
+          bins: binsForMdAge,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.1,
+          bins: binsForMdAge,
         },
       },
       {
@@ -196,7 +203,7 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: interpolate,
         options: {
-          bins: binsForMDAGE,
+          bins: binsForMdAge,
         },
       },
       {
@@ -204,7 +211,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.1,
-          bins: binsForMDAGE,
+          bins: binsForMdAge,
         },
       },
       {
@@ -233,6 +240,13 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '(GET("mdage.sum") - GET("mdage.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.previous_m"),2))',
         },
       },
     ],

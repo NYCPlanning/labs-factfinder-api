@@ -14,7 +14,7 @@ function aggregateSpecialVariable(row, rowConfig, allData) {
     try {
       specialValue = aggregator(allData, column, options, variable, row);
     } catch (err) {
-      console.log('Error with ', column, options, 'Stack trace: ', err); // eslint-disable-line
+      console.log('Error with ', variable, row.dataset, column, options, 'Stack trace: ', err); // eslint-disable-line
     }
     set(mutatedRow, column, specialValue);
   });

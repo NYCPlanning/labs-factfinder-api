@@ -137,7 +137,7 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_m"),2))',
         },
-      },      
+      },
     ],
   },
   {
