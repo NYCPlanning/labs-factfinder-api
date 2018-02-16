@@ -265,6 +265,35 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          bins: binsFormdemftwrk,
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdemftwrk.previous_sum") * 1.1005)',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.6,
+          bins: binsFormdemftwrk,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdemftwrk.previous_m") * 1.1005)',
+        },
+      },
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -276,6 +305,34 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.previous_m"),2))',
+        },
+      },
+      {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: 'IF((GET("mdemftwrk.previous_sum"))=0,"",((GET("mdemftwrk.sum")-GET("mdemftwrk.previous_sum"))/GET("mdemftwrk.previous_sum")))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: '((SQRT((GET("mdemftwrk.m")^2)+((GET("mdemftwrk.sum")/GET("mdemftwrk.previous_sum"))^2*GET("mdemftwrk.previous_m")^2)))/GET("mdemftwrk.previous_sum"))',
         },
       },
     ],
@@ -340,6 +397,35 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          bins: binsFormdefftwrk,
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdefftwrk.previous_sum") * 1.1005)',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.6,
+          bins: binsFormdefftwrk,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdefftwrk.previous_m") * 1.1005)',
+        },
+      },      
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -351,6 +437,34 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.previous_m"),2))',
+        },
+      },
+      {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: 'IF((GET("mdefftwrk.previous_sum"))=0,"",((GET("mdefftwrk.sum")-GET("mdefftwrk.previous_sum"))/GET("mdefftwrk.previous_sum")))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: '((SQRT((GET("mdefftwrk.m")^2)+((GET("mdefftwrk.sum")/GET("mdefftwrk.previous_sum"))^2*GET("mdefftwrk.previous_m")^2)))/GET("mdefftwrk.previous_sum"))',
         },
       },
     ],
