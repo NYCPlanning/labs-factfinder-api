@@ -80,7 +80,7 @@ const appendIsReliable = data => (data.map((row) => {
   appendedRow.is_reliable = false;
   appendedRow.comparison_is_reliable = false;
 
-  const { cv, comparison_cv, codingThresholds } = appendedRow;
+  const { cv, comparison_cv, codingThresholds, change_m, change_sum } = appendedRow;
 
   // set reliability to true if cv is less than 20
   if (cv !== null && cv < 20) appendedRow.is_reliable = true;
@@ -90,7 +90,10 @@ const appendIsReliable = data => (data.map((row) => {
   if (codingThresholds.sum) appendedRow.is_reliable = false;
   if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
 
-  return row;
+  // calculate significance
+  appendedRow.change_significant = (change_m < Math.abs(change_sum));
+
+  return appendedRow;
 }));
 
 const invalidCompare = (compare) => {

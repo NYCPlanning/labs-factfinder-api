@@ -97,6 +97,13 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: calculator,
+        options: {
+          procedure: ['hhpop.previous_sum', 'divide', 'hh1.previous_sum'],
+        },
+      },
+      {
         column: 'cv',
         aggregator: formula,
         options: {
@@ -118,6 +125,20 @@ module.exports = [
         },
       },
       {
+        column: 'previous_cv',
+        aggregator: formula,
+        options: {
+          formula: '(62)*((GET("uwhusmpl1.previous_sum"))^-0.503)',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '((((GET("avghhsz.previous_cv"))/(100))*(1.645))*(GET("avghhsz.previous_sum")))',
+        },
+      },
+      {
         column: 'comparison_m',
         aggregator: formula,
         options: {
@@ -132,10 +153,24 @@ module.exports = [
         },
       },
       {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avghhsz.sum") - GET("avghhsz.previous_sum"))',
+        },
+      },
+      {
         column: 'difference_m',
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.previous_m"),2))',
         },
       },
     ],
@@ -160,6 +195,27 @@ module.exports = [
         aggregator: calculator,
         options: {
           procedure: ['popinfms.comparison_sum', 'divide', 'fam1.comparison_sum'],
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: calculator,
+        options: {
+          procedure: ['popinfms.previous_sum', 'divide', 'fam1.previous_sum'],
+        },
+      },
+      {
+        column: 'previous_cv',
+        aggregator: formula,
+        options: {
+          formula: '(51)*((GET("uwhusmpl1.previous_sum"))^-0.473)',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '((((GET("avgfmsz.previous_cv"))/(100))*(1.645))*(GET("avgfmsz.previous_sum")))',
         },
       },
       {
@@ -203,7 +259,21 @@ module.exports = [
         options: {
           formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.comparison_m"),2))',
         },
-      },      
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("avgfmsz.sum") - GET("avgfmsz.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.previous_m"),2))',
+        },
+      },
     ],
   },
   {
