@@ -268,7 +268,7 @@ module.exports = [
         column: 'previous_sum',
         aggregator: interpolate,
         options: {
-          bins: binsFormdemftwrk,
+          bins: binsForMdemftwrk,
         },
       },
       {
@@ -283,7 +283,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
-          bins: binsFormdemftwrk,
+          bins: binsForMdemftwrk,
         },
       },
       {
@@ -400,7 +400,7 @@ module.exports = [
         column: 'previous_sum',
         aggregator: interpolate,
         options: {
-          bins: binsFormdefftwrk,
+          bins: binsForMdefftwrk,
         },
       },
       {
@@ -415,7 +415,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
-          bins: binsFormdefftwrk,
+          bins: binsForMdefftwrk,
         },
       },
       {
@@ -424,7 +424,7 @@ module.exports = [
         options: {
           formula: '(GET("mdefftwrk.previous_m") * 1.1005)',
         },
-      },      
+      }, 
       {
         column: 'difference_sum',
         aggregator: formula,
