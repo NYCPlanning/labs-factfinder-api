@@ -2,6 +2,18 @@ const interpolate = require('../../utils/interpolate');
 const calculateMedianError = require('../../utils/calculate-median-error');
 const formula = require('../../utils/formula');
 
+const binsForMdrms = [
+  ['rms1', [0, 1.499]],
+  ['rms2', [1.5, 2.499]],
+  ['rms3', [2.5, 3.499]],
+  ['rms4', [3.5, 4.499]],
+  ['rms5', [4.5, 5.499]],
+  ['rms6', [5.5, 6.499]],
+  ['rms7', [6.5, 7.499]],
+  ['rms8', [7.5, 8.499]],
+  ['rms9pl', [8.5, 9]],
+];
+
 module.exports = [
   {
     title: 'Total housing units',
@@ -50,23 +62,12 @@ module.exports = [
     variable: 'mdrms',
     special: true,
     decimal: 1,
-    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['rms1', [0, 1.499]],
-            ['rms2', [1.5, 2.499]],
-            ['rms3', [2.5, 3.499]],
-            ['rms4', [3.5, 4.499]],
-            ['rms5', [4.5, 5.499]],
-            ['rms6', [5.5, 6.499]],
-            ['rms7', [6.5, 7.499]],
-            ['rms8', [7.5, 8.499]],
-            ['rms9pl', [8.5, 9]],
-          ],
+          bins: binsForMdrms,
         },
       },
       {
@@ -74,17 +75,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['rms1', [1, 1]],
-            ['rms2', [2, 2]],
-            ['rms3', [3, 3]],
-            ['rms4', [4, 4]],
-            ['rms5', [5, 5]],
-            ['rms6', [6, 6]],
-            ['rms7', [7, 7]],
-            ['rms8', [8, 8]],
-            ['rms9pl', [9, 9]],
-          ],
+          bins: binsForMdrms,
         },
       },
       {
@@ -98,17 +89,7 @@ module.exports = [
         column: 'comparison_sum',
         aggregator: interpolate,
         options: {
-          bins: [
-            ['rms1', [1, 1]],
-            ['rms2', [2, 2]],
-            ['rms3', [3, 3]],
-            ['rms4', [4, 4]],
-            ['rms5', [5, 5]],
-            ['rms6', [6, 6]],
-            ['rms7', [7, 7]],
-            ['rms8', [8, 8]],
-            ['rms9pl', [9, 9]],
-          ],
+          bins: binsForMdrms,
         },
       },
       {
@@ -116,17 +97,7 @@ module.exports = [
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
-          bins: [
-            ['rms1', [1, 1]],
-            ['rms2', [2, 2]],
-            ['rms3', [3, 3]],
-            ['rms4', [4, 4]],
-            ['rms5', [5, 5]],
-            ['rms6', [6, 6]],
-            ['rms7', [7, 7]],
-            ['rms8', [8, 8]],
-            ['rms9pl', [9, 9]],
-          ],
+          bins: binsForMdrms,
         },
       },
       {
@@ -134,6 +105,21 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '((GET("mdrms.comparison_m")/ 1.645) / GET("mdrms.comparison_sum") * 100)',
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          bins: binsForMdrms,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.5,
+          bins: binsForMdrms,
         },
       },
       {
@@ -148,6 +134,20 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.sum") - GET("mdrms.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.previous_m"),2))',
         },
       },
     ],
