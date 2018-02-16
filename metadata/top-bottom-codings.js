@@ -72,12 +72,12 @@ const topBottomCodings = {
     },
     mdrms: {
       all: {
-        upper: 9,
-        lower: 1,
+        upper: 9000,
+        lower: 0,
       },
       nta: {
-        upper: 9,
-        lower: 1,
+        upper: 9000,
+        lower: 0,
       },
     },
     mdvl: {
@@ -174,12 +174,12 @@ const topBottomCodings = {
     },
     mdrms: {
       all: {
-        upper: 9,
-        lower: 1,
+        upper: 9000,
+        lower: 0,
       },
       nta: {
-        upper: 9,
-        lower: 1,
+        upper: 9000,
+        lower: 0,
       },
     },
     mdvl: {

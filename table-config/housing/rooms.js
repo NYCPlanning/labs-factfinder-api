@@ -3,15 +3,15 @@ const calculateMedianError = require('../../utils/calculate-median-error');
 const formula = require('../../utils/formula');
 
 const binsForMdrms = [
-  ['rms1', [0, 1.499]],
-  ['rms2', [1.5, 2.499]],
-  ['rms3', [2.5, 3.499]],
-  ['rms4', [3.5, 4.499]],
-  ['rms5', [4.5, 5.499]],
-  ['rms6', [5.5, 6.499]],
-  ['rms7', [6.5, 7.499]],
-  ['rms8', [7.5, 8.499]],
-  ['rms9pl', [8.5, 9]],
+  ['rms1', [0, 1499]],
+  ['rms2', [1500, 2499]],
+  ['rms3', [2500, 3499]],
+  ['rms4', [3500, 4499]],
+  ['rms5', [4500, 5499]],
+  ['rms6', [5500, 6499]],
+  ['rms7', [6500, 7499]],
+  ['rms8', [7500, 8499]],
+  ['rms9pl', [8500, 9000]],
 ];
 
 module.exports = [
@@ -62,6 +62,7 @@ module.exports = [
     variable: 'mdrms',
     special: true,
     decimal: 1,
+    hidePercentChange: true,
     specialCalculations: [
       {
         column: 'sum',
@@ -71,11 +72,25 @@ module.exports = [
         },
       },
       {
+        column: 'sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.sum") / 1000)',
+        },
+      },
+      {
         column: 'm',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
           bins: binsForMdrms,
+        },
+      },
+      {
+        column: 'm',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.m") / 1000)',
         },
       },
       {
@@ -110,8 +125,16 @@ module.exports = [
       {
         column: 'previous_sum',
         aggregator: interpolate,
+        referenceSumKey: 'previous_sum',
         options: {
           bins: binsForMdrms,
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.previous_sum") / 1000)',
         },
       },
       {
@@ -120,6 +143,13 @@ module.exports = [
         options: {
           designFactor: 1.5,
           bins: binsForMdrms,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdrms.previous_m") / 1000)',
         },
       },
       {
