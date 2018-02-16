@@ -75,6 +75,24 @@ const appendRowConfig = (data, profile, match) => {
     });
 };
 
+const appendIsReliable = data => (data.map((row) => {
+  const appendedRow = row;
+  appendedRow.is_reliable = false;
+  appendedRow.comparison_is_reliable = false;
+
+  const { cv, comparison_cv, codingThresholds } = appendedRow;
+
+  // set reliability to true if cv is less than 20
+  if (cv !== null && cv < 20) appendedRow.is_reliable = true;
+  if (comparison_cv !== null && comparison_cv < 20) appendedRow.comparison_is_reliable = true;
+
+  // set reliability to false if the value is top or bottom-coded
+  if (codingThresholds.sum) appendedRow.is_reliable = false;
+  if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
+
+  return row;
+}));
+
 const invalidCompare = (compare) => {
   const cityOrBoro = compare.match(/[0-5]{1}/);
   const nta = compare.match(/[A-Z]{2}[0-9]{2}/);
@@ -114,6 +132,7 @@ router.get('/:id/:profile', (req, res) => {
       client
         .query(SQL)
         .then(data => appendRowConfig(data.rows, profile, match))
+        .then(data => appendIsReliable(data))
         .then((data) => {
           res.send(data);
         })
