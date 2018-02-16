@@ -142,13 +142,13 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       *,
       -- significant --
       CASE
-        WHEN ABS(SQRT(POWER(m / 1.645, 2) + POWER(comparison_m / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
+        WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
         ELSE true
       END AS significant,
 
       -- percent_significant --
       CASE
-        WHEN ABS(SQRT(POWER(percent_m / 1.645, 2) + POWER(comparison_percent_m / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+        WHEN ABS(SQRT(POWER(coalesce(percent_m, 0) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
         ELSE true
       END AS percent_significant,
 
@@ -199,7 +199,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- change_percentage_point_significant --
       CASE
-        WHEN (ABS((SQRT((POWER(previous_percent_m, 2) + POWER(percent_m, 2))))) < (percent - previous_percent)) THEN
+        WHEN (ABS((SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))) < (percent - previous_percent)) THEN
           TRUE
         ELSE
           FALSE
@@ -250,25 +250,11 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           ELSE (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
         END AS previous_percent_m,
 
-        -- is_reliable --
-        CASE
-          WHEN (cv < 20)
-            THEN true
-          ELSE false
-        END AS is_reliable,
-
         comparison_cv,
         comparison_m,
         comparison_sum,
         comparison_percent_m,
         comparison_percent,
-
-        -- comparison_is_reliable --
-        CASE
-          WHEN (comparison_cv < 20)
-            THEN true
-          ELSE false
-        END AS comparison_is_reliable,
 
         -- change_sum --
         CASE

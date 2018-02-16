@@ -3,7 +3,7 @@ const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
 const medianOfRanges = require('../utils/median-of-ranges');
 
 const { isArray } = Array;
-const { get, set } = _;
+const { get } = _;
 
 function interpolate(data, sumKey = 'sum', options, variable, row) {
   const { bins, multipleBins, referenceSumKey = sumKey } = options;
@@ -47,17 +47,8 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
 
   const naturalMedian = medianOfRanges(scenario);
 
-  const { mutatedEstimate: trimmedEstimate, codingThreshold } =
+  const { mutatedEstimate: trimmedEstimate } =
     topBottomCodeEstimate(naturalMedian, row);
-
-  /*
-    Special exception!
-    If it's top or bottom coded, the estimates are unreliable.
-  */
-  if (codingThreshold) {
-    set(row, `codingThresholds.${sumKey}`, codingThreshold);
-    set(row, (sumKey === 'sum' ? 'is_reliable' : 'comparison_is_reliable'), false);
-  }
 
   return trimmedEstimate;
 }
