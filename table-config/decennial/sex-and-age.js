@@ -195,7 +195,7 @@ module.exports = [
   },
   {
     title: 'Under 18 years',
-    variable: 'popu18',
+    variable: 'popu18_1',
   },
   {
     title: '21 years and over',
