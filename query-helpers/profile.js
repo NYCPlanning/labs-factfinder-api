@@ -250,25 +250,11 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           ELSE (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
         END AS previous_percent_m,
 
-        -- is_reliable --
-        CASE
-          WHEN (cv < 20)
-            THEN true
-          ELSE false
-        END AS is_reliable,
-
         comparison_cv,
         comparison_m,
         comparison_sum,
         comparison_percent_m,
         comparison_percent,
-
-        -- comparison_is_reliable --
-        CASE
-          WHEN (comparison_cv < 20)
-            THEN true
-          ELSE false
-        END AS comparison_is_reliable,
 
         -- change_sum --
         CASE
