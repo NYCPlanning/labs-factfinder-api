@@ -152,6 +152,36 @@ module.exports = [
         },
       },
       {
+        column: 'previous_sum',
+        aggregator: interpolate,
+        options: {
+          designFactor: 1.6,
+          bins: binsMedianEarlySet,
+        },
+      },
+      {
+        column: 'previous_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdgr.previous_sum") * 1.1005)',
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: calculateMedianError,
+        options: {
+          designFactor: 1.6,
+          bins: binsMedianEarlySet,
+        },
+      },
+      {
+        column: 'previous_m',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdgr.previous_m") * 1.1005)',
+        },
+      },
+      {
         column: 'difference_sum',
         aggregator: formula,
         options: {
@@ -163,6 +193,34 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.comparison_m"),2))',
+        },
+      },
+      {
+        column: 'change_sum',
+        aggregator: formula,
+        options: {
+          formula: '(GET("mdgr.sum") - GET("mdgr.previous_sum"))',
+        },
+      },
+      {
+        column: 'change_m',
+        aggregator: formula,
+        options: {
+          formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.previous_m"),2))',
+        },
+      },
+      {
+        column: 'change_percent',
+        aggregator: formula,
+        options: {
+          formula: 'IF((GET("mdgr.previous_sum"))=0,"",((GET("mdgr.sum")-GET("mdgr.previous_sum"))/GET("mdgr.previous_sum")))',
+        },
+      },
+      {
+        column: 'change_percent_m',
+        aggregator: formula,
+        options: {
+          formula: '((SQRT((GET("mdgr.m")^2)+((GET("mdgr.sum")/GET("mdgr.previous_sum"))^2*GET("mdgr.previous_m")^2)))/GET("mdgr.previous_sum"))',
         },
       },
     ],
