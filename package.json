@@ -4,8 +4,12 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
+    "saveoutput": "curl http://localhost:4000/profile/1/demographic?compare=0 > test-output/1-demographic-0.json",
     "lint": "eslint -c .eslintrc lib"
   },
+  "pre-commit": [
+    "saveoutput"
+  ],
   "license": "ISC",
   "dependencies": {
     "apicache": "^1.1.0",
@@ -41,6 +45,7 @@
     "eslint": "^4.8.0",
     "eslint-config-airbnb-base": "^12.0.2",
     "eslint-loader": "^1.6.1",
-    "eslint-plugin-import": "^2.6.1"
+    "eslint-plugin-import": "^2.6.1",
+    "pre-commit": "1.2.2"
   }
 }
