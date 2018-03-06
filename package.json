@@ -4,7 +4,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
-    "saveoutput": "curl http://localhost:4000/profile/1/demographic?compare=0 > test-output/1-demographic-0.json",
+    "saveoutput": "curl http://localhost:4000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.json",
     "lint": "eslint -c .eslintrc lib"
   },
   "pre-commit": [
@@ -45,6 +45,7 @@
     "eslint": "^4.8.0",
     "eslint-config-airbnb-base": "^12.0.2",
     "eslint-loader": "^1.6.1",
-    "eslint-plugin-import": "^2.6.1"
+    "eslint-plugin-import": "^2.6.1",
+    "prettyjson": "1.2.1"
   }
 }
