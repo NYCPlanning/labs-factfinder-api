@@ -22,7 +22,7 @@ describe('Special variables', function() {
       const medianFamInc = JSON.parse(body).find(obj => {
         return obj.variable === 'mdfaminc' && obj.dataset === 'y2012_2016';
       });
-      expect(Object.keys(medianFamInc.codingThresholds).length).to.equal(200);
+      expect(Object.keys(medianFamInc.codingThresholds).length).to.equal(2);
       done();
     });
   })

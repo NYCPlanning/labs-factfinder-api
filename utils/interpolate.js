@@ -3,7 +3,7 @@ const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
 const medianOfRanges = require('../utils/median-of-ranges');
 
 const { isArray } = Array;
-const { get } = _;
+const { get, set } = _;
 
 function interpolate(data, sumKey = 'sum', options, variable, row) {
   const { bins, multipleBins, referenceSumKey = sumKey } = options;
@@ -47,8 +47,12 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
 
   const naturalMedian = medianOfRanges(scenario);
 
-  const { mutatedEstimate: trimmedEstimate } =
+  const { mutatedEstimate: trimmedEstimate, codingThreshold } =
     topBottomCodeEstimate(naturalMedian, row);
+
+  if (codingThreshold) {
+    set(row, `codingThresholds.${sumKey}`, codingThreshold);
+  }
 
   return trimmedEstimate;
 }
