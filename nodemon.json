@@ -1,0 +1,6 @@
+{
+  "ignore": ["test-output"],
+  "events": {
+    "restart": "sleep 3; curl http://localhost:4000/profile/1/demographic?compare=0 > test-output/1-demographic-0.json"
+  }
+}
