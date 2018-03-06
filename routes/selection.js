@@ -98,6 +98,3 @@ router.post('/', (req, res) => {
 });
 
 module.exports = router;
-
-// hash submission => check to see if hash already exists in database =>
-// if it does, return looked up hash, if not return new hash
