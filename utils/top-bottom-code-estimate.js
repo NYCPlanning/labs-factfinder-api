@@ -46,6 +46,8 @@ function topBottomCodeEstimate(estimate, row) {
     codingThreshold = 'upper';
   }
 
+  console.log(codingThreshold);
+
   return { mutatedEstimate, codingThreshold };
 }
 
