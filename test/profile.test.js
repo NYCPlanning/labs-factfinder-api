@@ -81,9 +81,10 @@ describe('normal variables with complex case logic', function() {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'oscasia' && obj.dataset === 'y2012_2016';
       });
+      console.log(rowObject);
       expect(rowObject.previous_sum).to.equal(0);
       expect(rowObject.sum).to.equal(0);
-      expect(rowObject.change_percentage_point).to.equal(null);
+      expect(rowObject.change_percentage_point).to.equal('0.0000');
       done();
     });
   });
@@ -94,9 +95,10 @@ describe('normal variables with complex case logic', function() {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'oscasia' && obj.dataset === 'y2012_2016';
       });
+      console.log(rowObject);
       expect(rowObject.previous_sum).to.equal(0);
       expect(rowObject.sum).to.equal(0);
-      expect(rowObject.change_percentage_point).to.equal(null);
+      expect(rowObject.change_percentage_point).to.equal(0);
       done();
     });
   });
