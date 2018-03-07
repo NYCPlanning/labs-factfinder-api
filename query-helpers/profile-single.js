@@ -96,141 +96,143 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           m as comparison_m
         FROM comparison_enriched_selection
       )
-
-    SELECT
+    SELECT 
       *,
-      -- significant --
-      CASE
-        WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
-        ELSE true
-      END AS significant,
-
-      -- percent_significant --
-      CASE
-        WHEN ABS(SQRT(POWER(coalesce(percent_m, 0) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
-        ELSE true
-      END AS percent_significant,
-
-      -- difference_sum --
-      (sum - comparison_sum) AS difference_sum,
-
-      -- difference_percent --
-      CASE
-        WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
-          0
-        ELSE
-          (coalesce(percent, 0) - coalesce(comparison_percent,0)) * 100
-      END AS difference_percent,
-
-      -- difference_m --
-      (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
-
-      -- difference_percent_m --
-      (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) + POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
-
-      -- change_percentage_point --
-      CASE
-        WHEN (percent = null AND previous_percent = null) THEN
-          null
-        WHEN (is_most_recent) THEN
-          coalesce(percent, 0) - coalesce(previous_percent, 0)
-      END AS change_percentage_point,
-
-      -- change_percentage_point_m --
-      CASE
-        WHEN is_most_recent THEN
-          (SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))
-      END AS change_percentage_point_m,
-
-      -- change_significant --
-      CASE
-        WHEN (change_m < ABS(change_sum)) THEN
-          TRUE
-        ELSE
-          FALSE
-      END AS change_significant,
-
-      -- change_percent_significant --
-      CASE
-        WHEN (change_percent_m < ABS(change_percent)) THEN
-          TRUE
-        ELSE
-          FALSE
-      END AS change_percent_significant,
-
       -- change_percentage_point_significant --
       CASE
-        WHEN (ABS((SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))) < (percent - previous_percent)) THEN
+        WHEN (change_percentage_point_m < ABS(change_percentage_point)) THEN
           TRUE
         ELSE
           FALSE
       END AS change_percentage_point_significant
     FROM (
-      SELECT *,
-        -- id --
-        ENCODE(CONVERT_TO(VARIABLE || dataset, 'UTF-8'), 'base64') AS id,
-        -- dataset --
-        regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
-        -- profile --
-        regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
-        -- category --
-        regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
-        -- variable --
-        regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-
+      SELECT
+        *,
         -- significant --
-        CASE WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - e) THEN false ELSE true END AS significant,
+        CASE
+          WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
+          ELSE true
+        END AS significant,
 
         -- percent_significant --
-        CASE WHEN ABS(SQRT(POWER((ROUND(z::numeric, 4) / 100) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - p) THEN false ELSE true END AS percent_significant,
-
-        -- is_reliable --
         CASE
-          WHEN (cv < 20)
-            THEN true
-          ELSE false
-        END as is_reliable,
+          WHEN ABS(SQRT(POWER(coalesce(percent_m, 0) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+          ELSE true
+        END AS percent_significant,
 
-        -- comparison_is_reliable --
+        -- difference_sum --
+        (sum - comparison_sum) AS difference_sum,
+
+        -- difference_percent --
         CASE
-          WHEN (comparison_cv < 20)
-            THEN true
-          ELSE false
-        END as comparison_is_reliable,
+          WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
+            0
+          ELSE
+            (coalesce(percent, 0) - coalesce(comparison_percent,0)) * 100
+        END AS difference_percent,
 
-        -- change_sum --
+        -- difference_m --
+        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
+
+        -- difference_percent_m --
+        (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) + POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
+
+        -- change_percentage_point --
         CASE
-          WHEN is_most_recent THEN
-            sum - previous_sum
-        END as change_sum,
+          WHEN (percent = null AND previous_percent = null) THEN
+            null
+          WHEN (is_most_recent) THEN
+            coalesce(percent, 0) - coalesce(previous_percent, 0)
+        END AS change_percentage_point,
 
-        -- change_m --
-        CASE
-          WHEN is_most_recent THEN
-            ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_m, 0), 2)))
-        END as change_m,
-
-        -- change_percent --
-        CASE
-          WHEN is_most_recent THEN
-            ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4)
-        END as change_percent,
-
-        -- change_percent_m --
+        -- change_percentage_point_m --
         CASE
           WHEN is_most_recent THEN
-            ABS(sum / NULLIF(previous_sum,0))
-            * SQRT(
-              (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
-              + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
-            ) * 1.645
-        END as change_percent_m
-      FROM
-        main_numbers
-      LEFT OUTER JOIN comparison_main_numbers
-        ON main_numbers.variable = comparison_main_numbers.comparison_variable
-        AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
-    ) precalculations
+            (SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))
+        END AS change_percentage_point_m,
+
+        -- change_significant --
+        CASE
+          WHEN (change_m < ABS(change_sum)) THEN
+            TRUE
+          ELSE
+            FALSE
+        END AS change_significant,
+
+        -- change_percent_significant --
+        CASE
+          WHEN (change_percent_m < ABS(change_percent)) THEN
+            TRUE
+          ELSE
+            FALSE
+        END AS change_percent_significant
+      FROM (
+        SELECT *,
+          -- id --
+          ENCODE(CONVERT_TO(VARIABLE || dataset, 'UTF-8'), 'base64') AS id,
+          -- dataset --
+          regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
+          -- profile --
+          regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
+          -- category --
+          regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
+          -- variable --
+          regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
+
+          -- significant --
+          CASE WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - e) THEN false ELSE true END AS significant,
+
+          -- percent_significant --
+          CASE WHEN ABS(SQRT(POWER((ROUND(z::numeric, 4) / 100) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - p) THEN false ELSE true END AS percent_significant,
+
+          -- is_reliable --
+          CASE
+            WHEN (cv < 20)
+              THEN true
+            ELSE false
+          END as is_reliable,
+
+          -- comparison_is_reliable --
+          CASE
+            WHEN (comparison_cv < 20)
+              THEN true
+            ELSE false
+          END as comparison_is_reliable,
+
+          -- change_sum --
+          CASE
+            WHEN is_most_recent THEN
+              sum - previous_sum
+          END as change_sum,
+
+          -- change_m --
+          CASE
+            WHEN is_most_recent THEN
+              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_m, 0), 2)))
+          END as change_m,
+
+          -- change_percent --
+          CASE
+            WHEN is_most_recent THEN
+              ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4)
+          END as change_percent,
+
+          -- change_percent_m --
+          CASE
+            WHEN is_most_recent THEN
+              ABS(sum / NULLIF(previous_sum,0))
+              * SQRT(
+                (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
+                + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
+              ) * 1.645
+          END as change_percent_m
+        FROM
+          main_numbers
+        LEFT OUTER JOIN comparison_main_numbers
+          ON main_numbers.variable = comparison_main_numbers.comparison_variable
+          AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
+      ) precalculations
+    ) significance
   `;
 };
 
