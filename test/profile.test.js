@@ -19,14 +19,14 @@ it('get a response', function(done) {
 describe('Special variables', function() {
   it('top-bottom codes variables correctly', function(done) {
     request('http://localhost:8080/profile/726/economic?compare=0' , function(error, response, body) {
-      const medianFamInc = JSON.parse(body).find(obj => {
+      const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'mdfaminc' && obj.dataset === 'y2012_2016';
       });
 
       // it should have two properties in it, "sum" and "previous_sum"
       // this gets the keys of the thresholds object and counts them
       // to make sure
-      expect(Object.keys(medianFamInc.codingThresholds).length).to.equal(2);
+      expect(Object.keys(rowObject.codingThresholds).length).to.equal(2);
       done();
     });
   });
@@ -35,20 +35,31 @@ describe('Special variables', function() {
 describe('normal variables with complex case logic', function() {
   it('data with 0-estimate current should get pct change calculations: lgfrlep1 change_percentage_point should be calculated', function(done) {
     request('http://localhost:8080/profile/733/social?compare=4104' , function(error, response, body) {
-      const medianFamInc = JSON.parse(body).find(obj => {
+      const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'lgfrlep1' && obj.dataset === 'y2012_2016';
       });
-      expect(!!medianFamInc.change_percentage_point).to.equal(true);
+      expect(!!rowObject.change_percentage_point).to.equal(true);
       done();
     });
   });
 
   it('data with 0-estimate previous should get pct change calculations: lgthalep1 change_percentage_point should be calculated', function(done) {
     request('http://localhost:8080/profile/733/social?compare=4104' , function(error, response, body) {
-      const medianFamInc = JSON.parse(body).find(obj => {
+      const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'lgthalep1' && obj.dataset === 'y2012_2016';
       });
-      expect(!!medianFamInc.change_percentage_point).to.equal(true);
+      expect(!!rowObject.change_percentage_point).to.equal(true);
+      done();
+    });
+  });
+
+  // lgmkhm1
+  it('data with 0-estimate previous should get pct change calculations: lgmkhm1 change_percentage_point should be calculated', function(done) {
+    request('http://localhost:8080/profile/733/social?compare=4104' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'lgmkhm1' && obj.dataset === 'y2012_2016';
+      });
+      expect((rowObject.difference_percentage_point === null)).to.equal(false);
       done();
     });
   });
