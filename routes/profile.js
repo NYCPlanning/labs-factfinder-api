@@ -82,6 +82,7 @@ const appendIsReliable = data => (data.map((row) => {
 
   const {
     cv, comparison_cv, codingThresholds, change_m, change_sum, change_percent_m, change_percent,
+    difference_sum, difference_m,
   } = appendedRow;
 
   // set reliability to true if cv is less than 20
