@@ -54,12 +54,49 @@ describe('normal variables with complex case logic', function() {
   });
 
   // lgmkhm1
-  it('data with 0-estimate previous should get pct change calculations: lgmkhm1 change_percentage_point should be calculated', function(done) {
+  it('data with at least one non-null percentage point should be calculated: lgmkhm1 difference_percentage should be calculated', function(done) {
     request('http://localhost:8080/profile/733/social?compare=4104' , function(error, response, body) {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'lgmkhm1' && obj.dataset === 'y2012_2016';
       });
-      expect((rowObject.difference_percentage_point === null)).to.equal(false);
+      expect((rowObject.difference_percentage === null)).to.equal(false);
+      done();
+    });
+  });
+
+  // lgmkhm1
+  it('data with at least one non-null percentage point should be calculated: lgmkhm1 difference_percentage should be calculated', function(done) {
+    request('http://localhost:8080/profile/843/social?compare=4104' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'lgmkhm1' && obj.dataset === 'y2012_2016';
+      });
+      expect((rowObject.difference_percentage === null)).to.equal(false);
+      done();
+    });
+  });
+
+  // oscasia
+  it('data with both 0 estimates should be percentage point null: oscasia difference_percentage should be calculated', function(done) {
+    request('http://localhost:8080/profile/733/social?compare=4104' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'oscasia' && obj.dataset === 'y2012_2016';
+      });
+      expect(rowObject.previous_sum).to.equal(0);
+      expect(rowObject.sum).to.equal(0);
+      expect(rowObject.change_percentage_point).to.equal(null);
+      done();
+    });
+  });
+
+  // oscasia, single geog
+  it('data with both 0 estimates should be percentage point null: oscasia difference_percentage should be calculated', function(done) {
+    request('http://localhost:8080/profile/843/social?compare=4104' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'oscasia' && obj.dataset === 'y2012_2016';
+      });
+      expect(rowObject.previous_sum).to.equal(0);
+      expect(rowObject.sum).to.equal(0);
+      expect(rowObject.change_percentage_point).to.equal(null);
       done();
     });
   });

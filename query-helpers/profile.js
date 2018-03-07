@@ -171,7 +171,9 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- change_percentage_point --
       CASE
-        WHEN is_most_recent THEN
+        WHEN (sum = 0 AND previous_sum = 0) THEN
+          null
+        WHEN (is_most_recent) THEN
           coalesce(percent, 0) - coalesce(previous_percent, 0)
       END AS change_percentage_point,
 
