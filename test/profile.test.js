@@ -100,4 +100,16 @@ describe('normal variables with complex case logic', function() {
       done();
     });
   });
+
+  // pop30t34
+  it('pop30t34 change pct pt significance should be coded a true', function(done) {
+    request('http://localhost:8080/profile/735/demographic?compare=SI07' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'pop30t34' && obj.dataset === 'y2012_2016';
+      });
+      console.log(rowObject);
+      expect(rowObject.change_percentage_point_significant).to.equal(true);
+      done();
+    });
+  });
 });
