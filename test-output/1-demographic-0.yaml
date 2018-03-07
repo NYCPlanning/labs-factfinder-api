@@ -8005,7 +8005,7 @@
   difference_percent:                  0
   difference_m:                        3559.92078563555
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             1.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8052,7 +8052,7 @@
   difference_percent:                  -0.97
   difference_m:                        1169.05175249003
   difference_percent_m:                0.664218716319241
-  change_percentage_point:             null
+  change_percentage_point:             0.0043
   change_percentage_point_m:           0.00656647929341729
   change_significant:                  false
   change_percent_significant:          false
@@ -8098,7 +8098,7 @@
   difference_percent:                  0
   difference_m:                        229
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8145,7 +8145,7 @@
   difference_percent:                  4.33
   difference_m:                        3514.04738158153
   difference_percent_m:                15.0357031260951
-  change_percentage_point:             null
+  change_percentage_point:             0.0993
   change_percentage_point_m:           0.150327099518373
   change_significant:                  false
   change_percent_significant:          false
@@ -8192,7 +8192,7 @@
   difference_percent:                  -0.4
   difference_m:                        746
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8239,7 +8239,7 @@
   difference_percent:                  -11.16
   difference_m:                        6184.64784769513
   difference_percent_m:                14.7949567897345
-  change_percentage_point:             null
+  change_percentage_point:             0.3644
   change_percentage_point_m:           0.147865055510121
   change_significant:                  false
   change_percent_significant:          false
@@ -8286,7 +8286,7 @@
   difference_percent:                  -0.2
   difference_m:                        761
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8333,7 +8333,7 @@
   difference_percent:                  -18.67
   difference_m:                        7347.67044715534
   difference_percent_m:                14.3797634323181
-  change_percentage_point:             null
+  change_percentage_point:             0.3973
   change_percentage_point_m:           0.143672403880994
   change_significant:                  false
   change_percent_significant:          false
@@ -8379,7 +8379,7 @@
   difference_percent:                  35.32
   difference_m:                        3300.43618329457
   difference_percent_m:                16.6728597221812
-  change_percentage_point:             null
+  change_percentage_point:             0.4162
   change_percentage_point_m:           0.166701605065918
   change_significant:                  false
   change_percent_significant:          false
@@ -8426,7 +8426,7 @@
   difference_percent:                  0
   difference_m:                        227
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8473,7 +8473,7 @@
   difference_percent:                  -11.18
   difference_m:                        5075.37397636864
   difference_percent_m:                6.75914458916908
-  change_percentage_point:             null
+  change_percentage_point:             0.0792
   change_percentage_point_m:           0.0674729839100759
   change_significant:                  false
   change_percent_significant:          false
@@ -8520,7 +8520,7 @@
   difference_percent:                  -0.3
   difference_m:                        648
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8567,7 +8567,7 @@
   difference_percent:                  -2.2
   difference_m:                        1681
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8614,7 +8614,7 @@
   difference_percent:                  -4.41
   difference_m:                        3445.48820923828
   difference_percent_m:                3.39150436814386
-  change_percentage_point:             null
+  change_percentage_point:             0.0329
   change_percentage_point_m:           0.0337820986309893
   change_significant:                  false
   change_percent_significant:          false
@@ -8661,7 +8661,7 @@
   difference_percent:                  0
   difference_m:                        155
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8708,7 +8708,7 @@
   difference_percent:                  -0.2
   difference_m:                        850
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8755,7 +8755,7 @@
   difference_percent:                  0
   difference_m:                        202
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8849,7 +8849,7 @@
   difference_percent:                  -0.6
   difference_m:                        1027
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8896,7 +8896,7 @@
   difference_percent:                  -0.8
   difference_m:                        1191
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8942,7 +8942,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -8989,7 +8989,7 @@
   difference_percent:                  -4.13
   difference_m:                        3225.02620144395
   difference_percent_m:                0.839195214558471
-  change_percentage_point:             null
+  change_percentage_point:             0.0037
   change_percentage_point_m:           0.00783740140695779
   change_significant:                  false
   change_percent_significant:          false
@@ -9036,7 +9036,7 @@
   difference_percent:                  32.42
   difference_m:                        4048.01729245318
   difference_percent_m:                16.6728597221812
-  change_percentage_point:             null
+  change_percentage_point:             0.4162
   change_percentage_point_m:           0.166701605065918
   change_significant:                  false
   change_percent_significant:          false
@@ -9082,7 +9082,7 @@
   difference_percent:                  -11.98
   difference_m:                        7099.46857166084
   difference_percent_m:                15.9839226912425
-  change_percentage_point:             null
+  change_percentage_point:             0.1822
   change_percentage_point_m:           0.159726574056923
   change_significant:                  false
   change_percent_significant:          false
@@ -9128,7 +9128,7 @@
   difference_percent:                  -0.4
   difference_m:                        886
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -9175,7 +9175,7 @@
   difference_percent:                  -0.6
   difference_m:                        869
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -9222,7 +9222,7 @@
   difference_percent:                  -0.9
   difference_m:                        997
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -9269,7 +9269,7 @@
   difference_percent:                  -1.2
   difference_m:                        1545
   difference_percent_m:                0.1
-  change_percentage_point:             null
+  change_percentage_point:             0.0000
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -12443,7 +12443,7 @@
   difference_percent:                  0
   difference_m:                        1.6143197239245062
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  false
   change_percent_significant:          false
@@ -13236,7 +13236,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13280,7 +13280,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13324,7 +13324,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13368,7 +13368,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13412,7 +13412,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13456,7 +13456,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13500,7 +13500,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13544,7 +13544,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13588,7 +13588,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13632,7 +13632,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13676,7 +13676,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13720,7 +13720,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13764,7 +13764,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13808,7 +13808,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13852,7 +13852,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13896,7 +13896,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13940,7 +13940,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -13984,7 +13984,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -14028,7 +14028,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -14072,7 +14072,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -14116,7 +14116,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -14160,7 +14160,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -14204,7 +14204,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true
@@ -14248,7 +14248,7 @@
   difference_percent:                  0
   difference_m:                        0
   difference_percent_m:                0
-  change_percentage_point:             null
+  change_percentage_point:             0
   change_percentage_point_m:           0
   change_significant:                  true
   change_percent_significant:          true

@@ -4,7 +4,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "NODE_ENV=development nodemon ./bin/www",
-    "saveoutput": "if [ \"$NODE_ENV\" = \"development\" ]; then curl -f http://localhost:4000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.json; fi",
+    "saveoutput": "if [ \"$NODE_ENV\" = \"development\" ]; then curl -f http://localhost:4000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.yaml; fi",
     "lint": "eslint -c .eslintrc lib",
     "test": "NODE_ENV=test nodemon --ext js --watch . --exec 'mocha ./test' --delay 1 || true"
   },

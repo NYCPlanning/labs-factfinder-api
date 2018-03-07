@@ -137,7 +137,8 @@ router.get('/:id/:profile', (req, res) => {
 
       client
         .query(SQL)
-        .then(data => appendRowConfig(data.rows, profile, match))
+        .then(data => data.rows)
+        .then(rows => appendRowConfig(rows, profile, match))
         .then(data => appendIsReliable(data))
         .then((data) => {
           res.send(data);
