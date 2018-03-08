@@ -10475,7 +10475,7 @@
   change_sum:                          -55
   change_m:                            72.034713853808
   change_percent:                      -1.0000
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -8025
@@ -10616,7 +10616,7 @@
   change_sum:                          -55
   change_m:                            70.178344238091
   change_percent:                      -1.0000
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -41245
@@ -13229,7 +13229,7 @@
   change_sum:                          -121
   change_m:                            0
   change_percent:                      -0.0858
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -554093
@@ -13273,7 +13273,7 @@
   change_sum:                          -243
   change_m:                            0
   change_percent:                      -0.2047
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -465549
@@ -13317,7 +13317,7 @@
   change_sum:                          191
   change_m:                            0
   change_percent:                      0.3287
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -283570
@@ -13361,7 +13361,7 @@
   change_sum:                          123
   change_m:                            0
   change_percent:                      0.2915
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -195041
@@ -13405,7 +13405,7 @@
   change_sum:                          269
   change_m:                            0
   change_percent:                      3.1647
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -117712
@@ -13449,7 +13449,7 @@
   change_sum:                          -5
   change_m:                            0
   change_percent:                      -0.0174
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -115162
@@ -13493,7 +13493,7 @@
   change_sum:                          171
   change_m:                            0
   change_percent:                      0.2482
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -386371
@@ -13537,7 +13537,7 @@
   change_sum:                          131
   change_m:                            0
   change_percent:                      0.0787
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -780244
@@ -13581,7 +13581,7 @@
   change_sum:                          485
   change_m:                            0
   change_percent:                      0.3304
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -713759
@@ -13625,7 +13625,7 @@
   change_sum:                          242
   change_m:                            0
   change_percent:                      0.2025
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -607154
@@ -13669,7 +13669,7 @@
   change_sum:                          -111
   change_m:                            0
   change_percent:                      -0.0811
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -564957
@@ -13713,7 +13713,7 @@
   change_sum:                          -441
   change_m:                            0
   change_percent:                      -0.2559
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -555388
@@ -13757,7 +13757,7 @@
   change_sum:                          336
   change_m:                            0
   change_percent:                      0.3164
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -553622
@@ -13801,7 +13801,7 @@
   change_sum:                          127
   change_m:                            0
   change_percent:                      0.1130
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -509761
@@ -13845,7 +13845,7 @@
   change_sum:                          -234
   change_m:                            0
   change_percent:                      -0.2147
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -486787
@@ -13889,7 +13889,7 @@
   change_sum:                          49
   change_m:                            0
   change_percent:                      0.1129
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -194878
@@ -13933,7 +13933,7 @@
   change_sum:                          -9
   change_m:                            0
   change_percent:                      -0.0153
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -261245
@@ -13977,7 +13977,7 @@
   change_sum:                          13
   change_m:                            0
   change_percent:                      0.0461
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -159951
@@ -14021,7 +14021,7 @@
   change_sum:                          170
   change_m:                            0
   change_percent:                      0.5313
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -194664
@@ -14065,7 +14065,7 @@
   change_sum:                          4
   change_m:                            0
   change_percent:                      0.0085
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -256941
@@ -14109,7 +14109,7 @@
   change_sum:                          -87
   change_m:                            0
   change_percent:                      -0.1651
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -188871
@@ -14153,7 +14153,7 @@
   change_sum:                          -17
   change_m:                            0
   change_percent:                      -0.0601
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -140166
@@ -14197,7 +14197,7 @@
   change_sum:                          18
   change_m:                            0
   change_percent:                      0.0453
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -156358
@@ -14241,7 +14241,7 @@
   change_sum:                          1061
   change_m:                            0
   change_percent:                      0.0569
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 true
   difference_sum:                      -8442244
@@ -14285,7 +14285,7 @@
   change_sum:                          -31
   change_m:                            50
   change_percent:                      -1.0000
-  change_percent_m:                    null
+  change_percent_m:                    0
   significant:                         true
   percent_significant:                 false
   difference_sum:                      -3002
