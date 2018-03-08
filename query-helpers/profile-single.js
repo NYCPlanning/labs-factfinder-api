@@ -116,7 +116,13 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
         -- percent_significant --
         CASE
-          WHEN ABS(SQRT(POWER(coalesce(percent_m, 0) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+          WHEN ABS(
+            SQRT(
+              POWER(coalesce(percent_m, 0) / 1.645, 2) 
+                + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)
+            ) * 1.645 ) > ABS(coalesce(comparison_percent, 0) - coalesce(percent, 0))
+          THEN 
+            false
           ELSE true
         END AS percent_significant,
 

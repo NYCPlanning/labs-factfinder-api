@@ -102,13 +102,46 @@ describe('normal variables with complex case logic', function() {
   });
 
   // pop30t34
+  // https://github.com/NYCPlanning/labs-nyc-factfinder/issues/541
   it('pop30t34 change pct pt significance should be coded a true', function(done) {
     request('http://localhost:8080/profile/735/demographic?compare=SI07' , function(error, response, body) {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'pop30t34' && obj.dataset === 'y2012_2016';
       });
-      console.log(rowObject);
       expect(rowObject.change_percentage_point_significant).to.equal(true);
+      done();
+    });
+  });
+
+  // https://github.com/NYCPlanning/labs-factfinder-api/issues/29
+  // Change percent MOE should only be null if previous estimate is 0
+  // cw_crpld
+  it('cw_crpld Change percent MOE should only be null if previous estimate is 0', function(done) {
+    request('http://localhost:8080/profile/851/economic' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'cw_crpld' && obj.dataset === 'y2012_2016';
+      });
+      console.log(rowObject);
+
+      // change_percent_m should be present bc change_percent is
+      expect((rowObject.change_percent !== null)).to.equal(true);
+      expect((rowObject.change_percent_m !== null)).to.equal(true);
+      done();
+    });
+  });
+
+  // https://github.com/NYCPlanning/labs-nyc-factfinder/issues/545
+  // single geog: percentage point difference not all always graying
+  // sthrnafr
+  it('sthrnafr single geog: percentage point difference not all always graying', function(done) {
+    request('http://localhost:8080/profile/735/social?compare=SI07' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'sthrnafr' && obj.dataset === 'y2012_2016';
+      });
+      console.log(rowObject);
+
+      // change_percent_m should be present bc change_percent is
+      expect(rowObject.percent_significant).to.equal(false);
       done();
     });
   });
