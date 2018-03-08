@@ -148,7 +148,13 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- percent_significant --
       CASE
-        WHEN ABS(SQRT(POWER(coalesce(percent_m, 0) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - percent) THEN false
+        WHEN ABS(
+          SQRT(
+            POWER(coalesce(percent_m, 0) / 1.645, 2) 
+              + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)
+          ) * 1.645 ) > ABS(coalesce(comparison_percent, 0) - coalesce(percent, 0))
+        THEN 
+          false
         ELSE true
       END AS percent_significant,
 
@@ -278,12 +284,17 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
         -- change_percent_m --
         CASE
-          WHEN is_most_recent THEN
-            ABS(sum / NULLIF(previous_sum,0))
-            * SQRT(
-              (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2),0))
-             + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2),0))
-            ) * 1.645
+          WHEN is_most_recent AND previous_sum != 0 THEN
+            coalesce(
+              ABS(sum / NULLIF(previous_sum,0))
+              * SQRT(
+                (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2),0))
+               + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2),0))
+              ) * 1.645,
+              0
+            )
+          ELSE 
+            null
         END AS change_percent_m
 
       FROM main_numbers

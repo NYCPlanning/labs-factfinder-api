@@ -225,12 +225,15 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
           -- change_percent_m --
           CASE
-            WHEN is_most_recent THEN
-              ABS(sum / NULLIF(previous_sum,0))
-              * SQRT(
-                (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
-                + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
-              ) * 1.645
+            WHEN is_most_recent AND previous_sum != 0 THEN
+              coalesce(
+                ABS(sum / NULLIF(previous_sum,0))
+                * SQRT(
+                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
+                  + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
+                ) * 1.645,
+                0
+              )
           END as change_percent_m
         FROM
           main_numbers
