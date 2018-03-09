@@ -127,7 +127,7 @@ const buildSQL = function buildSQL(ids, compare) {
       (sum - comparison_sum) AS difference_sum,
 
       -- difference_percent --
-      (percent - comparison_percent) AS difference_percent,
+      ((percent - comparison_percent) * 100) AS difference_percent,
 
       -- change_sum --
       (sum - previous_sum) AS change_sum,
