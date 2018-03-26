@@ -94,9 +94,9 @@ const appendIsReliable = data => (data.map((row) => {
   if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
 
   // calculate significance
-  appendedRow.significant = (difference_m < Math.abs(difference_sum));
-  appendedRow.change_significant = (change_m < Math.abs(change_sum));
-  appendedRow.change_percent_significant = (change_percent_m < Math.abs(change_percent));
+  appendedRow.significant = ((((difference_m)/1.645)/Math.abs(difference_sum))*100) < 20;
+  appendedRow.change_significant = ((((change_m)/1.645)/Math.abs(change_sum))*100) < 20;
+  appendedRow.change_percent_significant = ((((change_percent_m)/1.645)/Math.abs(change_percent))*100) < 20;
   
   return appendedRow;
 }));
