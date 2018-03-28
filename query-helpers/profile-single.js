@@ -100,31 +100,28 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       *,
       -- change_percentage_point_significant --
       CASE
-        WHEN (change_percentage_point_m < ABS(change_percentage_point)) THEN
+        WHEN ((((change_percentage_point) / 1.645) / nullif(ABS(change_percentage_point_m), 0)) * 100) < 20 THEN
           TRUE
         ELSE
           FALSE
-      END AS change_percentage_point_significant
+      END AS change_percentage_point_significant,
+
+      -- significant --
+      CASE
+        WHEN ((((difference_m) / 1.645) / nullif(ABS(difference_sum), 0)) * 100) < 20 THEN true
+        ELSE false
+      END AS significant,
+
+      -- percent_significant --
+      CASE
+        WHEN ((((difference_percent_m) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20 THEN 
+          true
+        ELSE false
+      END AS percent_significant
+
     FROM (
       SELECT
         *,
-        -- significant --
-        CASE
-          WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - sum) THEN false
-          ELSE true
-        END AS significant,
-
-        -- percent_significant --
-        CASE
-          WHEN ABS(
-            SQRT(
-              POWER(coalesce(percent_m, 0) / 1.645, 2) 
-                + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)
-            ) * 1.645 ) > ABS(coalesce(comparison_percent, 0) - coalesce(percent, 0))
-          THEN 
-            false
-          ELSE true
-        END AS percent_significant,
 
         -- difference_sum --
         (sum - comparison_sum) AS difference_sum,
@@ -159,7 +156,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
         -- change_significant --
         CASE
-          WHEN (change_m < ABS(change_sum)) THEN
+          WHEN ((((change_m) / 1.645) / nullif(ABS(change_sum), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
@@ -167,7 +164,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
         -- change_percent_significant --
         CASE
-          WHEN (change_percent_m < ABS(change_percent)) THEN
+          WHEN ((((change_percent_m) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
@@ -184,12 +181,6 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
           -- variable --
           regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-
-          -- significant --
-          CASE WHEN ABS(SQRT(POWER(coalesce(m, 0) / 1.645, 2) + POWER(coalesce(comparison_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_sum - e) THEN false ELSE true END AS significant,
-
-          -- percent_significant --
-          CASE WHEN ABS(SQRT(POWER((ROUND(z::numeric, 4) / 100) / 1.645, 2) + POWER(coalesce(comparison_percent_m, 0) / 1.645, 2)) * 1.645) > ABS(comparison_percent - p) THEN false ELSE true END AS percent_significant,
 
           -- is_reliable --
           CASE
