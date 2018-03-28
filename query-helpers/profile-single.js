@@ -104,22 +104,24 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           TRUE
         ELSE
           FALSE
-      END AS change_percentage_point_significant
+      END AS change_percentage_point_significant,
+
+      -- significant --
+      CASE
+        WHEN ((((difference_m) / 1.645) / ABS(difference_sum)) * 100) < 20 THEN true
+        ELSE false
+      END AS significant,
+
+      -- percent_significant --
+      CASE
+        WHEN ((((difference_percent_m) / 1.645) / ABS(difference_percent)) * 100) < 20 THEN 
+          true
+        ELSE false
+      END AS percent_significant
+
     FROM (
       SELECT
         *,
-        -- significant --
-        CASE
-          WHEN ((((difference_m) / 1.645) / ABS(difference_sum)) * 100) < 20 THEN true
-          ELSE false
-        END AS significant,
-
-        -- percent_significant --
-        CASE
-          WHEN ((((difference_percent_m) / 1.645) / ABS(difference_percent)) * 100) < 20 THEN 
-            true
-          ELSE false
-        END AS percent_significant,
 
         -- difference_sum --
         (sum - comparison_sum) AS difference_sum,
@@ -179,12 +181,6 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
           -- variable --
           regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-
-          -- significant --
-          CASE WHEN ((((difference_m) / 1.645) / ABS(difference_sum)) * 100) < 20 THEN true ELSE false END AS significant,
-
-          -- percent_significant --
-          CASE WHEN ((((difference_percent_m) / 1.645) / ABS(difference_percent)) * 100) < 20 THEN true ELSE false END AS percent_significant,
 
           -- is_reliable --
           CASE
