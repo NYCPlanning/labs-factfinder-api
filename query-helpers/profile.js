@@ -165,7 +165,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- change_percentage_point_significant --
       CASE
-        WHEN ((((change_percentage_point) / 1.645) / nullif(ABS(change_percentage_point_m), 0)) * 100) < 20 THEN
+        WHEN ((((change_percentage_point_m) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
           TRUE
         ELSE
           FALSE
