@@ -108,7 +108,7 @@ describe('normal variables with complex case logic', function() {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'pop30t34' && obj.dataset === 'y2012_2016';
       });
-      expect(rowObject.change_percentage_point_significant).to.equal(true);
+      expect(rowObject.change_percentage_point_significant).to.equal(false);
       done();
     });
   });
