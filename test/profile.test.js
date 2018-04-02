@@ -121,7 +121,6 @@ describe('normal variables with complex case logic', function() {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'cw_crpld' && obj.dataset === 'y2012_2016';
       });
-      console.log(rowObject);
 
       // change_percent_m should be present bc change_percent is
       expect((rowObject.change_percent !== null)).to.equal(true);
@@ -138,10 +137,26 @@ describe('normal variables with complex case logic', function() {
       const rowObject = JSON.parse(body).find(obj => {
         return obj.variable === 'sthrnafr' && obj.dataset === 'y2012_2016';
       });
-      console.log(rowObject);
 
       // change_percent_m should be present bc change_percent is
       expect(rowObject.percent_significant).to.equal(false);
+      done();
+    });
+  });
+
+  it('single geog top-coded variables do not get Difference and change calcs', function(done) {
+    request('http://localhost:8080/profile/599/housing?compare=MN12' , function(error, response, body) {
+      const rowObject = JSON.parse(body).find(obj => {
+        return obj.variable === 'mdvl' && obj.dataset === 'y2012_2016';
+      });
+
+      // change_percent_m should be present bc change_percent is
+      expect(rowObject.difference_sum).to.equal(null);
+      expect(rowObject.difference_m).to.equal(null);
+      expect(rowObject.change_sum).to.equal(null);
+      expect(rowObject.change_percent).to.equal(null);
+      expect(rowObject.change_percentage_point).to.equal(null);
+      expect(rowObject.difference_percent).to.equal(null);
       done();
     });
   });
