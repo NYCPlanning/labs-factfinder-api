@@ -81,8 +81,15 @@ const appendIsReliable = data => (data.map((row) => {
   appendedRow.comparison_is_reliable = false;
 
   const {
-    cv, comparison_cv, codingThresholds, change_m, change_sum, change_percent_m, change_percent,
-    difference_sum, difference_m,
+    cv,
+    comparison_cv,
+    codingThresholds,
+    change_m,
+    change_sum,
+    change_percent_m,
+    change_percent,
+    difference_sum,
+    difference_m,
   } = appendedRow;
 
   // set reliability to true if cv is less than 20
@@ -94,10 +101,24 @@ const appendIsReliable = data => (data.map((row) => {
   if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
 
   // calculate significance
-  appendedRow.significant = ((((difference_m)/1.645)/Math.abs(difference_sum))*100) < 20;
-  appendedRow.change_significant = ((((change_m)/1.645)/Math.abs(change_sum))*100) < 20;
-  appendedRow.change_percent_significant = ((((change_percent_m)/1.645)/Math.abs(change_percent))*100) < 20;
-  
+  appendedRow.significant = (
+    (
+      (difference_m / 1.645) / Math.abs(difference_sum)
+    ) * 100
+  ) < 20;
+
+  appendedRow.change_significant = (
+    (
+      (change_m / 1.645) / Math.abs(change_sum)
+    ) * 100
+  ) < 20;
+
+  appendedRow.change_percent_significant = (
+    (
+      (change_percent_m / 1.645) / Math.abs(change_percent)
+    ) * 100
+  ) < 20;
+
   return appendedRow;
 }));
 
@@ -109,7 +130,6 @@ const invalidCompare = (compare) => {
   if (cityOrBoro || nta || puma) return false;
   return true;
 };
-
 
 router.get('/:id/:profile', (req, res) => {
   const { id: _id, profile } = req.params;
