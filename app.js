@@ -7,7 +7,9 @@ const compression = require('compression');
 
 const app = express();
 app.use(compression());
-const connection = mongoose.connect(process.env.MONGO_URI);
+const connection = mongoose.connect(process.env.MONGO_URI, {
+  useMongoClient: true,
+});
 
 autoIncrement.initialize(connection);
 
