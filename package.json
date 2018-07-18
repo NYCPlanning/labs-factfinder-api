@@ -4,7 +4,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "NODE_ENV=development nodemon ./bin/www",
-    "saveoutput": "if [ \"$NODE_ENV\" = \"development\" ]; then curl -f http://localhost:4000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.yaml; fi",
+    "saveoutput": "if [ \"$NODE_ENV\" = \"development\" ]; then curl -f http://localhost:3000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.yaml; fi",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "test": "NODE_ENV=test nodemon --ext js --watch . --exec 'mocha ./test' --delay 1 || true"
   },
@@ -45,7 +45,6 @@
     "chai-http": "3.0.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-loader": "^1.6.1",
     "eslint-plugin-import": "^2.12.0",
     "expect": "22.4.0",
     "mocha": "^5.0.2",
