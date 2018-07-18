@@ -6,7 +6,8 @@ const autoIncrement = require('mongoose-auto-increment');
 const compression = require('compression');
 
 const app = express();
-app.use(compression());
+
+// initialize mongodb connection
 const connection = mongoose.connect(process.env.MONGO_URI, {
   useMongoClient: true,
 });
@@ -20,10 +21,8 @@ const pgp = require('pg-promise')({
   },
 });
 
-// initialize database connection
+// initialize postgresql connection
 app.db = pgp(process.env.DATABASE_CONNECTION_STRING);
-
-const routes = require('./routes');
 
 // allows CORS
 app.all('*', (req, res, next) => {
@@ -33,18 +32,20 @@ app.all('*', (req, res, next) => {
   next();
 });
 
+// middleware
 app.use(bodyParser.json());
-app.use('/', routes);
+app.use(compression());
 
-// catch 404 and forward to error handler
-app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).send({
-      error: 'invalid token',
-    });
-  }
+// routes
+app.use('/search', require('./routes/search'));
+app.use('/selection', require('./routes/selection'));
+app.use('/profile', require('./routes/profile'));
 
-  next(err);
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'not found',
+  });
 });
 
 module.exports = app;
