@@ -1,18 +1,9 @@
 // simple express app to serve up custom APIs
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const autoIncrement = require('mongoose-auto-increment');
 const compression = require('compression');
 
 const app = express();
-
-// initialize mongodb connection
-const connection = mongoose.connect(process.env.MONGO_URI, {
-  useMongoClient: true,
-});
-
-autoIncrement.initialize(connection);
 
 // require pg-promise
 const pgp = require('pg-promise')({
