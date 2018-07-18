@@ -11,11 +11,19 @@ You will need the following things properly installed on your computer.
 ## Local development
 
 - Clone this repo `https://github.com/NYCPlanning/labs-factfinder-api.git`
-- Install Dependencies `npm install`
-- Create `.env` file based on `.env-example` with your mongo uri
+- Install Dependencies `yarn install`
+- Create `.env` file based on `.env-example` with your mongo uri and postgresql connection string
 - Start the server `npm run devstart`
 
 ## Architecture
+
+The api has three endpoints.  
+
+`/search` returns search results for addresses, neighborhoods, etc.  Uses geosearch, and carto tables to return autocomplete suggestions.
+
+`/selection` sets and gets collections of census geometries.  Uses mongodb to store an array of geoids that the user selected.
+
+`/profile` returns census/acs data for a given profile type and geographic selection.  Queries postgresql using pg-promise.
 
 ### Caching
 The dokku plugin `nginx-cache` via [https://github.com/koalalorenzo/dokku-nginx-cache](https://github.com/koalalorenzo/dokku-nginx-cache) is enabled for this app, but nginx won't cache if expressjs is not returning a cache-control header.
@@ -44,6 +52,13 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
       - `id` - the `id` of the selection
       - `type` - geoid type of the selection, one of 'blocks', 'tracts', 'ntas', 'pumas'
       - `features` - a geojson FeatureCollection containing a Feature for each selected geometry
+
+  - `/profile`
+    - `GET /profile/:selectionid/:profileid`
+      - Returns the specified data profile for the specified geographic area.
+      - `selectionid` is a selection id returned by the selection api
+      - `profileid` is one of 'decennial', 'demographic', 'social', 'economic', 'housing'
+
 
 ## Backend services
 
