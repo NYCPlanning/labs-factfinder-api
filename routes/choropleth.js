@@ -1,30 +1,11 @@
 const express = require('express');
-const { Client } = require('pg');
-const PgError = require('pg-error');
 const ntas = require('../data/ntas.json');
 
 const router = express.Router();
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const { connection } = client;
-connection.parseE = PgError.parse;
-connection.parseN = PgError.parse;
-
-function emitPgError(err) {
-  switch (err.severity) {
-    case 'ERROR':
-    case 'FATAL':
-    case 'PANIC': return this.emit('error', err);
-    default: return this.emit('notice', err);
-  }
-}
-
-connection.on('PgError', emitPgError);
-
 router.get('/', (req, res) => {
+  const { app } = req;
+
   const SQL = `
     SELECT
       popu181.geoid as ntacode,
@@ -89,16 +70,12 @@ router.get('/', (req, res) => {
       ) population_density on popu181.geoid = population_density.geoid
   `;
 
-  // match.geoids is an array of geoids to query with
-  client.connect();
-
-  client
-    .query(SQL)
-    .then(({ rows }) => {
+  app.query(SQL)
+    .then((data) => {
       // join ntas geojson with properties from postgresql
       ntas.features.forEach((feature) => {
         const { geoid } = feature.properties;
-        const row = rows.find(d => d.ntacode === geoid);
+        const row = data.find(d => d.ntacode === geoid);
         Object.assign(feature.properties, row);
       });
 

@@ -13,6 +13,16 @@ const connection = mongoose.connect(process.env.MONGO_URI, {
 
 autoIncrement.initialize(connection);
 
+// require pg-promise
+const pgp = require('pg-promise')({
+  query(e) {
+     (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
+  },
+});
+
+// initialize database connection
+app.db = pgp(process.env.DATABASE_CONNECTION_STRING);
+
 const routes = require('./routes');
 
 // allows CORS

@@ -1,7 +1,5 @@
 const express = require('express');
 const _ = require('lodash');
-const { Client } = require('pg');
-const PgError = require('pg-error');
 
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
@@ -13,24 +11,6 @@ const nestProfile = require('../utils/nest-profile');
 
 const router = express.Router();
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const { connection } = client;
-connection.parseE = PgError.parse;
-connection.parseN = PgError.parse;
-
-function emitPgError(err) {
-  switch (err.severity) {
-    case 'ERROR':
-    case 'FATAL':
-    case 'PANIC': return this.emit('error', err);
-    default: return this.emit('notice', err);
-  }
-}
-
-connection.on('PgError', emitPgError);
 
 router.use((req, res, next) => {
   res.setHeader('Cache-Control', 'public, max-age=0');
@@ -112,6 +92,8 @@ const invalidCompare = (compare) => {
 
 
 router.get('/:id/:profile', (req, res) => {
+  const { app } = req;
+
   const { id: _id, profile } = req.params;
   const { compare = '0' } = req.query;
 
@@ -134,13 +116,8 @@ router.get('/:id/:profile', (req, res) => {
         SQL = buildProfileSQL(profile, match.geoids, compare);
       }
 
-      // match.geoids is an array of geoids to query with
-      client.connect();
-
-      client
-        .query(SQL)
-        .then(data => data.rows)
-        .then(rows => appendRowConfig(rows, profile, match))
+      app.db.query(SQL)
+        .then(data => appendRowConfig(data, profile, match))
         .then(data => appendIsReliable(data))
         .then((data) => {
           res.send(data);
