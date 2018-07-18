@@ -35,12 +35,12 @@ const Carto = {
     return rp(fetchOptions)
       .then((response) => {
         const obj = JSON.parse(response);
-        if (obj.error) console.log('SQL error ', obj.error);
+        if (obj.error) console.log('SQL error ', obj.error); // eslint-disable-line
         return obj.rows ? obj.rows : obj;
         // throw new Error('Not found');
       })
       .catch((reason) => {
-        console.log(reason);
+        console.log(reason); // eslint-disable-line
       });
   },
 };

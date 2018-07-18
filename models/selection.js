@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const autoIncrement = require('mongoose-auto-increment');
+const { autoIncrement } = require('mongoose-plugin-autoinc');
+
+const connection = mongoose.createConnection(process.env.MONGO_URI);
 
 const SelectionSchema = new mongoose.Schema({
   type: {
@@ -22,8 +24,8 @@ const SelectionSchema = new mongoose.Schema({
   },
 });
 
-SelectionSchema.plugin(autoIncrement.plugin, 'Selection');
+SelectionSchema.plugin(autoIncrement, 'Selection');
 
-const Selection = mongoose.model('Selection', SelectionSchema);
+const Selection = connection.model('Selection', SelectionSchema);
 
 module.exports = Selection;

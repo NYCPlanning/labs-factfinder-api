@@ -1,17 +1,19 @@
 // simple express app to serve up custom APIs
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const autoIncrement = require('mongoose-auto-increment');
 const compression = require('compression');
 
 const app = express();
-app.use(compression());
-const connection = mongoose.connect(process.env.MONGO_URI);
 
-autoIncrement.initialize(connection);
+// require pg-promise
+const pgp = require('pg-promise')({
+  query(e) {
+     (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
+  },
+});
 
-const routes = require('./routes');
+// initialize postgresql connection
+app.db = pgp(process.env.DATABASE_CONNECTION_STRING);
 
 // allows CORS
 app.all('*', (req, res, next) => {
@@ -21,18 +23,20 @@ app.all('*', (req, res, next) => {
   next();
 });
 
+// middleware
 app.use(bodyParser.json());
-app.use('/', routes);
+app.use(compression());
 
-// catch 404 and forward to error handler
-app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).send({
-      error: 'invalid token',
-    });
-  }
+// routes
+app.use('/search', require('./routes/search'));
+app.use('/selection', require('./routes/selection'));
+app.use('/profile', require('./routes/profile'));
 
-  next(err);
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'not found',
+  });
 });
 
 module.exports = app;

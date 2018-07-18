@@ -47,41 +47,34 @@ function calculateMedianError(data, column, options) {
     });
   }
 
-  if (scenario.some(obj => obj.quantity === null)) return;
+  if (scenario.some(obj => obj.quantity === null)) return null;
 
   const sum = scenario.reduce(
     (total, { quantity }) => total + quantity,
     0,
   );
 
-  const standardError =
-    designFactor * ((
-      (93 / (7 * sum)) * 2500
-    ) ** 0.5);
+  const standardError = designFactor * ((
+    (93 / (7 * sum)) * 2500
+  ) ** 0.5);
 
   const pUpper = 50 + standardError;
   const pLower = 50 - standardError;
 
-  const upperCategoryIndex =
-    foundBins
-      .findIndex((__, currentBin) =>
-        round(pUpper) > findCumulativePercentage(scenario, sum, currentBin) &&
-        round(pUpper) < findCumulativePercentage(scenario, sum, currentBin + 1));
+  const upperCategoryIndex = foundBins
+    .findIndex((__, currentBin) => round(pUpper) > findCumulativePercentage(scenario, sum, currentBin)
+        && round(pUpper) < findCumulativePercentage(scenario, sum, currentBin + 1));
 
-  const lowerCategoryIndex =
-    foundBins
-      .findIndex((__, currentBin) =>
-        round(pLower) > findCumulativePercentage(scenario, sum, currentBin) &&
-        round(pLower) < findCumulativePercentage(scenario, sum, currentBin + 1));
+  const lowerCategoryIndex = foundBins
+    .findIndex((__, currentBin) => round(pLower) > findCumulativePercentage(scenario, sum, currentBin)
+        && round(pLower) < findCumulativePercentage(scenario, sum, currentBin + 1));
 
   const upperCategory = foundBins[upperCategoryIndex];
   const lowerCategory = foundBins[lowerCategoryIndex];
 
-  const upperA2SubsequentBin =
-    (foundBins[upperCategoryIndex + 1] || foundBins[upperCategoryIndex])[1][0];
+  const upperA2SubsequentBin = (foundBins[upperCategoryIndex + 1] || foundBins[upperCategoryIndex])[1][0];
 
-  const lowerA2SubsequentBin =
-    (foundBins[lowerCategoryIndex + 1] || foundBins[lowerCategoryIndex])[1][0];
+  const lowerA2SubsequentBin = (foundBins[lowerCategoryIndex + 1] || foundBins[lowerCategoryIndex])[1][0];
 
   const inputs = {
     upper: {
@@ -98,19 +91,17 @@ function calculateMedianError(data, column, options) {
     },
   };
 
-  const upperBound =
+  const upperBound = (
     (
-      (
-        (pUpper - inputs.upper.C1) / (inputs.upper.C2 - inputs.upper.C1)
-      ) * (inputs.upper.A2 - inputs.upper.A1)
-    ) + inputs.upper.A1;
+      (pUpper - inputs.upper.C1) / (inputs.upper.C2 - inputs.upper.C1)
+    ) * (inputs.upper.A2 - inputs.upper.A1)
+  ) + inputs.upper.A1;
 
-  const lowerBound =
+  const lowerBound = (
     (
-      (
-        (pLower - inputs.lower.C1) / (inputs.lower.C2 - inputs.lower.C1)
-      ) * (inputs.lower.A2 - inputs.lower.A1)
-    ) + inputs.lower.A1;
+      (pLower - inputs.lower.C1) / (inputs.lower.C2 - inputs.lower.C1)
+    ) * (inputs.lower.A2 - inputs.lower.A1)
+  ) + inputs.lower.A1;
 
   const standardErrorOfMedian = 0.5 * (upperBound - lowerBound);
   const marginOfError = standardErrorOfMedian * 1.645;

@@ -1,4 +1,5 @@
 /node_modules
+/test-output
 npm-debug.log
 .env
 .python-version
