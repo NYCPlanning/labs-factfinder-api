@@ -5,7 +5,7 @@
     "start": "node ./bin/www",
     "devstart": "NODE_ENV=development nodemon ./bin/www",
     "saveoutput": "if [ \"$NODE_ENV\" = \"development\" ]; then curl -f http://localhost:4000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.yaml; fi",
-    "lint": "eslint -c .eslintrc lib",
+    "lint": "./node_modules/.bin/eslint **/*.js",
     "test": "NODE_ENV=test nodemon --ext js --watch . --exec 'mocha ./test' --delay 1 || true"
   },
   "pre-commit": [
@@ -14,46 +14,44 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "apicache": "^1.1.0",
-    "body-parser": "^1.15.2",
-    "compression": "1.7.1",
+    "apicache": "^1.2.3",
+    "body-parser": "^1.18.3",
+    "compression": "1.7.3",
     "cwait": "1.1.1",
     "d3": "^4.13.0",
     "d3-collection": "^1.0.4",
     "debug": "^3.1.0",
-    "dotenv": "^4.0.0",
-    "ember-metal": "^0.9.2",
-    "ember-source": "^2.18.0",
-    "express": "^4.16.1",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
     "hot-formula-parser": "^2.3.1",
-    "lodash": "^4.17.5",
-    "mongoose": "^4.13.4",
+    "lodash": "^4.17.10",
+    "mongoose": "^4.1.12",
     "mongoose-auto-increment": "^5.0.1",
     "numeral": "^2.0.6",
-    "pg": "^7.4.1",
+    "pg": "^7.4.3",
     "pg-error": "^1.0.0",
-    "request": "^2.83.0",
+    "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "sha1": "^1.1.1",
     "slug": "^0.9.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.9.1"
   },
   "engines": {
-    "node": "8.6.0",
+    "node": "^6.14.0 || ^8.10.0 || >=9.10.0",
     "npm": "5.3.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.1",
+    "babel-eslint": "^8.2.6",
     "chai": "4.1.2",
     "chai-http": "3.0.0",
-    "eslint": "^4.8.0",
-    "eslint-config-airbnb-base": "^12.0.2",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
     "eslint-loader": "^1.6.1",
-    "eslint-plugin-import": "^2.6.1",
+    "eslint-plugin-import": "^2.12.0",
     "expect": "22.4.0",
-    "mocha": "5.0.2",
+    "mocha": "^5.0.2",
     "prettyjson": "1.2.1",
     "should": "13.2.1",
-    "supertest": "3.0.0"
+    "supertest": "3.1.0"
   }
 }
