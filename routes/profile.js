@@ -61,8 +61,15 @@ const appendIsReliable = data => (data.map((row) => {
   appendedRow.comparison_is_reliable = false;
 
   const {
-    cv, comparison_cv, codingThresholds, change_m, change_sum, change_percent_m, change_percent,
-    difference_sum, difference_m,
+    cv,
+    comparison_cv,
+    codingThresholds,
+    change_m,
+    change_sum,
+    change_percent_m,
+    change_percent,
+    difference_sum,
+    difference_m,
   } = appendedRow;
 
   // set reliability to true if cv is less than 20
@@ -89,7 +96,6 @@ const invalidCompare = (compare) => {
   if (cityOrBoro || nta || puma) return false;
   return true;
 };
-
 
 router.get('/:id/:profile', (req, res) => {
   const { app } = req;

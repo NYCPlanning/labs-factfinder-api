@@ -82,21 +82,21 @@ const topBottomCodings = {
     },
     mdvl: {
       all: {
-        upper: 1000000,
+        upper: 2000000,
         lower: 0,
       },
       nta: {
-        upper: 1000000,
+        upper: 2000000,
         lower: 0,
       },
     },
     mdgr: {
       all: {
-        upper: 2000,
+        upper: 3500,
         lower: 0,
       },
       nta: {
-        upper: 2000,
+        upper: 3500,
         lower: 0,
       },
     },
@@ -194,11 +194,11 @@ const topBottomCodings = {
     },
     mdgr: {
       all: {
-        upper: 3500,
+        upper: 2000,
         lower: 0,
       },
       nta: {
-        upper: 3500,
+        upper: 2000,
         lower: 0,
       },
     },
