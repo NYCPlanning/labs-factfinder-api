@@ -47,8 +47,7 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
 
   const naturalMedian = medianOfRanges(scenario);
 
-  const { mutatedEstimate: trimmedEstimate, codingThreshold } =
-    topBottomCodeEstimate(naturalMedian, row);
+  const { mutatedEstimate: trimmedEstimate, codingThreshold } = topBottomCodeEstimate(naturalMedian, row);
 
   if (codingThreshold) {
     set(row, `codingThresholds.${sumKey}`, codingThreshold);

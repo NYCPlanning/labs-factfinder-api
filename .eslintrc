@@ -1,5 +1,8 @@
 {
-  parser: "babel-eslint",
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 2017,
+  },
   "extends": "airbnb-base",
   "rules": {
     "max-len": [0, 120, 2, {ignoreComments: true}],
