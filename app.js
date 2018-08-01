@@ -13,7 +13,7 @@ const pgp = require('pg-promise')({
 });
 
 // initialize postgresql connection
-app.db = pgp(process.env.DATABASE_CONNECTION_STRING);
+app.db = pgp(process.env.DATABASE_URL);
 
 // allows CORS
 app.all('*', (req, res, next) => {
