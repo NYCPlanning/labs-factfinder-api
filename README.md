@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop)
+
 # factfinder-api
 An express.js api that provides search and selection data for [NYC Population Factfinder](https://github.com/NYCPlanning/labs-nyc-factfinder).  
 
