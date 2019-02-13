@@ -769,21 +769,21 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '((((GET("percapinc.cv"))/(100))*(1.645))*(GET("percapinc.sum")))',
+          formula: '(1/GET("pop_6.sum")) * SQRT((GET("agip15pl.m")^2) + (GET("agip15pl.sum") / (GET("pop_6.sum")^2) * (GET("pop_6.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("percapinc.comparison_cv"))/(100))*(1.645))*(GET("percapinc.comparison_sum")))',
+          formula: '(1/GET("pop_6.comparison_sum")) * SQRT((GET("agip15pl.comparison_m")^2) + (GET("agip15pl.comparison_sum") / (GET("pop_6.comparison_sum")^2) * (GET("pop_6.comparison_m")^2)))',
         },
       },
       {
         column: 'previous_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("percapinc.previous_cv"))/(100))*(1.645))*(GET("percapinc.previous_sum")))',
+          formula: '(1/GET("pop_6.previous_sum")) * SQRT((GET("agip15pl.previous_m")^2) + (GET("agip15pl.previous_sum") / (GET("pop_6.previous_sum")^2) * (GET("pop_6.previous_m")^2)))',
         },
       },
       {
