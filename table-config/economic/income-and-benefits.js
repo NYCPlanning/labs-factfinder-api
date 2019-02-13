@@ -745,27 +745,6 @@ module.exports = [
         },
       },
       {
-        column: 'cv',
-        aggregator: formula,
-        options: {
-          formula: '(1122)*((GET("uwpopsmpl.sum"))^-0.778)',
-        },
-      },
-      {
-        column: 'comparison_cv',
-        aggregator: formula,
-        options: {
-          formula: '(1122)*((GET("uwpopsmpl.comparison_sum"))^-0.778)',
-        },
-      },
-      {
-        column: 'previous_cv',
-        aggregator: formula,
-        options: {
-          formula: '(1122)*((GET("uwpopsmpl.previous_sum"))^-0.778)',
-        },
-      },
-      {
         column: 'm',
         aggregator: formula,
         options: {
@@ -784,6 +763,27 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '(1/GET("pop_6.previous_sum")) * SQRT((GET("agip15pl.previous_m")^2) + (GET("agip15pl.previous_sum") / (GET("pop_6.previous_sum")^2) * (GET("pop_6.previous_m")^2)))',
+        },
+      },
+      {
+        column: 'cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("m")/1.645/GET("sum")*100)',
+        },
+      },
+      {
+        column: 'comparison_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("comparison_m")/1.645/GET("comparison_sum")*100)',
+        },
+      },
+      {
+        column: 'previous_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("previous_m")/1.645/GET("previous_sum")*100)',
         },
       },
       {

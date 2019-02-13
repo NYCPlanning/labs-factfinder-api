@@ -65,7 +65,7 @@ module.exports = [
         column: 'previous_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("avghhsooc.previous_cv"))/(100))*1.645))*(GET("avghhsooc.previous_sum"))',
+          formula: '(1/GET("oochu4.previous_sum")) * SQRT((GET("popoochu.previous_m")^2) + (GET("popoochu.previous_sum") / (GET("oochu4.previous_sum")^2) * (GET("oochu4.previous_m")^2)))',
         },
       },
       {
