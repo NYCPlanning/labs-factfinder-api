@@ -41,38 +41,17 @@ module.exports = [
         },
       },
       {
-        column: 'cv',
-        aggregator: formula,
-        options: {
-          formula: '(564)*((GET("uwhusmpl3.sum"))^-0.762)',
-        },
-      },
-      {
-        column: 'comparison_cv',
-        aggregator: formula,
-        options: {
-          formula: '(564)*((GET("uwhusmpl3.comparison_sum"))^-0.762)',
-        },
-      },
-      {
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '((((GET("avghhsooc.cv"))/(100))*1.645))*(GET("avghhsooc.sum"))',
+          formula: '(1/GET("oochu4.sum")) * SQRT((GET("popoochu.m")^2) + (GET("popoochu.sum") / (GET("oochu4.sum")^2) * (GET("oochu4.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("avghhsooc.comparison_cv"))/(100))*1.645))*(GET("avghhsooc.comparison_sum"))',
-        },
-      },
-      {
-        column: 'previous_cv',
-        aggregator: formula,
-        options: {
-          formula: '(564)*((GET("uwhusmpl3.previous_sum"))^-0.762)',
+          formula: '(1/GET("oochu4.comparison_sum")) * SQRT((GET("popoochu.comparison_m")^2) + (GET("popoochu.comparison_sum") / (GET("oochu4.comparison_sum")^2) * (GET("oochu4.comparison_m")^2)))',
         },
       },
       {
@@ -87,6 +66,27 @@ module.exports = [
         aggregator: formula,
         options: {
           formula: '((((GET("avghhsooc.previous_cv"))/(100))*1.645))*(GET("avghhsooc.previous_sum"))',
+        },
+      },
+      {
+        column: 'cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("m")/1.645/GET("sum")*100)',
+        },
+      },
+      {
+        column: 'comparison_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("comparison_m")/1.645/GET("comparison_sum")*100)',
+        },
+      },
+      {
+        column: 'previous_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("previous_m")/1.645/GET("previous_sum")*100)',
         },
       },
       {
