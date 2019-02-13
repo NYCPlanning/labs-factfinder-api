@@ -10,14 +10,13 @@ function runFormulaFor(data, sumKey, rowConfig) {
 
   parser.setFunction('GET', ([path]) => get(data, path));
 
-  try {
-    const { result } = parser.parse(formula);
+  const { result, error } = parser.parse(formula);
 
-    return result;
-  } catch (e) {
-    console.log(e.toString());
-    throw new Error(e);
+  if (error) {
+    throw new Error(error);
   }
+
+  return result;
 }
 
 module.exports = runFormulaFor;
