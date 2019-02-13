@@ -104,45 +104,45 @@ module.exports = [
         },
       },
       {
-        column: 'cv',
-        aggregator: formula,
-        options: {
-          formula: '(62)*((GET("uwhusmpl1.sum"))^-0.503)',
-        },
-      },
-      {
-        column: 'comparison_cv',
-        aggregator: formula,
-        options: {
-          formula: '(62)*((GET("uwhusmpl1.comparison_sum"))^-0.503)',
-        },
-      },
-      {
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '((((GET("avghhsz.cv"))/(100))*(1.645))*(GET("avghhsz.sum")))',
+          formula: '(1/GET("hh4.sum")) * SQRT((GET("hhpop1.m")^2) + (GET("hhpop1.sum") / (GET("hh4.sum")^2) * (GET("hh4.m")^2)))',
         },
       },
       {
-        column: 'previous_cv',
+        column: 'cv',
         aggregator: formula,
         options: {
-          formula: '(62)*((GET("uwhusmpl1.previous_sum"))^-0.503)',
+          formula: '(GET("m")/1.645/GET("sum")*100)',
         },
       },
       {
         column: 'previous_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("avghhsz.previous_cv"))/(100))*(1.645))*(GET("avghhsz.previous_sum")))',
+          formula: '(1/GET("hh4.previous_sum")) * SQRT((GET("hhpop1.previous_m")^2) + (GET("hhpop1.previous_sum") / (GET("hh4.previous_sum")^2) * (GET("hh4.previous_m")^2)))',
+        },
+      },
+      {
+        column: 'previous_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("previous_m")/1.645/GET("previous_sum")*100)',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("avghhsz.comparison_cv"))/(100))*(1.645))*(GET("avghhsz.comparison_sum")))',
+          formula: '(1/GET("hh4.comparison_sum")) * SQRT((GET("hhpop1.comparison_m")^2) + (GET("hhpop1.comparison_sum") / (GET("hh4.comparison_sum")^2) * (GET("hh4.comparison_m")^2)))',
+        },
+      },
+      {
+        column: 'comparison_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("comparison_m")/1.645/GET("comparison_sum")*100)',
         },
       },
       {
