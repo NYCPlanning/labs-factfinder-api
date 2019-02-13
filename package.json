@@ -9,7 +9,6 @@
     "test": "NODE_ENV=test node ./node_modules/mocha/bin/mocha ./test/**/*.js --exit"
   },
   "pre-commit": [
-    "saveoutput",
     "test"
   ],
   "license": "ISC",
