@@ -12,7 +12,7 @@ function runFormulaFor(data, sumKey, rowConfig, variable) {
 
   const { result, error } = parser.parse(formula);
 
-  if (error) {
+  if (error && get(data[variable], 'dataset') === 'y2013_2017') {
     throw new Error(error);
   }
 
