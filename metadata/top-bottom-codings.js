@@ -118,8 +118,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 200000,
-        lower: 9999,
+        upper: 225000,
+        lower: 11000,
       },
     },
     mdfaminc: {
@@ -128,8 +128,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 200000,
-        lower: 9999,
+        upper: 225000,
+        lower: 11000,
       },
     },
     mdnfinc: {
@@ -138,8 +138,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 200000,
-        lower: 9999,
+        upper: 225000,
+        lower: 11000,
       },
     },
     mdewrk: {
@@ -148,8 +148,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 100000,
-        lower: 2499,
+        upper: 112500,
+        lower: 2800,
       },
     },
     mdemftwrk: {
@@ -158,8 +158,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 100000,
-        lower: 2499,
+        upper: 112500,
+        lower: 2800,
       },
     },
     mdefftwrk: {
@@ -168,8 +168,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 100000,
-        lower: 2499,
+        upper: 112500,
+        lower: 2800,
       },
     },
     mdrms: {
@@ -188,7 +188,7 @@ const topBottomCodings = {
         lower: 0,
       },
       nta: {
-        upper: 1000000,
+        upper: 1275000,
         lower: 0,
       },
     },
@@ -198,7 +198,7 @@ const topBottomCodings = {
         lower: 0,
       },
       nta: {
-        upper: 2000,
+        upper: 2250,
         lower: 0,
       },
     },
