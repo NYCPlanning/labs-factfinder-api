@@ -239,7 +239,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdemftwrk.m")/ 1.645) / GET("mdemftwrk.sum") * 100)',
+          formula: '((GET("m")/ 1.645) / GET("sum") * 100)',
         },
       },
       {

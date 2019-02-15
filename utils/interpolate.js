@@ -20,7 +20,7 @@ function interpolate(data, sumKey = 'sum', options, variable, row) {
     const [firstObject] = Object.keys(data) || [];
     const thisYear = get(data, `${firstObject}.dataset`).slice(-4);
 
-    if (thisYear === '2000' || thisYear === '2016') {
+    if (thisYear === '2000' || thisYear === '2017') {
       foundBins = laterSet;
     } else {
       foundBins = earlySet;
