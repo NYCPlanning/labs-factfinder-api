@@ -8,7 +8,14 @@ function runFormulaFor(data, sumKey, rowConfig, variable) {
   const { formula } = rowConfig;
   const parser = new Parser();
 
-  parser.setFunction('GET', ([path]) => get(data, path) || get(data[variable], path)); // fallback to current object
+  parser.setFunction('GET', ([path]) => {
+    const first = get(data, path);
+    const fallback = get(data[variable], path);
+
+    if (typeof first === 'number') return first;
+
+    return fallback;
+  }); // fallback to current object
 
   const { result, error } = parser.parse(formula);
 
