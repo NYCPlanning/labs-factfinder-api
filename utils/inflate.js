@@ -1,4 +1,4 @@
-const INFLATION_MULTIPLIER = 1.1005; // inflates 2010 dollars to 2016 dollars
+const INFLATION_MULTIPLIER = 1.1267; // inflates 2010 dollars to 2017 dollars
 
 function inflate(data, column, rowConfig, variable) {
   const rowData = data[variable];
