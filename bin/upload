@@ -1,0 +1,8 @@
+#!/bin/bash
+
+CONTAINER_NAME=factfinder-$(uuid)
+
+FF_SOURCE_DIR=data/seeds/factfinder/ && [[ "$1" == "-t" ]] && FF_SOURCE_DIR=tmp/
+
+ssh $USER@planninglabs.nyc mkdir /tmp/$CONTAINER_NAME
+scp -C -rp $FF_SOURCE_DIR/*.csv $USER@nycplanning:/tmp/$CONTAINER_NAME
