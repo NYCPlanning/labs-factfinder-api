@@ -106,7 +106,7 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -114,11 +114,11 @@ module.exports = [
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: inflate,
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.4,
@@ -127,18 +127,18 @@ module.exports = [
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: inflate,
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdvl.m")/ 1.645) / GET("mdvl.est") * 100)',
+          formula: '((GET("mdvl.m")/ 1.645) / GET("mdvl.estimate") * 100)',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -158,21 +158,21 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdvl.comparison_moe")/ 1.645) / GET("mdvl.comparison_est") * 100)',
+          formula: '((GET("mdvl.comparison_moe")/ 1.645) / GET("mdvl.comparison_estimate") * 100)',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
         options: {
           bins: binsMedianValueEarly,
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.previous_est") * 1.1005)',
+          formula: '(GET("mdvl.previous_estimate") * 1.1005)',
         },
       },
       {
@@ -191,10 +191,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.est") - GET("mdvl.comparison_est"))',
+          formula: '(GET("mdvl.estimate") - GET("mdvl.comparison_estimate"))',
         },
       },
       {
@@ -205,10 +205,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.est") - GET("mdvl.previous_est"))',
+          formula: '(GET("mdvl.estimate") - GET("mdvl.previous_estimate"))',
         },
       },
       {

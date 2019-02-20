@@ -30,13 +30,13 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           *,
 
           -- cv --
-          (((m / 1.645) / NULLIF(SUM,0)) * 100) AS cv,
+          (((m / 1.645) / NULLIF(estimate,0)) * 100) AS cv,
 
-          -- previous_est --
+          -- previous_estimate --
           CASE
             WHEN is_most_recent THEN
-              lag(est) over (order by variable, dataset)
-          END AS previous_est,
+              lag(estimate) over (order by variable, dataset)
+          END AS previous_estimate,
 
           -- previous_moe --
           CASE
@@ -45,11 +45,11 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           END AS previous_moe
         FROM (
           SELECT
-            -- est --
-            est(e) AS est,
+            -- estimate --
+            SUM(e) AS estimate,
 
-            -- m --
-            SQRT(SUM(POWER(m, 2))) AS m,
+            -- moe --
+            SQRT(SUM(POWER(m, 2))) AS moe,
 
             -- is_most_recent --
             CASE
@@ -71,8 +71,8 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       base_numbers AS (
         SELECT
-          -- base_est --
-          SUM(e) AS base_est,
+          -- base_estimate --
+          SUM(e) AS base_estimate,
 
           -- base_moe --
           SQRT(SUM(POWER(m, 2))) AS base_moe,
@@ -83,8 +83,8 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           -- base_dataset --
           MAX(dataset) AS base_dataset,
 
-          -- previous_base_est --
-          LAG(SUM(e)) over (order by variable, dataset) AS previous_base_est,
+          -- previous_base_estimate --
+          LAG(SUM(e)) over (order by variable, dataset) AS previous_base_estimate,
 
           -- previous_base_moe --
           LAG(SQRT(SUM(POWER(m, 2)))) over (order by variable, dataset) AS previous_base_moe
@@ -111,8 +111,8 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           *
         FROM (
           SELECT
-            -- comparison_est --
-            e AS comparison_est,
+            -- comparison_estimate --
+            e AS comparison_estimate,
 
             -- comparison_moe --
             m AS comparison_moe,
@@ -143,7 +143,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       -- difference_reliable --
       CASE
-        WHEN ((((difference_moe) / 1.645) / nullif(ABS(difference_est), 0)) * 100) < 20
+        WHEN ((((difference_moe) / 1.645) / nullif(ABS(difference_estimate), 0)) * 100) < 20
         THEN true
         ELSE false
       END AS difference_reliable,
@@ -175,8 +175,8 @@ const buildSQL = function buildSQL(profile, ids, compare) {
       SELECT
         *,
 
-        -- difference_est --
-        (est - comparison_est) AS difference_est,
+        -- difference_estimate --
+        (estimate - comparison_estimate) AS difference_estimate,
 
         -- difference_percent --
         CASE
@@ -208,7 +208,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
         -- change_reliable --
         CASE
-          WHEN ((((change_moe) / 1.645) / nullif(ABS(change_est), 0)) * 100) < 20 THEN
+          WHEN ((((change_moe) / 1.645) / nullif(ABS(change_estimate), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
@@ -233,43 +233,43 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           -- variable --
           regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
           is_most_recent,
-          est,
+          estimate,
           m,
           cv,
 
           -- percent --
-          ROUND((est / NULLIF(base_est,0))::numeric, 4) AS percent,
+          ROUND((estimate / NULLIF(base_estimate,0))::numeric, 4) AS percent,
 
           -- previous_percent --
-          ROUND((previous_est / NULLIF(previous_base_est,0))::numeric, 4) AS previous_percent,
-          previous_est,
+          ROUND((previous_estimate / NULLIF(previous_base_estimate,0))::numeric, 4) AS previous_percent,
+          previous_estimate,
           previous_moe,
 
           -- percent_moe --
           CASE
-            WHEN (POWER(m, 2) - POWER(est / NULLIF(base_est,0), 2) * POWER(base_m, 2)) < 0
-              THEN (1 / NULLIF(base_est,0)) * SQRT(POWER(m, 2) + POWER(est / NULLIF(base_est,0), 2) * POWER(base_m, 2))
-            ELSE (1 / NULLIF(base_est,0)) * SQRT(POWER(m, 2) - POWER(est / NULLIF(base_est,0), 2) * POWER(base_m, 2))
+            WHEN (POWER(m, 2) - POWER(estimate / NULLIF(base_estimate,0), 2) * POWER(base_moe, 2)) < 0
+              THEN (1 / NULLIF(base_estimate,0)) * SQRT(POWER(m, 2) + POWER(estimate / NULLIF(base_estimate,0), 2) * POWER(base_moe, 2))
+            ELSE (1 / NULLIF(base_estimate,0)) * SQRT(POWER(m, 2) - POWER(estimate / NULLIF(base_estimate,0), 2) * POWER(base_moe, 2))
           END AS percent_moe,
 
           -- previous_percent_moe --
           CASE
-            WHEN (POWER(previous_moe, 2) - POWER(previous_est / NULLIF(previous_base_est,0), 2) * POWER(previous_base_m, 2)) < 0
-              THEN (1 / NULLIF(previous_base_est,0)) * SQRT(POWER(previous_moe, 2) + POWER(previous_est / NULLIF(previous_base_est,0), 2) * POWER(previous_base_m, 2))
-            ELSE (1 / NULLIF(previous_base_est,0)) * SQRT(POWER(previous_moe, 2) - POWER(previous_est / NULLIF(previous_base_est,0), 2) * POWER(previous_base_m, 2))
+            WHEN (POWER(previous_moe, 2) - POWER(previous_estimate / NULLIF(previous_base_estimate,0), 2) * POWER(previous_base_moe, 2)) < 0
+              THEN (1 / NULLIF(previous_base_estimate,0)) * SQRT(POWER(previous_moe, 2) + POWER(previous_estimate / NULLIF(previous_base_estimate,0), 2) * POWER(previous_base_moe, 2))
+            ELSE (1 / NULLIF(previous_base_estimate,0)) * SQRT(POWER(previous_moe, 2) - POWER(previous_estimate / NULLIF(previous_base_estimate,0), 2) * POWER(previous_base_moe, 2))
           END AS previous_percent_moe,
 
           comparison_cv,
           comparison_moe,
-          comparison_est,
+          comparison_estimate,
           comparison_percent_moe,
           comparison_percent,
 
-          -- change_est --
+          -- change_estimate --
           CASE
             WHEN is_most_recent THEN
-              est - previous_est
-          END AS change_est,
+              estimate - previous_estimate
+          END AS change_estimate,
 
           -- change_moe --
           CASE
@@ -280,17 +280,17 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           -- change_percent --
           CASE
             WHEN is_most_recent THEN
-              ROUND(((est - previous_est) / NULLIF(previous_est,0))::numeric, 4)
+              ROUND(((estimate - previous_estimate) / NULLIF(previous_estimate,0))::numeric, 4)
           END AS change_percent,
 
           -- change_percent_moe --
           CASE
-            WHEN is_most_recent AND previous_est != 0 THEN
+            WHEN is_most_recent AND previous_estimate != 0 THEN
               coalesce(
-                ABS(est / NULLIF(previous_est,0))
+                ABS(estimate / NULLIF(previous_estimate,0))
                 * SQRT(
-                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(est, 2),0))
-                 + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_est, 2),0))
+                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(estimate, 2),0))
+                 + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_estimate, 2),0))
                 ) * 1.645,
                 0
               )

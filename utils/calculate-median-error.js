@@ -23,8 +23,8 @@ function calculateMedianError(data, column, options) {
   let foundBins = bins;
 
   const sumKey = (function computeSumKey() {
-    if (column.length === 1) return 'sum';
-    return column.replace('_m', '_sum');
+    if (column.length === 1) return 'estimate';
+    return column.replace('_m', '_estimate');
   }());
 
   let scenario = data;

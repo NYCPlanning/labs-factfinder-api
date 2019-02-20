@@ -51,38 +51,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '((GET("vhufslo.est"))/((GET("vhufslo.est"))+(GET("oochu1.est"))))*100',
+          formula: '((GET("vhufslo.estimate"))/((GET("vhufslo.estimate"))+(GET("oochu1.estimate"))))*100',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '((GET("vhufslo.comparison_est"))/((GET("vhufslo.comparison_est"))+(GET("oochu1.comparison_est"))))*100',
+          formula: '((GET("vhufslo.comparison_estimate"))/((GET("vhufslo.comparison_estimate"))+(GET("oochu1.comparison_estimate"))))*100',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '((GET("vhufslo.previous_est"))/((GET("vhufslo.previous_est"))+(GET("oochu1.previous_est"))))*100',
+          formula: '((GET("vhufslo.previous_estimate"))/((GET("vhufslo.previous_estimate"))+(GET("oochu1.previous_estimate"))))*100',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("hmownrvcrt.est") - GET("hmownrvcrt.comparison_est"))',
+          formula: '(GET("hmownrvcrt.estimate") - GET("hmownrvcrt.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("hmownrvcrt.est") - GET("hmownrvcrt.previous_est"))',
+          formula: '(GET("hmownrvcrt.estimate") - GET("hmownrvcrt.previous_estimate"))',
         },
       },
     ],
@@ -96,38 +96,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '((GET("vhufrnt.est"))/((GET("vhufrnt.est"))+(GET("rochu_3.est"))))*100',
+          formula: '((GET("vhufrnt.estimate"))/((GET("vhufrnt.estimate"))+(GET("rochu_3.estimate"))))*100',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '((GET("vhufrnt.comparison_est"))/((GET("vhufrnt.comparison_est"))+(GET("rochu_3.comparison_est"))))*100',
+          formula: '((GET("vhufrnt.comparison_estimate"))/((GET("vhufrnt.comparison_estimate"))+(GET("rochu_3.comparison_estimate"))))*100',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '((GET("vhufrnt.previous_est"))/((GET("vhufrnt.previous_est"))+(GET("rochu_3.previous_est"))))*100',
+          formula: '((GET("vhufrnt.previous_estimate"))/((GET("vhufrnt.previous_estimate"))+(GET("rochu_3.previous_estimate"))))*100',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("rntvcrt.est") - GET("rntvcrt.comparison_est"))',
+          formula: '(GET("rntvcrt.estimate") - GET("rntvcrt.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("rntvcrt.est") - GET("rntvcrt.previous_est"))',
+          formula: '(GET("rntvcrt.estimate") - GET("rntvcrt.previous_estimate"))',
         },
       },
     ],

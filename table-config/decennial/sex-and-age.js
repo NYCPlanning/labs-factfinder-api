@@ -124,7 +124,7 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
         options: {
           bins: [
@@ -150,7 +150,7 @@ module.exports = [
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           bins: [
@@ -176,7 +176,7 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           bins: [
@@ -202,17 +202,17 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.est") - GET("mdage.previous_est"))',
+          formula: '(GET("mdage.estimate") - GET("mdage.previous_estimate"))',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.est") - GET("mdage.comparison_est"))',
+          formula: '(GET("mdage.estimate") - GET("mdage.comparison_estimate"))',
         },
       },
     ],

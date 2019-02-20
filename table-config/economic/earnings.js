@@ -81,18 +81,18 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdewrk,
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: inflate,
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -100,18 +100,18 @@ module.exports = [
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: inflate,
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdewrk.m")/ 1.645) / GET("mdewrk.est") * 100)',
+          formula: '((GET("mdewrk.m")/ 1.645) / GET("mdewrk.estimate") * 100)',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdewrk,
@@ -129,21 +129,21 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdewrk.comparison_moe")/ 1.645) / GET("mdewrk.comparison_est") * 100)',
+          formula: '((GET("mdewrk.comparison_moe")/ 1.645) / GET("mdewrk.comparison_estimate") * 100)',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdewrk,
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.previous_est") * 1.1005)',
+          formula: '(GET("mdewrk.previous_estimate") * 1.1005)',
         },
       },
       {
@@ -162,10 +162,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.est") - GET("mdewrk.comparison_est"))',
+          formula: '(GET("mdewrk.estimate") - GET("mdewrk.comparison_estimate"))',
         },
       },
       {
@@ -176,10 +176,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.est") - GET("mdewrk.previous_est"))',
+          formula: '(GET("mdewrk.estimate") - GET("mdewrk.previous_estimate"))',
         },
       },
       {
@@ -193,14 +193,14 @@ module.exports = [
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdewrk.previous_est"))=0,"",((GET("mdewrk.est")-GET("mdewrk.previous_est"))/GET("mdewrk.previous_est")))',
+          formula: 'IF((GET("mdewrk.previous_estimate"))=0,"",((GET("mdewrk.estimate")-GET("mdewrk.previous_estimate"))/GET("mdewrk.previous_estimate")))',
         },
       },
       {
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdewrk.m")^2)+((GET("mdewrk.est")/GET("mdewrk.previous_est"))^2*GET("mdewrk.previous_moe")^2)))/GET("mdewrk.previous_est"))',
+          formula: '((SQRT((GET("mdewrk.m")^2)+((GET("mdewrk.estimate")/GET("mdewrk.previous_estimate"))^2*GET("mdewrk.previous_moe")^2)))/GET("mdewrk.previous_estimate"))',
         },
       },
     ],
@@ -213,18 +213,18 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdemftwrk,
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: inflate,
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -232,18 +232,18 @@ module.exports = [
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: inflate,
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdemftwrk.m")/ 1.645) / GET("mdemftwrk.est") * 100)',
+          formula: '((GET("mdemftwrk.m")/ 1.645) / GET("mdemftwrk.estimate") * 100)',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdemftwrk,
@@ -261,21 +261,21 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdemftwrk.comparison_moe")/ 1.645) / GET("mdemftwrk.comparison_est") * 100)',
+          formula: '((GET("mdemftwrk.comparison_moe")/ 1.645) / GET("mdemftwrk.comparison_estimate") * 100)',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdemftwrk,
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.previous_est") * 1.1005)',
+          formula: '(GET("mdemftwrk.previous_estimate") * 1.1005)',
         },
       },
       {
@@ -294,10 +294,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.est") - GET("mdemftwrk.comparison_est"))',
+          formula: '(GET("mdemftwrk.estimate") - GET("mdemftwrk.comparison_estimate"))',
         },
       },
       {
@@ -308,10 +308,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.est") - GET("mdemftwrk.previous_est"))',
+          formula: '(GET("mdemftwrk.estimate") - GET("mdemftwrk.previous_estimate"))',
         },
       },
       {
@@ -325,14 +325,14 @@ module.exports = [
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdemftwrk.previous_est"))=0,"",((GET("mdemftwrk.est")-GET("mdemftwrk.previous_est"))/GET("mdemftwrk.previous_est")))',
+          formula: 'IF((GET("mdemftwrk.previous_estimate"))=0,"",((GET("mdemftwrk.estimate")-GET("mdemftwrk.previous_estimate"))/GET("mdemftwrk.previous_estimate")))',
         },
       },
       {
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdemftwrk.m")^2)+((GET("mdemftwrk.est")/GET("mdemftwrk.previous_est"))^2*GET("mdemftwrk.previous_moe")^2)))/GET("mdemftwrk.previous_est"))',
+          formula: '((SQRT((GET("mdemftwrk.m")^2)+((GET("mdemftwrk.estimate")/GET("mdemftwrk.previous_estimate"))^2*GET("mdemftwrk.previous_moe")^2)))/GET("mdemftwrk.previous_estimate"))',
         },
       },
     ],
@@ -345,18 +345,18 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdefftwrk,
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: inflate,
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -364,18 +364,18 @@ module.exports = [
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: inflate,
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdefftwrk.m")/ 1.645) / GET("mdefftwrk.est") * 100)',
+          formula: '((GET("mdefftwrk.m")/ 1.645) / GET("mdefftwrk.estimate") * 100)',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdefftwrk,
@@ -393,21 +393,21 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdefftwrk.comparison_moe")/ 1.645) / GET("mdefftwrk.comparison_est") * 100)',
+          formula: '((GET("mdefftwrk.comparison_moe")/ 1.645) / GET("mdefftwrk.comparison_estimate") * 100)',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdefftwrk,
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.previous_est") * 1.1005)',
+          formula: '(GET("mdefftwrk.previous_estimate") * 1.1005)',
         },
       },
       {
@@ -426,10 +426,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.est") - GET("mdefftwrk.comparison_est"))',
+          formula: '(GET("mdefftwrk.estimate") - GET("mdefftwrk.comparison_estimate"))',
         },
       },
       {
@@ -440,10 +440,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.est") - GET("mdefftwrk.previous_est"))',
+          formula: '(GET("mdefftwrk.estimate") - GET("mdefftwrk.previous_estimate"))',
         },
       },
       {
@@ -457,14 +457,14 @@ module.exports = [
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdefftwrk.previous_est"))=0,"",((GET("mdefftwrk.est")-GET("mdefftwrk.previous_est"))/GET("mdefftwrk.previous_est")))',
+          formula: 'IF((GET("mdefftwrk.previous_estimate"))=0,"",((GET("mdefftwrk.estimate")-GET("mdefftwrk.previous_estimate"))/GET("mdefftwrk.previous_estimate")))',
         },
       },
       {
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdefftwrk.m")^2)+((GET("mdefftwrk.est")/GET("mdefftwrk.previous_est"))^2*GET("mdefftwrk.previous_moe")^2)))/GET("mdefftwrk.previous_est"))',
+          formula: '((SQRT((GET("mdefftwrk.m")^2)+((GET("mdefftwrk.estimate")/GET("mdefftwrk.previous_estimate"))^2*GET("mdefftwrk.previous_moe")^2)))/GET("mdefftwrk.previous_estimate"))',
         },
       },
     ],

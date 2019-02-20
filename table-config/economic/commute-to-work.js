@@ -41,73 +41,73 @@ module.exports = [
     special: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: calculator,
         options: {
-          procedure: ['agttm.est', 'divide', ['wrkr16pl.est', 'subtract', 'cw_wrkdhm.est']],
+          procedure: ['agttm.estimate', 'divide', ['wrkr16pl.estimate', 'subtract', 'cw_wrkdhm.estimate']],
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: calculator,
         options: {
-          procedure: ['agttm.comparison_est', 'divide', ['wrkr16pl.comparison_est', 'subtract', 'cw_wrkdhm.comparison_est']],
+          procedure: ['agttm.comparison_estimate', 'divide', ['wrkr16pl.comparison_estimate', 'subtract', 'cw_wrkdhm.comparison_estimate']],
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: calculator,
         options: {
-          procedure: ['agttm.previous_est', 'divide', ['wrkr16pl.previous_est', 'subtract', 'cw_wrkdhm.previous_est']],
+          procedure: ['agttm.previous_estimate', 'divide', ['wrkr16pl.previous_estimate', 'subtract', 'cw_wrkdhm.previous_estimate']],
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("wrkrnothm.est")) * SQRT((GET("agttm.m")^2) + (GET("agttm.est") / (GET("wrkrnothm.est")^2) * (GET("wrkrnothm.m")^2)))',
+          formula: '(1/GET("wrkrnothm.estimate")) * SQRT((GET("agttm.m")^2) + (GET("agttm.estimate") / (GET("wrkrnothm.estimate")^2) * (GET("wrkrnothm.m")^2)))',
         },
       },
       {
         column: 'comparison_moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("wrkrnothm.comparison_est")) * SQRT((GET("agttm.comparison_moe")^2) + (GET("agttm.comparison_est") / (GET("wrkrnothm.comparison_est")^2) * (GET("wrkrnothm.comparison_moe")^2)))',
+          formula: '(1/GET("wrkrnothm.comparison_estimate")) * SQRT((GET("agttm.comparison_moe")^2) + (GET("agttm.comparison_estimate") / (GET("wrkrnothm.comparison_estimate")^2) * (GET("wrkrnothm.comparison_moe")^2)))',
         },
       },
       {
         column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("wrkrnothm.previous_est")) * SQRT((GET("agttm.previous_moe")^2) + (GET("agttm.previous_est") / (GET("wrkrnothm.previous_est")^2) * (GET("wrkrnothm.previous_moe")^2)))',
+          formula: '(1/GET("wrkrnothm.previous_estimate")) * SQRT((GET("agttm.previous_moe")^2) + (GET("agttm.previous_estimate") / (GET("wrkrnothm.previous_estimate")^2) * (GET("wrkrnothm.previous_moe")^2)))',
         },
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '(GET("m")/1.645/GET("est")*100)',
+          formula: '(GET("moe")/1.645/GET("estimate")*100)',
         },
       },
       {
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '(GET("comparison_moe")/1.645/GET("comparison_est")*100)',
+          formula: '(GET("comparison_moe")/1.645/GET("comparison_estimate")*100)',
         },
       },
       {
         column: 'previous_cv',
         aggregator: formula,
         options: {
-          formula: '(GET("previous_moe")/1.645/GET("previous_est")*100)',
+          formula: '(GET("previous_moe")/1.645/GET("previous_estimate")*100)',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mntrvtm.est") - GET("mntrvtm.comparison_est"))',
+          formula: '(GET("mntrvtm.estimate") - GET("mntrvtm.comparison_estimate"))',
         },
       },
       {
@@ -118,10 +118,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mntrvtm.est") - GET("mntrvtm.previous_est"))',
+          formula: '(GET("mntrvtm.estimate") - GET("mntrvtm.previous_estimate"))',
         },
       },
       {
@@ -135,14 +135,14 @@ module.exports = [
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mntrvtm.previous_est"))=0,"",((GET("mntrvtm.est")-GET("mntrvtm.previous_est"))/GET("mntrvtm.previous_est")))',
+          formula: 'IF((GET("mntrvtm.previous_estimate"))=0,"",((GET("mntrvtm.estimate")-GET("mntrvtm.previous_estimate"))/GET("mntrvtm.previous_estimate")))',
         },
       },
       {
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mntrvtm.m")^2)+((GET("mntrvtm.est")/GET("mntrvtm.previous_est"))^2*GET("mntrvtm.previous_moe")^2)))/GET("mntrvtm.previous_est"))',
+          formula: '((SQRT((GET("mntrvtm.m")^2)+((GET("mntrvtm.estimate")/GET("mntrvtm.previous_estimate"))^2*GET("mntrvtm.previous_moe")^2)))/GET("mntrvtm.previous_estimate"))',
         },
       },
     ],

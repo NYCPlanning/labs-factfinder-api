@@ -14,38 +14,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("pop1.est"))/(GET("landacres.est"))',
+          formula: '(GET("pop1.estimate"))/(GET("landacres.estimate"))',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("pop1.previous_est"))/(GET("landacres.previous_est"))',
+          formula: '(GET("pop1.previous_estimate"))/(GET("landacres.previous_estimate"))',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("pop1.comparison_est"))/(GET("landacres.comparison_est"))',
+          formula: '(GET("pop1.comparison_estimate"))/(GET("landacres.comparison_estimate"))',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popperacre.est") - GET("popperacre.comparison_est"))',
+          formula: '(GET("popperacre.estimate") - GET("popperacre.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popperacre.est") - GET("popperacre.previous_est"))',
+          formula: '(GET("popperacre.estimate") - GET("popperacre.previous_estimate"))',
         },
       },
     ],

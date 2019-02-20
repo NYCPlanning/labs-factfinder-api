@@ -20,11 +20,11 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         SELECT
           *,
 
-          -- previous_est --
+          -- previous_estimate --
           CASE
             WHEN is_most_recent THEN
-              lag(est) over (order by variable, dataset)
-          END as previous_est,
+              lag(estimate) over (order by variable, dataset)
+          END as previous_estimate,
 
           -- previous_percent --
           CASE
@@ -45,8 +45,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           END as previous_percent_moe
         FROM (
           SELECT *,
-            -- est --
-            e as est,
+            -- estimate --
+            e as estimate,
             -- cv --
             (((m / 1.645) / NULLIF(e,0)) * 100) AS cv,
             -- percent --
@@ -80,8 +80,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
       comparison_moeain_numbers AS (
         SELECT
-          -- comparison_est --
-          e as comparison_est,
+          -- comparison_estimate --
+          e as comparison_estimate,
           -- comparison_cv --
           (((m / 1.645) / NULLIF(e,0)) * 100) AS comparison_cv,
           -- comparison_variable --
@@ -108,7 +108,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
       -- difference_reliable --
       CASE
-        WHEN ((((difference_moe) / 1.645) / nullif(ABS(difference_est), 0)) * 100) < 20 THEN true
+        WHEN ((((difference_moe) / 1.645) / nullif(ABS(difference_estimate), 0)) * 100) < 20 THEN true
         ELSE false
       END AS difference_reliable,
 
@@ -123,8 +123,8 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       SELECT
         *,
 
-        -- difference_est --
-        (est - comparison_est) AS difference_est,
+        -- difference_estimate --
+        (estimate - comparison_estimate) AS difference_estimate,
 
         -- difference_percent --
         CASE
@@ -156,7 +156,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
 
         -- change_reliable --
         CASE
-          WHEN ((((change_moe) / 1.645) / nullif(ABS(change_est), 0)) * 100) < 20 THEN
+          WHEN ((((change_moe) / 1.645) / nullif(ABS(change_estimate), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
@@ -196,11 +196,11 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
             ELSE false
           END as comparison_is_reliable,
 
-          -- change_est --
+          -- change_estimate --
           CASE
             WHEN is_most_recent THEN
-              est - previous_est
-          END as change_est,
+              estimate - previous_estimate
+          END as change_estimate,
 
           -- change_moe --
           CASE
@@ -211,17 +211,17 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           -- change_percent --
           CASE
             WHEN is_most_recent THEN
-              ROUND(((est - previous_est) / NULLIF(previous_est,0))::numeric, 4)
+              ROUND(((estimate - previous_estimate) / NULLIF(previous_estimate,0))::numeric, 4)
           END as change_percent,
 
           -- change_percent_moe --
           CASE
-            WHEN is_most_recent AND previous_est != 0 THEN
+            WHEN is_most_recent AND previous_estimate != 0 THEN
               coalesce(
-                ABS(est / NULLIF(previous_est,0))
+                ABS(estimate / NULLIF(previous_estimate,0))
                 * SQRT(
-                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(est, 2), 0))
-                  + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_est, 2), 0))
+                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(estimate, 2), 0))
+                  + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_estimate, 2), 0))
                 ) * 1.645,
                 0
               )

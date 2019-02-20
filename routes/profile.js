@@ -65,10 +65,10 @@ const appendIsReliable = data => (data.map((row) => {
     comparison_cv,
     codingThresholds,
     change_moe,
-    change_est,
+    change_estimate,
     change_percent_moe,
     change_percent,
-    difference_est,
+    difference_estimate,
     difference_moe,
   } = appendedRow;
 
@@ -77,12 +77,12 @@ const appendIsReliable = data => (data.map((row) => {
   if (comparison_cv !== null && comparison_cv < 20) appendedRow.comparison_is_reliable = true;
 
   // set reliability to false if the value is top or bottom-coded
-  if (codingThresholds.est) appendedRow.is_reliable = false;
-  if (codingThresholds.comparison_est) appendedRow.comparison_is_reliable = false;
+  if (codingThresholds.estimate) appendedRow.is_reliable = false;
+  if (codingThresholds.comparison_estimate) appendedRow.comparison_is_reliable = false;
 
   // calculate significance
-  appendedRow.reliable = ((((difference_moe) / 1.645) / Math.abs(difference_est)) * 100) < 20;
-  appendedRow.change_reliable = ((((change_moe) / 1.645) / Math.abs(change_est)) * 100) < 20;
+  appendedRow.reliable = ((((difference_moe) / 1.645) / Math.abs(difference_estimate)) * 100) < 20;
+  appendedRow.change_reliable = ((((change_moe) / 1.645) / Math.abs(change_estimate)) * 100) < 20;
   appendedRow.change_percent_reliable = ((((change_percent_moe) / 1.645) / Math.abs(change_percent)) * 100) < 20;
 
   return appendedRow;

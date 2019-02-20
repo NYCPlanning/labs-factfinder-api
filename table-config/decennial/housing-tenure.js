@@ -26,38 +26,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popoochu.est"))/(GET("oochu.est"))',
+          formula: '(GET("popoochu.estimate"))/(GET("oochu.estimate"))',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popoochu.comparison_est"))/(GET("oochu.comparison_est"))',
+          formula: '(GET("popoochu.comparison_estimate"))/(GET("oochu.comparison_estimate"))',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popoochu.previous_est"))/(GET("oochu.previous_est"))',
+          formula: '(GET("popoochu.previous_estimate"))/(GET("oochu.previous_estimate"))',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszooc.est") - GET("avhhszooc.comparison_est"))',
+          formula: '(GET("avhhszooc.estimate") - GET("avhhszooc.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszooc.est") - GET("avhhszooc.previous_est"))',
+          formula: '(GET("avhhszooc.estimate") - GET("avhhszooc.previous_estimate"))',
         },
       },
     ],
@@ -71,38 +71,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("poprochu.est"))/(GET("rochu_1.est"))',
+          formula: '(GET("poprochu.estimate"))/(GET("rochu_1.estimate"))',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("poprochu.comparison_est"))/(GET("rochu_1.comparison_est"))',
+          formula: '(GET("poprochu.comparison_estimate"))/(GET("rochu_1.comparison_estimate"))',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("poprochu.previous_est"))/(GET("rochu_1.previous_est"))',
+          formula: '(GET("poprochu.previous_estimate"))/(GET("rochu_1.previous_estimate"))',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszroc.est") - GET("avhhszroc.comparison_est"))',
+          formula: '(GET("avhhszroc.estimate") - GET("avhhszroc.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszroc.est") - GET("avhhszroc.previous_est"))',
+          formula: '(GET("avhhszroc.estimate") - GET("avhhszroc.previous_estimate"))',
         },
       },
     ],

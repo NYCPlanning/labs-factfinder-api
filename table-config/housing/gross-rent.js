@@ -96,7 +96,7 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -104,11 +104,11 @@ module.exports = [
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: inflate,
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -117,18 +117,18 @@ module.exports = [
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: inflate,
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdgr.m")/ 1.645) / GET("mdgr.est") * 100)',
+          formula: '((GET("mdgr.m")/ 1.645) / GET("mdgr.estimate") * 100)',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -148,11 +148,11 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdgr.comparison_moe")/ 1.645) / GET("mdgr.comparison_est") * 100)',
+          formula: '((GET("mdgr.comparison_moe")/ 1.645) / GET("mdgr.comparison_estimate") * 100)',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
         options: {
           designFactor: 1.6,
@@ -160,10 +160,10 @@ module.exports = [
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdgr.previous_est") * 1.1005)',
+          formula: '(GET("mdgr.previous_estimate") * 1.1005)',
         },
       },
       {
@@ -182,10 +182,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdgr.est") - GET("mdgr.comparison_est"))',
+          formula: '(GET("mdgr.estimate") - GET("mdgr.comparison_estimate"))',
         },
       },
       {
@@ -196,10 +196,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdgr.est") - GET("mdgr.previous_est"))',
+          formula: '(GET("mdgr.estimate") - GET("mdgr.previous_estimate"))',
         },
       },
       {
@@ -213,14 +213,14 @@ module.exports = [
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdgr.previous_est"))=0,"",((GET("mdgr.est")-GET("mdgr.previous_est"))/GET("mdgr.previous_est")))',
+          formula: 'IF((GET("mdgr.previous_estimate"))=0,"",((GET("mdgr.estimate")-GET("mdgr.previous_estimate"))/GET("mdgr.previous_estimate")))',
         },
       },
       {
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdgr.m")^2)+((GET("mdgr.est")/GET("mdgr.previous_est"))^2*GET("mdgr.previous_moe")^2)))/GET("mdgr.previous_est"))',
+          formula: '((SQRT((GET("mdgr.m")^2)+((GET("mdgr.estimate")/GET("mdgr.previous_estimate"))^2*GET("mdgr.previous_moe")^2)))/GET("mdgr.previous_estimate"))',
         },
       },
     ],

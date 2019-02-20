@@ -24,16 +24,16 @@ const buildSQL = function buildSQL(ids, compare) {
       main_numbers AS (
         SELECT
           *,
-          -- previous_est --
+          -- previous_estimate --
           CASE
             WHEN is_most_recent THEN
-              lag(est) over (order by variable, year)
-          END as previous_est
+              lag(estimate) over (order by variable, year)
+          END as previous_estimate
         FROM (
           SELECT
 
-            -- est --
-            est(value) AS est,
+            -- estimate --
+            SUM(value) AS estimate,
 
             -- relation --
             max(relation) AS relation,
@@ -58,11 +58,11 @@ const buildSQL = function buildSQL(ids, compare) {
       base_numbers AS (
         SELECT
 
-          -- base_est --
-          est(value) AS base_est,
+          -- base_estimate --
+          SUM(value) AS base_estimate,
 
-          -- previous_base_est --
-          lag(est(value)) over (order by variable, year) AS previous_base_est,
+          -- previous_base_estimate --
+          LAG(SUM(value)) over (order by variable, year) AS previous_base_estimate,
 
           -- base_variable --
           variable AS base_variable,
@@ -90,8 +90,8 @@ const buildSQL = function buildSQL(ids, compare) {
       comparison_moeain_numbers AS (
         SELECT
 
-          -- comparison_est --
-          est(value) AS comparison_est,
+          -- comparison_estimate --
+          SUM(value) AS comparison_estimate,
 
           -- comparison_relation --
           max(relation) AS comparison_relation,
@@ -108,8 +108,8 @@ const buildSQL = function buildSQL(ids, compare) {
       comparison_base_numbers AS (
         SELECT
 
-          -- comparison_base_est --
-          est(value) AS comparison_base_est,
+          -- comparison_base_estimate --
+          SUM(value) AS comparison_base_estimate,
 
           -- comparison_base_variable --
           variable AS comparison_base_variable,
@@ -123,17 +123,17 @@ const buildSQL = function buildSQL(ids, compare) {
 
     SELECT *,
 
-      -- difference_est --
-      (est - comparison_est) AS difference_est,
+      -- difference_estimate --
+      (estimate - comparison_estimate) AS difference_estimate,
 
       -- difference_percent --
       ((percent - comparison_percent) * 100) AS difference_percent,
 
-      -- change_est --
-      (est - previous_est) AS change_est,
+      -- change_estimate --
+      (estimate - previous_estimate) AS change_estimate,
 
       -- change_percent --
-      ROUND(((est - previous_est) / NULLIF(previous_est,0))::numeric, 4) AS change_percent,
+      ROUND(((estimate - previous_estimate) / NULLIF(previous_estimate,0))::numeric, 4) AS change_percent,
 
       -- change_percentage_point --
       percent - previous_percent AS change_percentage_point
@@ -162,13 +162,13 @@ const buildSQL = function buildSQL(ids, compare) {
         'y' || year as dataset,
 
         -- percent --
-        ROUND((est / NULLIF(base_est,0))::numeric, 4) as percent,
+        ROUND((estimate / NULLIF(base_estimate,0))::numeric, 4) as percent,
 
         -- previous_percent --
-        ROUND((previous_est / NULLIF(previous_base_est,0))::numeric, 4) as previous_percent,
+        ROUND((previous_estimate / NULLIF(previous_base_estimate,0))::numeric, 4) as previous_percent,
 
         -- comparison_percent --
-        ROUND((comparison_est / NULLIF(comparison_base_est,0))::numeric, 4) as comparison_percent
+        ROUND((comparison_estimate / NULLIF(comparison_base_estimate,0))::numeric, 4) as comparison_percent
 
         FROM main_numbers
         INNER JOIN comparison_moeain_numbers

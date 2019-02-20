@@ -5,7 +5,7 @@ const medianOfRanges = require('../utils/median-of-ranges');
 const { isArray } = Array;
 const { get, set } = _;
 
-function interpolate(data, sumKey = 'sum', options, variable, row) {
+function interpolate(data, sumKey = 'estimate', options, variable, row) {
   const { bins, multipleBins, referenceSumKey = sumKey } = options;
   let scenario = data;
   let foundBins = bins;

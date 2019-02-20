@@ -65,21 +65,21 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdrms,
         },
       },
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.est") / 1000)',
+          formula: '(GET("mdrms.estimate") / 1000)',
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
@@ -87,7 +87,7 @@ module.exports = [
         },
       },
       {
-        column: 'm',
+        column: 'moe',
         aggregator: formula,
         options: {
           formula: '(GET("mdrms.m") / 1000)',
@@ -97,21 +97,21 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdrms.m")/ 1.645) / GET("mdrms.est") * 100)',
+          formula: '((GET("mdrms.m")/ 1.645) / GET("mdrms.estimate") * 100)',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: interpolate,
         options: {
           bins: binsForMdrms,
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.comparison_est") / 1000)',
+          formula: '(GET("mdrms.comparison_estimate") / 1000)',
         },
       },
       {
@@ -133,22 +133,22 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdrms.comparison_moe")/ 1.645) / GET("mdrms.comparison_est") * 100)',
+          formula: '((GET("mdrms.comparison_moe")/ 1.645) / GET("mdrms.comparison_estimate") * 100)',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: interpolate,
-        referenceSumKey: 'previous_est',
+        referenceSumKey: 'previous_estimate',
         options: {
           bins: binsForMdrms,
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.previous_est") / 1000)',
+          formula: '(GET("mdrms.previous_estimate") / 1000)',
         },
       },
       {
@@ -167,10 +167,10 @@ module.exports = [
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.est") - GET("mdrms.comparison_est"))',
+          formula: '(GET("mdrms.estimate") - GET("mdrms.comparison_estimate"))',
         },
       },
       {
@@ -181,10 +181,10 @@ module.exports = [
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.est") - GET("mdrms.previous_est"))',
+          formula: '(GET("mdrms.estimate") - GET("mdrms.previous_estimate"))',
         },
       },
       {

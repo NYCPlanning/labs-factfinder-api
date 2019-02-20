@@ -86,38 +86,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popinhh.est"))/(GET("hh1.est"))',
+          formula: '(GET("popinhh.estimate"))/(GET("hh1.estimate"))',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popinhh.comparison_est"))/(GET("hh1.comparison_est"))',
+          formula: '(GET("popinhh.comparison_estimate"))/(GET("hh1.comparison_estimate"))',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popinhh.previous_est"))/(GET("hh1.previous_est"))',
+          formula: '(GET("popinhh.previous_estimate"))/(GET("hh1.previous_estimate"))',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsz.est") - GET("avghhsz.comparison_est"))',
+          formula: '(GET("avghhsz.estimate") - GET("avghhsz.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsz.est") - GET("avghhsz.previous_est"))',
+          formula: '(GET("avghhsz.estimate") - GET("avghhsz.previous_estimate"))',
         },
       },
     ],
@@ -131,38 +131,38 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'est',
+        column: 'estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popinfam.est"))/(GET("fam1.est"))',
+          formula: '(GET("popinfam.estimate"))/(GET("fam1.estimate"))',
         },
       },
       {
-        column: 'previous_est',
+        column: 'previous_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popinfam.previous_est"))/(GET("fam1.previous_est"))',
+          formula: '(GET("popinfam.previous_estimate"))/(GET("fam1.previous_estimate"))',
         },
       },
       {
-        column: 'comparison_est',
+        column: 'comparison_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("popinfam.comparison_est"))/(GET("fam1.comparison_est"))',
+          formula: '(GET("popinfam.comparison_estimate"))/(GET("fam1.comparison_estimate"))',
         },
       },
       {
-        column: 'difference_est',
+        column: 'difference_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avgfamsz.est") - GET("avgfamsz.comparison_est"))',
+          formula: '(GET("avgfamsz.estimate") - GET("avgfamsz.comparison_estimate"))',
         },
       },
       {
-        column: 'change_est',
+        column: 'change_estimate',
         aggregator: formula,
         options: {
-          formula: '(GET("avgfamsz.est") - GET("avgfamsz.previous_est"))',
+          formula: '(GET("avgfamsz.estimate") - GET("avgfamsz.previous_estimate"))',
         },
       },
     ],

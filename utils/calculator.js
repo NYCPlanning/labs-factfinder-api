@@ -16,7 +16,7 @@ function isOperator(step) {
   return operations.some(op => op === step);
 }
 
-function calculator(data, sumColumn = 'sum', rowConfig) {
+function calculator(data, estColumn = 'estimate', rowConfig) {
   const { procedure } = rowConfig;
   const currentProcedure = clone(procedure);
 
@@ -27,7 +27,7 @@ function calculator(data, sumColumn = 'sum', rowConfig) {
     }
 
     if (isArray(step)) {
-      currentProcedure[i] = calculator(data, sumColumn, { procedure: step, data: rowConfig.variable });
+      currentProcedure[i] = calculator(data, estColumn, { procedure: step, data: rowConfig.variable });
       return;
     }
 
