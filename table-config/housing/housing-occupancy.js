@@ -34,17 +34,17 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: calculator,
         options: {
-          procedure: [['vacsale.comparison_sum', 'divide', 'hovacu.comparison_sum'], 'multiply', 100],
+          procedure: [['vacsale.comparison_est', 'divide', 'hovacu.comparison_est'], 'multiply', 100],
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: calculator,
         options: {
-          procedure: [['vacsale.previous_sum', 'divide', 'hovacu.previous_sum'], 'multiply', 100],
+          procedure: [['vacsale.previous_est', 'divide', 'hovacu.previous_est'], 'multiply', 100],
         },
       },
       {
@@ -55,17 +55,17 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacsale.comparison_m")^2)-(( GET("vacsale.comparison_sum") ^2/ GET("hovacu.comparison_sum") ^2)*( GET("hovacu.comparison_m") ^2)))<0,((1/ GET("hovacu.comparison_sum") *(SQRT((GET("vacsale.comparison_m") ^2)+(( GET("vacsale.comparison_sum") ^2/ GET("hovacu.comparison_sum") ^2)*( GET("hovacu.comparison_m") ^2)))))*100),((1/ GET("hovacu.comparison_sum") *(SQRT((GET("vacsale.comparison_m") ^2)-(( GET("vacsale.comparison_sum") ^2/ GET("hovacu.comparison_sum") ^2)*( GET("hovacu.comparison_m") ^2)))))*100))',
+          formula: 'IF(((GET("vacsale.comparison_moe")^2)-(( GET("vacsale.comparison_est") ^2/ GET("hovacu.comparison_est") ^2)*( GET("hovacu.comparison_moe") ^2)))<0,((1/ GET("hovacu.comparison_est") *(SQRT((GET("vacsale.comparison_moe") ^2)+(( GET("vacsale.comparison_est") ^2/ GET("hovacu.comparison_est") ^2)*( GET("hovacu.comparison_moe") ^2)))))*100),((1/ GET("hovacu.comparison_est") *(SQRT((GET("vacsale.comparison_moe") ^2)-(( GET("vacsale.comparison_est") ^2/ GET("hovacu.comparison_est") ^2)*( GET("hovacu.comparison_moe") ^2)))))*100))',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacsale.previous_m")^2)-(( GET("vacsale.previous_sum") ^2/ GET("hovacu.previous_sum") ^2)*( GET("hovacu.previous_m") ^2)))<0,((1/ GET("hovacu.previous_sum") *(SQRT((GET("vacsale.previous_m") ^2)+(( GET("vacsale.previous_sum") ^2/ GET("hovacu.previous_sum") ^2)*( GET("hovacu.previous_m") ^2)))))*100),((1/ GET("hovacu.previous_sum") *(SQRT((GET("vacsale.previous_m") ^2)-(( GET("vacsale.previous_sum") ^2/ GET("hovacu.previous_sum") ^2)*( GET("hovacu.previous_m") ^2)))))*100))',
+          formula: 'IF(((GET("vacsale.previous_moe")^2)-(( GET("vacsale.previous_est") ^2/ GET("hovacu.previous_est") ^2)*( GET("hovacu.previous_moe") ^2)))<0,((1/ GET("hovacu.previous_est") *(SQRT((GET("vacsale.previous_moe") ^2)+(( GET("vacsale.previous_est") ^2/ GET("hovacu.previous_est") ^2)*( GET("hovacu.previous_moe") ^2)))))*100),((1/ GET("hovacu.previous_est") *(SQRT((GET("vacsale.previous_moe") ^2)-(( GET("vacsale.previous_est") ^2/ GET("hovacu.previous_est") ^2)*( GET("hovacu.previous_moe") ^2)))))*100))',
         },
       },
       {
@@ -79,35 +79,35 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("hovacrt.comparison_m")/ 1.645) / GET("hovacrt.comparison_sum") * 100)',
+          formula: '((GET("hovacrt.comparison_moe")/ 1.645) / GET("hovacrt.comparison_est") * 100)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("hovacrt.sum") - GET("hovacrt.comparison_sum"))',
+          formula: '(GET("hovacrt.sum") - GET("hovacrt.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("hovacrt.sum") - GET("hovacrt.previous_sum"))',
+          formula: '(GET("hovacrt.sum") - GET("hovacrt.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.previous_moe"),2))',
         },
       },
     ],
@@ -128,17 +128,17 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: calculator,
         options: {
-          procedure: [['vacrnt.comparison_sum', 'divide', 'rntvacu.comparison_sum'], 'multiply', 100],
+          procedure: [['vacrnt.comparison_est', 'divide', 'rntvacu.comparison_est'], 'multiply', 100],
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: calculator,
         options: {
-          procedure: [['vacrnt.previous_sum', 'divide', 'rntvacu.previous_sum'], 'multiply', 100],
+          procedure: [['vacrnt.previous_est', 'divide', 'rntvacu.previous_est'], 'multiply', 100],
         },
       },
       {
@@ -149,17 +149,17 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacrnt.comparison_m")^2)-(( GET("vacrnt.comparison_sum") ^2/ GET("rntvacu.comparison_sum") ^2)*( GET("rntvacu.comparison_m") ^2)))<0,((1/ GET("rntvacu.comparison_sum") *(SQRT((GET("vacrnt.comparison_m") ^2)+(( GET("vacrnt.comparison_sum") ^2/ GET("rntvacu.comparison_sum") ^2)*( GET("rntvacu.comparison_m") ^2)))))*100),((1/ GET("rntvacu.comparison_sum") *(SQRT((GET("vacrnt.comparison_m") ^2)-(( GET("vacrnt.comparison_sum") ^2/ GET("rntvacu.comparison_sum") ^2)*( GET("rntvacu.comparison_m") ^2)))))*100))',
+          formula: 'IF(((GET("vacrnt.comparison_moe")^2)-(( GET("vacrnt.comparison_est") ^2/ GET("rntvacu.comparison_est") ^2)*( GET("rntvacu.comparison_moe") ^2)))<0,((1/ GET("rntvacu.comparison_est") *(SQRT((GET("vacrnt.comparison_moe") ^2)+(( GET("vacrnt.comparison_est") ^2/ GET("rntvacu.comparison_est") ^2)*( GET("rntvacu.comparison_moe") ^2)))))*100),((1/ GET("rntvacu.comparison_est") *(SQRT((GET("vacrnt.comparison_moe") ^2)-(( GET("vacrnt.comparison_est") ^2/ GET("rntvacu.comparison_est") ^2)*( GET("rntvacu.comparison_moe") ^2)))))*100))',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacrnt.previous_m")^2)-(( GET("vacrnt.previous_sum") ^2/ GET("rntvacu.previous_sum") ^2)*( GET("rntvacu.previous_m") ^2)))<0,((1/ GET("rntvacu.previous_sum") *(SQRT((GET("vacrnt.previous_m") ^2)+(( GET("vacrnt.previous_sum") ^2/ GET("rntvacu.previous_sum") ^2)*( GET("rntvacu.previous_m") ^2)))))*100),((1/ GET("rntvacu.previous_sum") *(SQRT((GET("vacrnt.previous_m") ^2)-(( GET("vacrnt.previous_sum") ^2/ GET("rntvacu.previous_sum") ^2)*( GET("rntvacu.previous_m") ^2)))))*100))',
+          formula: 'IF(((GET("vacrnt.previous_moe")^2)-(( GET("vacrnt.previous_est") ^2/ GET("rntvacu.previous_est") ^2)*( GET("rntvacu.previous_moe") ^2)))<0,((1/ GET("rntvacu.previous_est") *(SQRT((GET("vacrnt.previous_moe") ^2)+(( GET("vacrnt.previous_est") ^2/ GET("rntvacu.previous_est") ^2)*( GET("rntvacu.previous_moe") ^2)))))*100),((1/ GET("rntvacu.previous_est") *(SQRT((GET("vacrnt.previous_moe") ^2)-(( GET("vacrnt.previous_est") ^2/ GET("rntvacu.previous_est") ^2)*( GET("rntvacu.previous_moe") ^2)))))*100))',
         },
       },
       {
@@ -173,35 +173,35 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("rntvacrt.comparison_m")/ 1.645) / GET("rntvacrt.comparison_sum") * 100)',
+          formula: '((GET("rntvacrt.comparison_moe")/ 1.645) / GET("rntvacrt.comparison_est") * 100)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.comparison_sum"))',
+          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.previous_sum"))',
+          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.previous_moe"),2))',
         },
       },
     ],

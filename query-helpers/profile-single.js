@@ -20,11 +20,11 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         SELECT
           *,
 
-          -- previous_sum --
+          -- previous_est --
           CASE
             WHEN is_most_recent THEN
-              lag(sum) over (order by variable, dataset)
-          END as previous_sum,
+              lag(est) over (order by variable, dataset)
+          END as previous_est,
 
           -- previous_percent --
           CASE
@@ -32,27 +32,27 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
               lag(p / 100) over (order by variable, dataset)
           END as previous_percent,
 
-          -- previous_m --
+          -- previous_moe --
           CASE
             WHEN is_most_recent THEN
               lag(m) over (order by variable, dataset)
-          END as previous_m,
+          END as previous_moe,
 
-          -- previous_percent_m --
+          -- previous_percent_moe --
           CASE
             WHEN is_most_recent THEN
               lag(z / 100) over (order by variable, dataset)
-          END as previous_percent_m
+          END as previous_percent_moe
         FROM (
           SELECT *,
-            -- sum --
-            e as sum,
+            -- est --
+            e as est,
             -- cv --
             (((m / 1.645) / NULLIF(e,0)) * 100) AS cv,
             -- percent --
             ROUND(p::numeric, 4) / 100 as percent,
-            -- percent_m --
-            ROUND(z::numeric, 4) / 100 as percent_m,
+            -- percent_moe --
+            ROUND(z::numeric, 4) / 100 as percent_moe,
 
             -- is_most_recent --
             CASE
@@ -78,10 +78,10 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           ON factfinder_metadata.variablename = comparison_selection.variable
       ),
 
-      comparison_main_numbers AS (
+      comparison_moeain_numbers AS (
         SELECT
-          -- comparison_sum --
-          e as comparison_sum,
+          -- comparison_est --
+          e as comparison_est,
           -- comparison_cv --
           (((m / 1.645) / NULLIF(e,0)) * 100) AS comparison_cv,
           -- comparison_variable --
@@ -90,41 +90,41 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           dataset as comparison_dataset,
           -- comparison_percent --
           ROUND(p::numeric, 4) / 100 as comparison_percent,
-          -- comparison_percent_m --
-          ROUND(z::numeric, 4) / 100 as comparison_percent_m,
-          -- comparison_m --
-          m as comparison_m
+          -- comparison_percent_moe --
+          ROUND(z::numeric, 4) / 100 as comparison_percent_moe,
+          -- comparison_moe --
+          m as comparison_moe
         FROM comparison_enriched_selection
       )
-    SELECT 
+    SELECT
       *,
-      -- change_percentage_point_significant --
+      -- change_percentage_point_reliable --
       CASE
-        WHEN ((((change_percentage_point_m) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
+        WHEN ((((change_percentage_point_moe) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
           TRUE
         ELSE
           FALSE
-      END AS change_percentage_point_significant,
+      END AS change_percentage_point_reliable,
 
-      -- significant --
+      -- difference_reliable --
       CASE
-        WHEN ((((difference_m) / 1.645) / nullif(ABS(difference_sum), 0)) * 100) < 20 THEN true
+        WHEN ((((difference_moe) / 1.645) / nullif(ABS(difference_est), 0)) * 100) < 20 THEN true
         ELSE false
-      END AS significant,
+      END AS difference_reliable,
 
-      -- percent_significant --
+      -- difference_percent_reliable --
       CASE
-        WHEN ((((difference_percent_m) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20 THEN 
+        WHEN ((((difference_percent_moe) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20 THEN
           true
         ELSE false
-      END AS percent_significant
+      END AS difference_percent_reliable
 
     FROM (
       SELECT
         *,
 
-        -- difference_sum --
-        (sum - comparison_sum) AS difference_sum,
+        -- difference_est --
+        (est - comparison_est) AS difference_est,
 
         -- difference_percent --
         CASE
@@ -134,11 +134,11 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
             (coalesce(percent, 0) - coalesce(comparison_percent,0)) * 100
         END AS difference_percent,
 
-        -- difference_m --
-        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
+        -- difference_moe --
+        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_moe, 0), 2)))) AS difference_moe,
 
-        -- difference_percent_m --
-        (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) + POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
+        -- difference_percent_moe --
+        (SQRT((POWER(coalesce(percent_moe, 0) * 100, 2) + POWER(coalesce(comparison_percent_moe, 0) * 100, 2)))) AS difference_percent_moe,
 
         -- change_percentage_point --
         CASE
@@ -148,27 +148,27 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
             coalesce(percent, 0) - coalesce(previous_percent, 0)
         END AS change_percentage_point,
 
-        -- change_percentage_point_m --
+        -- change_percentage_point_moe --
         CASE
           WHEN is_most_recent THEN
-            (SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))
-        END AS change_percentage_point_m,
+            (SQRT((POWER(coalesce(previous_percent_moe, 0), 2) + POWER(coalesce(percent_moe, 0), 2))))
+        END AS change_percentage_point_moe,
 
-        -- change_significant --
+        -- change_reliable --
         CASE
-          WHEN ((((change_m) / 1.645) / nullif(ABS(change_sum), 0)) * 100) < 20 THEN
+          WHEN ((((change_moe) / 1.645) / nullif(ABS(change_est), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
-        END AS change_significant,
+        END AS change_reliable,
 
-        -- change_percent_significant --
+        -- change_percent_reliable --
         CASE
-          WHEN ((((change_percent_m) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
+          WHEN ((((change_percent_moe) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
-        END AS change_percent_significant
+        END AS change_percent_reliable
       FROM (
         SELECT *,
           -- id --
@@ -196,41 +196,41 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
             ELSE false
           END as comparison_is_reliable,
 
-          -- change_sum --
+          -- change_est --
           CASE
             WHEN is_most_recent THEN
-              sum - previous_sum
-          END as change_sum,
+              est - previous_est
+          END as change_est,
 
-          -- change_m --
+          -- change_moe --
           CASE
             WHEN is_most_recent THEN
-              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_m, 0), 2)))
-          END as change_m,
+              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_moe, 0), 2)))
+          END as change_moe,
 
           -- change_percent --
           CASE
             WHEN is_most_recent THEN
-              ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4)
+              ROUND(((est - previous_est) / NULLIF(previous_est,0))::numeric, 4)
           END as change_percent,
 
-          -- change_percent_m --
+          -- change_percent_moe --
           CASE
-            WHEN is_most_recent AND previous_sum != 0 THEN
+            WHEN is_most_recent AND previous_est != 0 THEN
               coalesce(
-                ABS(sum / NULLIF(previous_sum,0))
+                ABS(est / NULLIF(previous_est,0))
                 * SQRT(
-                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2), 0))
-                  + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2), 0))
+                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(est, 2), 0))
+                  + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_est, 2), 0))
                 ) * 1.645,
                 0
               )
-          END as change_percent_m
+          END as change_percent_moe
         FROM
           main_numbers
-        LEFT OUTER JOIN comparison_main_numbers
-          ON main_numbers.variable = comparison_main_numbers.comparison_variable
-          AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
+        LEFT OUTER JOIN comparison_moeain_numbers
+          ON main_numbers.variable = comparison_moeain_numbers.comparison_variable
+          AND main_numbers.dataset = comparison_moeain_numbers.comparison_dataset
       ) precalculations
     ) significance
   `;

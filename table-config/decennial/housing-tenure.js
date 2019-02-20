@@ -33,31 +33,31 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: formula,
         options: {
-          formula: '(GET("popoochu.comparison_sum"))/(GET("oochu.comparison_sum"))',
+          formula: '(GET("popoochu.comparison_est"))/(GET("oochu.comparison_est"))',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("popoochu.previous_sum"))/(GET("oochu.previous_sum"))',
+          formula: '(GET("popoochu.previous_est"))/(GET("oochu.previous_est"))',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.comparison_sum"))',
+          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.comparison_est"))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.previous_sum"))',
+          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.previous_est"))',
         },
       },
     ],
@@ -78,31 +78,31 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: formula,
         options: {
-          formula: '(GET("poprochu.comparison_sum"))/(GET("rochu_1.comparison_sum"))',
+          formula: '(GET("poprochu.comparison_est"))/(GET("rochu_1.comparison_est"))',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("poprochu.previous_sum"))/(GET("rochu_1.previous_sum"))',
+          formula: '(GET("poprochu.previous_est"))/(GET("rochu_1.previous_est"))',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.comparison_sum"))',
+          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.comparison_est"))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.previous_sum"))',
+          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.previous_est"))',
         },
       },
     ],

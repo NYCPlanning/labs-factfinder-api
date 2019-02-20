@@ -21,31 +21,31 @@ module.exports = [
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("pop1.previous_sum"))/(GET("landacres.previous_sum"))',
+          formula: '(GET("pop1.previous_est"))/(GET("landacres.previous_est"))',
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: formula,
         options: {
-          formula: '(GET("pop1.comparison_sum"))/(GET("landacres.comparison_sum"))',
+          formula: '(GET("pop1.comparison_est"))/(GET("landacres.comparison_est"))',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("popperacre.sum") - GET("popperacre.comparison_sum"))',
+          formula: '(GET("popperacre.sum") - GET("popperacre.comparison_est"))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("popperacre.sum") - GET("popperacre.previous_sum"))',
+          formula: '(GET("popperacre.sum") - GET("popperacre.previous_est"))',
         },
       },
     ],

@@ -101,21 +101,21 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdrms,
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.comparison_sum") / 1000)',
+          formula: '(GET("mdrms.comparison_est") / 1000)',
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
@@ -123,36 +123,36 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.comparison_m") / 1000)',
+          formula: '(GET("mdrms.comparison_moe") / 1000)',
         },
       },
       {
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdrms.comparison_m")/ 1.645) / GET("mdrms.comparison_sum") * 100)',
+          formula: '((GET("mdrms.comparison_moe")/ 1.645) / GET("mdrms.comparison_est") * 100)',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
-        referenceSumKey: 'previous_sum',
+        referenceSumKey: 'previous_est',
         options: {
           bins: binsForMdrms,
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.previous_sum") / 1000)',
+          formula: '(GET("mdrms.previous_est") / 1000)',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.5,
@@ -160,38 +160,38 @@ module.exports = [
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.previous_m") / 1000)',
+          formula: '(GET("mdrms.previous_moe") / 1000)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.sum") - GET("mdrms.comparison_sum"))',
+          formula: '(GET("mdrms.sum") - GET("mdrms.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.sum") - GET("mdrms.previous_sum"))',
+          formula: '(GET("mdrms.sum") - GET("mdrms.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.previous_moe"),2))',
         },
       },
     ],

@@ -124,7 +124,7 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
         options: {
           bins: [
@@ -176,7 +176,7 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           bins: [
@@ -202,17 +202,17 @@ module.exports = [
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.previous_sum"))',
+          formula: '(GET("mdage.sum") - GET("mdage.previous_est"))',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.comparison_sum"))',
+          formula: '(GET("mdage.sum") - GET("mdage.comparison_est"))',
         },
       },
     ],

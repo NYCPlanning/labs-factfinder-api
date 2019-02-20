@@ -111,14 +111,14 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdewrk,
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -129,25 +129,25 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdewrk.comparison_m")/ 1.645) / GET("mdewrk.comparison_sum") * 100)',
+          formula: '((GET("mdewrk.comparison_moe")/ 1.645) / GET("mdewrk.comparison_est") * 100)',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdewrk,
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.previous_sum") * 1.1005)',
+          formula: '(GET("mdewrk.previous_est") * 1.1005)',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -155,52 +155,52 @@ module.exports = [
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.previous_m") * 1.1005)',
+          formula: '(GET("mdewrk.previous_moe") * 1.1005)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.sum") - GET("mdewrk.comparison_sum"))',
+          formula: '(GET("mdewrk.sum") - GET("mdewrk.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdewrk.sum") - GET("mdewrk.previous_sum"))',
+          formula: '(GET("mdewrk.sum") - GET("mdewrk.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.previous_moe"),2))',
         },
       },
       {
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdewrk.previous_sum"))=0,"",((GET("mdewrk.sum")-GET("mdewrk.previous_sum"))/GET("mdewrk.previous_sum")))',
+          formula: 'IF((GET("mdewrk.previous_est"))=0,"",((GET("mdewrk.sum")-GET("mdewrk.previous_est"))/GET("mdewrk.previous_est")))',
         },
       },
       {
-        column: 'change_percent_m',
+        column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdewrk.m")^2)+((GET("mdewrk.sum")/GET("mdewrk.previous_sum"))^2*GET("mdewrk.previous_m")^2)))/GET("mdewrk.previous_sum"))',
+          formula: '((SQRT((GET("mdewrk.m")^2)+((GET("mdewrk.sum")/GET("mdewrk.previous_est"))^2*GET("mdewrk.previous_moe")^2)))/GET("mdewrk.previous_est"))',
         },
       },
     ],
@@ -243,14 +243,14 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdemftwrk,
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -261,25 +261,25 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdemftwrk.comparison_m")/ 1.645) / GET("mdemftwrk.comparison_sum") * 100)',
+          formula: '((GET("mdemftwrk.comparison_moe")/ 1.645) / GET("mdemftwrk.comparison_est") * 100)',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdemftwrk,
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.previous_sum") * 1.1005)',
+          formula: '(GET("mdemftwrk.previous_est") * 1.1005)',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -287,52 +287,52 @@ module.exports = [
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.previous_m") * 1.1005)',
+          formula: '(GET("mdemftwrk.previous_moe") * 1.1005)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.comparison_sum"))',
+          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.previous_sum"))',
+          formula: '(GET("mdemftwrk.sum") - GET("mdemftwrk.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.previous_moe"),2))',
         },
       },
       {
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdemftwrk.previous_sum"))=0,"",((GET("mdemftwrk.sum")-GET("mdemftwrk.previous_sum"))/GET("mdemftwrk.previous_sum")))',
+          formula: 'IF((GET("mdemftwrk.previous_est"))=0,"",((GET("mdemftwrk.sum")-GET("mdemftwrk.previous_est"))/GET("mdemftwrk.previous_est")))',
         },
       },
       {
-        column: 'change_percent_m',
+        column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdemftwrk.m")^2)+((GET("mdemftwrk.sum")/GET("mdemftwrk.previous_sum"))^2*GET("mdemftwrk.previous_m")^2)))/GET("mdemftwrk.previous_sum"))',
+          formula: '((SQRT((GET("mdemftwrk.m")^2)+((GET("mdemftwrk.sum")/GET("mdemftwrk.previous_est"))^2*GET("mdemftwrk.previous_moe")^2)))/GET("mdemftwrk.previous_est"))',
         },
       },
     ],
@@ -375,14 +375,14 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdefftwrk,
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -393,25 +393,25 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdefftwrk.comparison_m")/ 1.645) / GET("mdefftwrk.comparison_sum") * 100)',
+          formula: '((GET("mdefftwrk.comparison_moe")/ 1.645) / GET("mdefftwrk.comparison_est") * 100)',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdefftwrk,
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.previous_sum") * 1.1005)',
+          formula: '(GET("mdefftwrk.previous_est") * 1.1005)',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.6,
@@ -419,52 +419,52 @@ module.exports = [
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.previous_m") * 1.1005)',
+          formula: '(GET("mdefftwrk.previous_moe") * 1.1005)',
         },
       }, 
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.comparison_sum"))',
+          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.previous_sum"))',
+          formula: '(GET("mdefftwrk.sum") - GET("mdefftwrk.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.previous_moe"),2))',
         },
       },
       {
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdefftwrk.previous_sum"))=0,"",((GET("mdefftwrk.sum")-GET("mdefftwrk.previous_sum"))/GET("mdefftwrk.previous_sum")))',
+          formula: 'IF((GET("mdefftwrk.previous_est"))=0,"",((GET("mdefftwrk.sum")-GET("mdefftwrk.previous_est"))/GET("mdefftwrk.previous_est")))',
         },
       },
       {
-        column: 'change_percent_m',
+        column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdefftwrk.m")^2)+((GET("mdefftwrk.sum")/GET("mdefftwrk.previous_sum"))^2*GET("mdefftwrk.previous_m")^2)))/GET("mdefftwrk.previous_sum"))',
+          formula: '((SQRT((GET("mdefftwrk.m")^2)+((GET("mdefftwrk.sum")/GET("mdefftwrk.previous_est"))^2*GET("mdefftwrk.previous_moe")^2)))/GET("mdefftwrk.previous_est"))',
         },
       },
     ],

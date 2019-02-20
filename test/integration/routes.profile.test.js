@@ -36,7 +36,7 @@ describe('Special variables', () => {
         const rowObject = res.body
           .find(obj => obj.variable === 'mdfaminc' && obj.dataset === 'y2013_2017');
 
-        // it should have two properties in it, "sum" and "previous_sum"
+        // it should have two properties in it, "sum" and "previous_est"
         // this gets the keys of the thresholds object and counts them
         // to make sure
         expect(Object.keys(rowObject.codingThresholds).length).to.equal(2);
@@ -115,7 +115,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
       res.type.should.equal('application/json');
 
       const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2013_2017');
-      expect(rowObject.previous_sum).to.equal(0);
+      expect(rowObject.previous_est).to.equal(0);
       expect(rowObject.sum).to.equal(0);
       expect(rowObject.change_percentage_point).to.equal('0.0000');
       done();
@@ -132,7 +132,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
       res.type.should.equal('application/json');
 
       const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2013_2017');
-      expect(rowObject.previous_sum).to.equal(0);
+      expect(rowObject.previous_est).to.equal(0);
       expect(rowObject.sum).to.equal(0);
       expect(rowObject.change_percentage_point).to.equal(0);
       done();
@@ -151,7 +151,7 @@ it('pop30t34 change pct pt significance should be coded a true', (done) => {
       res.type.should.equal('application/json');
 
       const rowObject = res.body.find(obj => obj.variable === 'pop30t34' && obj.dataset === 'y2013_2017');
-      expect(rowObject.change_percentage_point_significant).to.equal(false);
+      expect(rowObject.change_percentage_point_reliable).to.equal(false);
       done();
     });
 });
@@ -170,9 +170,9 @@ it('cw_crpld Change percent MOE should only be null if previous estimate is 0', 
 
       const rowObject = res.body.find(obj => obj.variable === 'cw_crpld' && obj.dataset === 'y2013_2017');
 
-      // change_percent_m should be present bc change_percent is
+      // change_percent_moe should be present bc change_percent is
       expect((rowObject.change_percent !== null)).to.equal(true);
-      expect((rowObject.change_percent_m !== null)).to.equal(true);
+      expect((rowObject.change_percent_moe !== null)).to.equal(true);
       done();
     });
 });
@@ -190,8 +190,8 @@ it('sthrnafr single geog: percentage point difference not all always graying', (
 
       const rowObject = res.body.find(obj => obj.variable === 'sthrnafr' && obj.dataset === 'y2013_2017');
 
-      // change_percent_m should be present bc change_percent is
-      expect(rowObject.percent_significant).to.equal(false);
+      // change_percent_moe should be present bc change_percent is
+      expect(rowObject.change_percent_reliable).to.equal(false);
       done();
     });
 });

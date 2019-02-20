@@ -138,7 +138,7 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -146,7 +146,7 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.4,
@@ -158,25 +158,25 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdvl.comparison_m")/ 1.645) / GET("mdvl.comparison_sum") * 100)',
+          formula: '((GET("mdvl.comparison_moe")/ 1.645) / GET("mdvl.comparison_est") * 100)',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
         options: {
           bins: binsMedianValueEarly,
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.previous_sum") * 1.1005)',
+          formula: '(GET("mdvl.previous_est") * 1.1005)',
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.4,
@@ -184,38 +184,38 @@ module.exports = [
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.previous_m") * 1.1005)',
+          formula: '(GET("mdvl.previous_moe") * 1.1005)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.sum") - GET("mdvl.comparison_sum"))',
+          formula: '(GET("mdvl.sum") - GET("mdvl.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.sum") - GET("mdvl.previous_sum"))',
+          formula: '(GET("mdvl.sum") - GET("mdvl.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.previous_moe"),2))',
         },
       },
     ],

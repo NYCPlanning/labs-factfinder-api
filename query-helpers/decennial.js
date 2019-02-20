@@ -24,16 +24,16 @@ const buildSQL = function buildSQL(ids, compare) {
       main_numbers AS (
         SELECT
           *,
-          -- previous_sum --
+          -- previous_est --
           CASE
             WHEN is_most_recent THEN
-              lag(sum) over (order by variable, year)
-          END as previous_sum
+              lag(est) over (order by variable, year)
+          END as previous_est
         FROM (
           SELECT
 
-            -- sum --
-            sum(value) AS sum,
+            -- est --
+            est(value) AS est,
 
             -- relation --
             max(relation) AS relation,
@@ -58,11 +58,11 @@ const buildSQL = function buildSQL(ids, compare) {
       base_numbers AS (
         SELECT
 
-          -- base_sum --
-          sum(value) AS base_sum,
+          -- base_est --
+          est(value) AS base_est,
 
-          -- previous_base_sum --
-          lag(sum(value)) over (order by variable, year) AS previous_base_sum,
+          -- previous_base_est --
+          lag(est(value)) over (order by variable, year) AS previous_base_est,
 
           -- base_variable --
           variable AS base_variable,
@@ -87,11 +87,11 @@ const buildSQL = function buildSQL(ids, compare) {
           ON decennial_dictionary.variablename = comparison_selection.variable
       ),
 
-      comparison_main_numbers AS (
+      comparison_moeain_numbers AS (
         SELECT
 
-          -- comparison_sum --
-          sum(value) AS comparison_sum,
+          -- comparison_est --
+          est(value) AS comparison_est,
 
           -- comparison_relation --
           max(relation) AS comparison_relation,
@@ -108,8 +108,8 @@ const buildSQL = function buildSQL(ids, compare) {
       comparison_base_numbers AS (
         SELECT
 
-          -- comparison_base_sum --
-          sum(value) AS comparison_base_sum,
+          -- comparison_base_est --
+          est(value) AS comparison_base_est,
 
           -- comparison_base_variable --
           variable AS comparison_base_variable,
@@ -123,17 +123,17 @@ const buildSQL = function buildSQL(ids, compare) {
 
     SELECT *,
 
-      -- difference_sum --
-      (sum - comparison_sum) AS difference_sum,
+      -- difference_est --
+      (est - comparison_est) AS difference_est,
 
       -- difference_percent --
       ((percent - comparison_percent) * 100) AS difference_percent,
 
-      -- change_sum --
-      (sum - previous_sum) AS change_sum,
+      -- change_est --
+      (est - previous_est) AS change_est,
 
       -- change_percent --
-      ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4) AS change_percent,
+      ROUND(((est - previous_est) / NULLIF(previous_est,0))::numeric, 4) AS change_percent,
 
       -- change_percentage_point --
       percent - previous_percent AS change_percentage_point
@@ -162,18 +162,18 @@ const buildSQL = function buildSQL(ids, compare) {
         'y' || year as dataset,
 
         -- percent --
-        ROUND((sum / NULLIF(base_sum,0))::numeric, 4) as percent,
+        ROUND((est / NULLIF(base_est,0))::numeric, 4) as percent,
 
         -- previous_percent --
-        ROUND((previous_sum / NULLIF(previous_base_sum,0))::numeric, 4) as previous_percent,
+        ROUND((previous_est / NULLIF(previous_base_est,0))::numeric, 4) as previous_percent,
 
         -- comparison_percent --
-        ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent
+        ROUND((comparison_est / NULLIF(comparison_base_est,0))::numeric, 4) as comparison_percent
 
         FROM main_numbers
-        INNER JOIN comparison_main_numbers
-          ON main_numbers.variable = comparison_main_numbers.comparison_variable
-          AND main_numbers.year = comparison_main_numbers.comparison_year
+        INNER JOIN comparison_moeain_numbers
+          ON main_numbers.variable = comparison_moeain_numbers.comparison_variable
+          AND main_numbers.year = comparison_moeain_numbers.comparison_year
         LEFT OUTER JOIN base_numbers
           ON main_numbers.relation = base_numbers.base_variable
           AND main_numbers.year = base_numbers.base_year

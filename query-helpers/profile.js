@@ -32,24 +32,24 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           -- cv --
           (((m / 1.645) / NULLIF(SUM,0)) * 100) AS cv,
 
-          -- previous_sum --
+          -- previous_est --
           CASE
             WHEN is_most_recent THEN
-              lag(sum) over (order by variable, dataset)
-          END AS previous_sum,
+              lag(est) over (order by variable, dataset)
+          END AS previous_est,
 
-          -- previous_m --
+          -- previous_moe --
           CASE
             WHEN is_most_recent THEN
               lag(m) over (order by variable, dataset)
-          END AS previous_m
+          END AS previous_moe
         FROM (
           SELECT
-            -- sum --
-            sum(e) AS sum,
+            -- est --
+            est(e) AS est,
 
             -- m --
-            sqrt(sum(power(m, 2))) AS m,
+            SQRT(SUM(POWER(m, 2))) AS m,
 
             -- is_most_recent --
             CASE
@@ -71,23 +71,23 @@ const buildSQL = function buildSQL(profile, ids, compare) {
 
       base_numbers AS (
         SELECT
-          -- base_sum --
-          sum(e) AS base_sum,
+          -- base_est --
+          SUM(e) AS base_est,
 
-          -- base_m --
-          sqrt(sum(power(m, 2))) AS base_m,
+          -- base_moe --
+          SQRT(SUM(POWER(m, 2))) AS base_moe,
 
           -- base_join --
-          max(base) AS base_join,
+          MAX(base) AS base_join,
 
           -- base_dataset --
-          max(dataset) AS base_dataset,
+          MAX(dataset) AS base_dataset,
 
-          -- previous_base_sum --
-          lag(sum(e)) over (order by variable, dataset) AS previous_base_sum,
+          -- previous_base_est --
+          LAG(SUM(e)) over (order by variable, dataset) AS previous_base_est,
 
-          -- previous_base_m --
-          lag(sqrt(sum(power(m, 2)))) over (order by variable, dataset) AS previous_base_m
+          -- previous_base_moe --
+          LAG(SQRT(SUM(POWER(m, 2)))) over (order by variable, dataset) AS previous_base_moe
         FROM enriched_selection
         WHERE base = variable
         GROUP BY variable, dataset
@@ -106,22 +106,22 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           ON factfinder_metadata.variablename = comparison_selection.variable
       ),
 
-      comparison_main_numbers AS (
+      comparison_moeain_numbers AS (
         SELECT
           *
         FROM (
           SELECT
-            -- comparison_sum --
-            e AS comparison_sum,
+            -- comparison_est --
+            e AS comparison_est,
 
-            -- comparison_m --
-            m AS comparison_m,
+            -- comparison_moe --
+            m AS comparison_moe,
 
             -- comparison_percent --
             (p / 100) AS comparison_percent,
 
-            -- comparison_percent_m --
-            (z / 100) AS comparison_percent_m,
+            -- comparison_percent_moe --
+            (z / 100) AS comparison_percent_moe,
 
             -- comparison_cv --
             c AS comparison_cv,
@@ -141,42 +141,42 @@ const buildSQL = function buildSQL(profile, ids, compare) {
     SELECT
       *,
 
-      -- significant --
+      -- difference_reliable --
       CASE
-        WHEN ((((difference_m) / 1.645) / nullif(ABS(difference_sum), 0)) * 100) < 20 
+        WHEN ((((difference_moe) / 1.645) / nullif(ABS(difference_est), 0)) * 100) < 20
         THEN true
         ELSE false
-      END AS significant,
+      END AS difference_reliable,
 
-      -- percent_significant --
+      -- difference_percent_reliable --
       CASE
-        WHEN ((((difference_percent_m) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20
+        WHEN ((((difference_percent_moe) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20
         THEN true
         ELSE false
-      END AS percent_significant,
+      END AS difference_percent_reliable,
 
-      -- change_percent_significant --
+      -- change_percent_reliable --
       CASE
-        WHEN ((((change_percent_m) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
+        WHEN ((((change_percent_moe) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
           TRUE
         ELSE
           FALSE
-      END AS change_percent_significant,
+      END AS change_percent_reliable,
 
-      -- change_percentage_point_significant --
+      -- change_percentage_point_reliable --
       CASE
-        WHEN ((((change_percentage_point_m) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
+        WHEN ((((change_percentage_point_moe) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
           TRUE
         ELSE
           FALSE
-      END AS change_percentage_point_significant
+      END AS change_percentage_point_reliable
 
-    FROM ( 
+    FROM (
       SELECT
         *,
 
-        -- difference_sum --
-        (sum - comparison_sum) AS difference_sum,
+        -- difference_est --
+        (est - comparison_est) AS difference_est,
 
         -- difference_percent --
         CASE
@@ -186,11 +186,11 @@ const buildSQL = function buildSQL(profile, ids, compare) {
             (coalesce(percent, 0) - (coalesce(comparison_percent,0))) * 100
         END AS difference_percent,
 
-        -- difference_m --
-        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
+        -- difference_moe --
+        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_moe, 0), 2)))) AS difference_moe,
 
-        -- difference_percent_m --
-        (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) + POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
+        -- difference_percent_moe --
+        (SQRT((POWER(coalesce(percent_moe, 0) * 100, 2) + POWER(coalesce(comparison_percent_moe, 0) * 100, 2)))) AS difference_percent_moe,
 
         -- change_percentage_point --
         CASE
@@ -200,19 +200,19 @@ const buildSQL = function buildSQL(profile, ids, compare) {
             coalesce(percent, 0) - coalesce(previous_percent, 0)
         END AS change_percentage_point,
 
-        -- change_percentage_point_m --
+        -- change_percentage_point_moe --
         CASE
           WHEN is_most_recent THEN
-            (SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))
-        END AS change_percentage_point_m,
+            (SQRT((POWER(coalesce(previous_percent_moe, 0), 2) + POWER(coalesce(percent_moe, 0), 2))))
+        END AS change_percentage_point_moe,
 
-        -- change_significant --
+        -- change_reliable --
         CASE
-          WHEN ((((change_m) / 1.645) / nullif(ABS(change_sum), 0)) * 100) < 20 THEN
+          WHEN ((((change_moe) / 1.645) / nullif(ABS(change_est), 0)) * 100) < 20 THEN
             TRUE
           ELSE
             FALSE
-        END AS change_significant
+        END AS change_reliable
 
       FROM (
         SELECT
@@ -233,76 +233,76 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           -- variable --
           regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
           is_most_recent,
-          sum,
+          est,
           m,
           cv,
 
           -- percent --
-          ROUND((sum / NULLIF(base_sum,0))::numeric, 4) AS percent,
+          ROUND((est / NULLIF(base_est,0))::numeric, 4) AS percent,
 
           -- previous_percent --
-          ROUND((previous_sum / NULLIF(previous_base_sum,0))::numeric, 4) AS previous_percent,
-          previous_sum,
-          previous_m,
+          ROUND((previous_est / NULLIF(previous_base_est,0))::numeric, 4) AS previous_percent,
+          previous_est,
+          previous_moe,
 
-          -- percent_m --
+          -- percent_moe --
           CASE
-            WHEN (POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
-              THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) + POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-            ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-          END AS percent_m,
+            WHEN (POWER(m, 2) - POWER(est / NULLIF(base_est,0), 2) * POWER(base_m, 2)) < 0
+              THEN (1 / NULLIF(base_est,0)) * SQRT(POWER(m, 2) + POWER(est / NULLIF(base_est,0), 2) * POWER(base_m, 2))
+            ELSE (1 / NULLIF(base_est,0)) * SQRT(POWER(m, 2) - POWER(est / NULLIF(base_est,0), 2) * POWER(base_m, 2))
+          END AS percent_moe,
 
-          -- previous_percent_m --
+          -- previous_percent_moe --
           CASE
-            WHEN (POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2)) < 0
-              THEN (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) + POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
-            ELSE (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
-          END AS previous_percent_m,
+            WHEN (POWER(previous_moe, 2) - POWER(previous_est / NULLIF(previous_base_est,0), 2) * POWER(previous_base_m, 2)) < 0
+              THEN (1 / NULLIF(previous_base_est,0)) * SQRT(POWER(previous_moe, 2) + POWER(previous_est / NULLIF(previous_base_est,0), 2) * POWER(previous_base_m, 2))
+            ELSE (1 / NULLIF(previous_base_est,0)) * SQRT(POWER(previous_moe, 2) - POWER(previous_est / NULLIF(previous_base_est,0), 2) * POWER(previous_base_m, 2))
+          END AS previous_percent_moe,
 
           comparison_cv,
-          comparison_m,
-          comparison_sum,
-          comparison_percent_m,
+          comparison_moe,
+          comparison_est,
+          comparison_percent_moe,
           comparison_percent,
 
-          -- change_sum --
+          -- change_est --
           CASE
             WHEN is_most_recent THEN
-              sum - previous_sum
-          END AS change_sum,
+              est - previous_est
+          END AS change_est,
 
-          -- change_m --
+          -- change_moe --
           CASE
             WHEN is_most_recent THEN
-              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_m, 0), 2)))
-          END AS change_m,
+              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_moe, 0), 2)))
+          END AS change_moe,
 
           -- change_percent --
           CASE
             WHEN is_most_recent THEN
-              ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4)
+              ROUND(((est - previous_est) / NULLIF(previous_est,0))::numeric, 4)
           END AS change_percent,
 
-          -- change_percent_m --
+          -- change_percent_moe --
           CASE
-            WHEN is_most_recent AND previous_sum != 0 THEN
+            WHEN is_most_recent AND previous_est != 0 THEN
               coalesce(
-                ABS(sum / NULLIF(previous_sum,0))
+                ABS(est / NULLIF(previous_est,0))
                 * SQRT(
-                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2),0))
-                 + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2),0))
+                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(est, 2),0))
+                 + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_est, 2),0))
                 ) * 1.645,
                 0
               )
-            ELSE 
+            ELSE
               null
-          END AS change_percent_m
+          END AS change_percent_moe
 
         FROM main_numbers
 
-        INNER JOIN comparison_main_numbers
-          ON main_numbers.variable = comparison_main_numbers.comparison_variable
-          AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
+        INNER JOIN comparison_moeain_numbers
+          ON main_numbers.variable = comparison_moeain_numbers.comparison_variable
+          AND main_numbers.dataset = comparison_moeain_numbers.comparison_dataset
 
         LEFT OUTER JOIN base_numbers
           ON main_numbers.base = base_numbers.base_join

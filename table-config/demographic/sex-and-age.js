@@ -170,7 +170,7 @@ module.exports = [
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdAge,
@@ -185,7 +185,7 @@ module.exports = [
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.1,
@@ -200,14 +200,14 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: interpolate,
         options: {
           bins: binsForMdAge,
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: calculateMedianError,
         options: {
           designFactor: 1.1,
@@ -218,35 +218,35 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdage.comparison_m")/ 1.645) / GET("mdage.comparison_sum") * 100)',
+          formula: '((GET("mdage.comparison_moe")/ 1.645) / GET("mdage.comparison_est") * 100)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.comparison_sum"))',
+          formula: '(GET("mdage.sum") - GET("mdage.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.previous_sum"))',
+          formula: '(GET("mdage.sum") - GET("mdage.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.previous_moe"),2))',
         },
       },
     ],

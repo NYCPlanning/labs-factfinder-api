@@ -34,10 +34,10 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: calculator,
         options: {
-          procedure: ['popoochu.comparison_sum', 'divide', 'oochu1.comparison_sum'],
+          procedure: ['popoochu.comparison_est', 'divide', 'oochu1.comparison_est'],
         },
       },
       {
@@ -48,24 +48,24 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("oochu4.comparison_sum")) * SQRT((GET("popoochu.comparison_m")^2) + (GET("popoochu.comparison_sum") / (GET("oochu4.comparison_sum")^2) * (GET("oochu4.comparison_m")^2)))',
+          formula: '(1/GET("oochu4.comparison_est")) * SQRT((GET("popoochu.comparison_moe")^2) + (GET("popoochu.comparison_est") / (GET("oochu4.comparison_est")^2) * (GET("oochu4.comparison_moe")^2)))',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: calculator,
         options: {
-          procedure: ['popoochu.previous_sum', 'divide', 'oochu1.previous_sum'],
+          procedure: ['popoochu.previous_est', 'divide', 'oochu1.previous_est'],
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("oochu4.previous_sum")) * SQRT((GET("popoochu.previous_m")^2) + (GET("popoochu.previous_sum") / (GET("oochu4.previous_sum")^2) * (GET("oochu4.previous_m")^2)))',
+          formula: '(1/GET("oochu4.previous_est")) * SQRT((GET("popoochu.previous_moe")^2) + (GET("popoochu.previous_est") / (GET("oochu4.previous_est")^2) * (GET("oochu4.previous_moe")^2)))',
         },
       },
       {
@@ -79,42 +79,42 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '(GET("comparison_m")/1.645/GET("comparison_sum")*100)',
+          formula: '(GET("comparison_moe")/1.645/GET("comparison_est")*100)',
         },
       },
       {
         column: 'previous_cv',
         aggregator: formula,
         options: {
-          formula: '(GET("previous_m")/1.645/GET("previous_sum")*100)',
+          formula: '(GET("previous_moe")/1.645/GET("previous_est")*100)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.comparison_sum"))',
+          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.previous_sum"))',
+          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + (POWER(GET("avghhsooc.previous_m"),2)))',
+          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + (POWER(GET("avghhsooc.previous_moe"),2)))',
         },
       },
     ],
@@ -135,10 +135,10 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_sum',
+        column: 'comparison_est',
         aggregator: calculator,
         options: {
-          procedure: ['poprtochu.comparison_sum', 'divide', 'rochu1.comparison_sum'],
+          procedure: ['poprtochu.comparison_est', 'divide', 'rochu1.comparison_est'],
         },
       },
       {
@@ -149,24 +149,24 @@ module.exports = [
         },
       },
       {
-        column: 'comparison_m',
+        column: 'comparison_moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("rochu2.comparison_sum")) * SQRT((GET("poprtochu.comparison_m")^2) + (GET("poprtochu.comparison_sum") / (GET("rochu2.comparison_sum")^2) * (GET("rochu2.comparison_m")^2)))',
+          formula: '(1/GET("rochu2.comparison_est")) * SQRT((GET("poprtochu.comparison_moe")^2) + (GET("poprtochu.comparison_est") / (GET("rochu2.comparison_est")^2) * (GET("rochu2.comparison_moe")^2)))',
         },
       },
       {
-        column: 'previous_sum',
+        column: 'previous_est',
         aggregator: calculator,
         options: {
-          procedure: ['poprtochu.previous_sum', 'divide', 'rochu1.previous_sum'],
+          procedure: ['poprtochu.previous_est', 'divide', 'rochu1.previous_est'],
         },
       },
       {
-        column: 'previous_m',
+        column: 'previous_moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("rochu2.previous_sum")) * SQRT((GET("poprtochu.previous_m")^2) + (GET("poprtochu.previous_sum") / (GET("rochu2.previous_sum")^2) * (GET("rochu2.previous_m")^2)))',
+          formula: '(1/GET("rochu2.previous_est")) * SQRT((GET("poprtochu.previous_moe")^2) + (GET("poprtochu.previous_est") / (GET("rochu2.previous_est")^2) * (GET("rochu2.previous_moe")^2)))',
         },
       },
       {
@@ -180,42 +180,42 @@ module.exports = [
         column: 'comparison_cv',
         aggregator: formula,
         options: {
-          formula: '(GET("comparison_m")/1.645/GET("comparison_sum")*100)',
+          formula: '(GET("comparison_moe")/1.645/GET("comparison_est")*100)',
         },
       },
       {
         column: 'previous_cv',
         aggregator: formula,
         options: {
-          formula: '(GET("previous_m")/1.645/GET("previous_sum")*100)',
+          formula: '(GET("previous_moe")/1.645/GET("previous_est")*100)',
         },
       },
       {
-        column: 'difference_sum',
+        column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.comparison_sum"))',
+          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.comparison_est"))',
         },
       },
       {
-        column: 'difference_m',
+        column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_m"),2))',
+          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_moe"),2))',
         },
       },
       {
-        column: 'change_sum',
+        column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.previous_sum"))',
+          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.previous_est"))',
         },
       },
       {
-        column: 'change_m',
+        column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.previous_m"),2))',
+          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.previous_moe"),2))',
         },
       },
     ],
