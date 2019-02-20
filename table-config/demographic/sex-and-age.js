@@ -163,7 +163,7 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: interpolate,
         options: {
           bins: binsForMdAge,
@@ -196,7 +196,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdage.m")/ 1.645) / GET("mdage.sum") * 100)',
+          formula: '((GET("mdage.m")/ 1.645) / GET("mdage.est") * 100)',
         },
       },
       {
@@ -225,7 +225,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.comparison_est"))',
+          formula: '(GET("mdage.est") - GET("mdage.comparison_est"))',
         },
       },
       {
@@ -239,7 +239,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.previous_est"))',
+          formula: '(GET("mdage.est") - GET("mdage.previous_est"))',
         },
       },
       {

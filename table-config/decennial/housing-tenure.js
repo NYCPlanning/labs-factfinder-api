@@ -26,10 +26,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: formula,
         options: {
-          formula: '(GET("popoochu.sum"))/(GET("oochu.sum"))',
+          formula: '(GET("popoochu.est"))/(GET("oochu.est"))',
         },
       },
       {
@@ -50,14 +50,14 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.comparison_est"))',
+          formula: '(GET("avhhszooc.est") - GET("avhhszooc.comparison_est"))',
         },
       },
       {
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszooc.sum") - GET("avhhszooc.previous_est"))',
+          formula: '(GET("avhhszooc.est") - GET("avhhszooc.previous_est"))',
         },
       },
     ],
@@ -71,10 +71,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: formula,
         options: {
-          formula: '(GET("poprochu.sum"))/(GET("rochu_1.sum"))',
+          formula: '(GET("poprochu.est"))/(GET("rochu_1.est"))',
         },
       },
       {
@@ -95,14 +95,14 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.comparison_est"))',
+          formula: '(GET("avhhszroc.est") - GET("avhhszroc.comparison_est"))',
         },
       },
       {
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avhhszroc.sum") - GET("avhhszroc.previous_est"))',
+          formula: '(GET("avhhszroc.est") - GET("avhhszroc.previous_est"))',
         },
       },
     ],

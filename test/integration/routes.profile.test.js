@@ -36,7 +36,7 @@ describe('Special variables', () => {
         const rowObject = res.body
           .find(obj => obj.variable === 'mdfaminc' && obj.dataset === 'y2013_2017');
 
-        // it should have two properties in it, "sum" and "previous_est"
+        // it should have two properties in it, "est" and "previous_est"
         // this gets the keys of the thresholds object and counts them
         // to make sure
         expect(Object.keys(rowObject.codingThresholds).length).to.equal(2);
@@ -116,7 +116,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
 
       const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2013_2017');
       expect(rowObject.previous_est).to.equal(0);
-      expect(rowObject.sum).to.equal(0);
+      expect(rowObject.est).to.equal(0);
       expect(rowObject.change_percentage_point).to.equal('0.0000');
       done();
     });
@@ -133,7 +133,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
 
       const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2013_2017');
       expect(rowObject.previous_est).to.equal(0);
-      expect(rowObject.sum).to.equal(0);
+      expect(rowObject.est).to.equal(0);
       expect(rowObject.change_percentage_point).to.equal(0);
       done();
     });

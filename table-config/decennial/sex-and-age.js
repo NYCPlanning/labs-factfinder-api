@@ -150,7 +150,7 @@ module.exports = [
         },
       },
       {
-        column: 'sum',
+        column: 'est',
         aggregator: interpolate,
         options: {
           bins: [
@@ -205,14 +205,14 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.previous_est"))',
+          formula: '(GET("mdage.est") - GET("mdage.previous_est"))',
         },
       },
       {
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdage.sum") - GET("mdage.comparison_est"))',
+          formula: '(GET("mdage.est") - GET("mdage.comparison_est"))',
         },
       },
     ],

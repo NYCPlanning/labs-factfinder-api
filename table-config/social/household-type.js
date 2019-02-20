@@ -83,10 +83,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: calculator,
         options: {
-          procedure: ['hhpop.sum', 'divide', 'hh1.sum'],
+          procedure: ['hhpop.est', 'divide', 'hh1.est'],
         },
       },
       {
@@ -107,14 +107,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("hh4.sum")) * SQRT((GET("hhpop1.m")^2) + (GET("hhpop1.sum") / (GET("hh4.sum")^2) * (GET("hh4.m")^2)))',
+          formula: '(1/GET("hh4.est")) * SQRT((GET("hhpop1.m")^2) + (GET("hhpop1.est") / (GET("hh4.est")^2) * (GET("hh4.m")^2)))',
         },
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '(GET("m")/1.645/GET("sum")*100)',
+          formula: '(GET("m")/1.645/GET("est")*100)',
         },
       },
       {
@@ -149,14 +149,14 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsz.sum") - GET("avghhsz.comparison_est"))',
+          formula: '(GET("avghhsz.est") - GET("avghhsz.comparison_est"))',
         },
       },
       {
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsz.sum") - GET("avghhsz.previous_est"))',
+          formula: '(GET("avghhsz.est") - GET("avghhsz.previous_est"))',
         },
       },
       {
@@ -184,10 +184,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: calculator,
         options: {
-          procedure: ['popinfms.sum', 'divide', 'fam1.sum'],
+          procedure: ['popinfms.est', 'divide', 'fam1.est'],
         },
       },
       {
@@ -222,14 +222,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("fam3.sum")) * SQRT((GET("popinfms.m")^2) + (GET("popinfms.sum") / (GET("fam3.sum")^2) * (GET("fam3.m")^2)))',
+          formula: '(1/GET("fam3.est")) * SQRT((GET("popinfms.m")^2) + (GET("popinfms.est") / (GET("fam3.est")^2) * (GET("fam3.m")^2)))',
         },
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '(GET("m")/1.645/GET("sum")*100)',
+          formula: '(GET("m")/1.645/GET("est")*100)',
         },
       },
       {
@@ -250,7 +250,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avgfmsz.sum") - GET("avgfmsz.comparison_est"))',
+          formula: '(GET("avgfmsz.est") - GET("avgfmsz.comparison_est"))',
         },
       },
       {
@@ -264,7 +264,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avgfmsz.sum") - GET("avgfmsz.previous_est"))',
+          formula: '(GET("avgfmsz.est") - GET("avgfmsz.previous_est"))',
         },
       },
       {

@@ -14,10 +14,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: formula,
         options: {
-          formula: '(GET("pop1.sum"))/(GET("landacres.sum"))',
+          formula: '(GET("pop1.est"))/(GET("landacres.est"))',
         },
       },
       {
@@ -38,14 +38,14 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("popperacre.sum") - GET("popperacre.comparison_est"))',
+          formula: '(GET("popperacre.est") - GET("popperacre.comparison_est"))',
         },
       },
       {
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("popperacre.sum") - GET("popperacre.previous_est"))',
+          formula: '(GET("popperacre.est") - GET("popperacre.previous_est"))',
         },
       },
     ],

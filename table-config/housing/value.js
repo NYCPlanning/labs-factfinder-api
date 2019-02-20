@@ -106,7 +106,7 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -114,7 +114,7 @@ module.exports = [
         },
       },
       {
-        column: 'sum',
+        column: 'est',
         aggregator: inflate,
       },
       {
@@ -134,7 +134,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdvl.m")/ 1.645) / GET("mdvl.sum") * 100)',
+          formula: '((GET("mdvl.m")/ 1.645) / GET("mdvl.est") * 100)',
         },
       },
       {
@@ -194,7 +194,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.sum") - GET("mdvl.comparison_est"))',
+          formula: '(GET("mdvl.est") - GET("mdvl.comparison_est"))',
         },
       },
       {
@@ -208,7 +208,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdvl.sum") - GET("mdvl.previous_est"))',
+          formula: '(GET("mdvl.est") - GET("mdvl.previous_est"))',
         },
       },
       {

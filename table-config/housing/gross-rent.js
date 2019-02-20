@@ -96,7 +96,7 @@ module.exports = [
     adjustForInflation: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: interpolate,
         options: {
           multipleBins: true,
@@ -104,7 +104,7 @@ module.exports = [
         },
       },
       {
-        column: 'sum',
+        column: 'est',
         aggregator: inflate,
       },
       {
@@ -124,7 +124,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdgr.m")/ 1.645) / GET("mdgr.sum") * 100)',
+          formula: '((GET("mdgr.m")/ 1.645) / GET("mdgr.est") * 100)',
         },
       },
       {
@@ -185,7 +185,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdgr.sum") - GET("mdgr.comparison_est"))',
+          formula: '(GET("mdgr.est") - GET("mdgr.comparison_est"))',
         },
       },
       {
@@ -199,7 +199,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdgr.sum") - GET("mdgr.previous_est"))',
+          formula: '(GET("mdgr.est") - GET("mdgr.previous_est"))',
         },
       },
       {
@@ -213,14 +213,14 @@ module.exports = [
         column: 'change_percent',
         aggregator: formula,
         options: {
-          formula: 'IF((GET("mdgr.previous_est"))=0,"",((GET("mdgr.sum")-GET("mdgr.previous_est"))/GET("mdgr.previous_est")))',
+          formula: 'IF((GET("mdgr.previous_est"))=0,"",((GET("mdgr.est")-GET("mdgr.previous_est"))/GET("mdgr.previous_est")))',
         },
       },
       {
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdgr.m")^2)+((GET("mdgr.sum")/GET("mdgr.previous_est"))^2*GET("mdgr.previous_moe")^2)))/GET("mdgr.previous_est"))',
+          formula: '((SQRT((GET("mdgr.m")^2)+((GET("mdgr.est")/GET("mdgr.previous_est"))^2*GET("mdgr.previous_moe")^2)))/GET("mdgr.previous_est"))',
         },
       },
     ],

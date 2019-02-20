@@ -27,10 +27,10 @@ module.exports = [
     hidePercentChange: false,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: calculator,
         options: {
-          procedure: ['popoochu.sum', 'divide', 'oochu1.sum'],
+          procedure: ['popoochu.est', 'divide', 'oochu1.est'],
         },
       },
       {
@@ -44,7 +44,7 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("oochu4.sum")) * SQRT((GET("popoochu.m")^2) + (GET("popoochu.sum") / (GET("oochu4.sum")^2) * (GET("oochu4.m")^2)))',
+          formula: '(1/GET("oochu4.est")) * SQRT((GET("popoochu.m")^2) + (GET("popoochu.est") / (GET("oochu4.est")^2) * (GET("oochu4.m")^2)))',
         },
       },
       {
@@ -72,7 +72,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '(GET("m")/1.645/GET("sum")*100)',
+          formula: '(GET("m")/1.645/GET("est")*100)',
         },
       },
       {
@@ -93,7 +93,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.comparison_est"))',
+          formula: '(GET("avghhsooc.est") - GET("avghhsooc.comparison_est"))',
         },
       },
       {
@@ -107,7 +107,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsooc.sum") - GET("avghhsooc.previous_est"))',
+          formula: '(GET("avghhsooc.est") - GET("avghhsooc.previous_est"))',
         },
       },
       {
@@ -128,10 +128,10 @@ module.exports = [
     hidePercentChange: false,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: calculator,
         options: {
-          procedure: ['poprtochu.sum', 'divide', 'rochu1.sum'],
+          procedure: ['poprtochu.est', 'divide', 'rochu1.est'],
         },
       },
       {
@@ -145,7 +145,7 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("rochu2.sum")) * SQRT((GET("poprtochu.m")^2) + (GET("poprtochu.sum") / (GET("rochu2.sum")^2) * (GET("rochu2.m")^2)))',
+          formula: '(1/GET("rochu2.est")) * SQRT((GET("poprtochu.m")^2) + (GET("poprtochu.est") / (GET("rochu2.est")^2) * (GET("rochu2.m")^2)))',
         },
       },
       {
@@ -173,7 +173,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '(GET("m")/1.645/GET("sum")*100)',
+          formula: '(GET("m")/1.645/GET("est")*100)',
         },
       },
       {
@@ -194,7 +194,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.comparison_est"))',
+          formula: '(GET("avghhsroc.est") - GET("avghhsroc.comparison_est"))',
         },
       },
       {
@@ -208,7 +208,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsroc.sum") - GET("avghhsroc.previous_est"))',
+          formula: '(GET("avghhsroc.est") - GET("avghhsroc.previous_est"))',
         },
       },
       {

@@ -86,10 +86,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: formula,
         options: {
-          formula: '(GET("popinhh.sum"))/(GET("hh1.sum"))',
+          formula: '(GET("popinhh.est"))/(GET("hh1.est"))',
         },
       },
       {
@@ -110,14 +110,14 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsz.sum") - GET("avghhsz.comparison_est"))',
+          formula: '(GET("avghhsz.est") - GET("avghhsz.comparison_est"))',
         },
       },
       {
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avghhsz.sum") - GET("avghhsz.previous_est"))',
+          formula: '(GET("avghhsz.est") - GET("avghhsz.previous_est"))',
         },
       },
     ],
@@ -131,10 +131,10 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: formula,
         options: {
-          formula: '(GET("popinfam.sum"))/(GET("fam1.sum"))',
+          formula: '(GET("popinfam.est"))/(GET("fam1.est"))',
         },
       },
       {
@@ -155,14 +155,14 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avgfamsz.sum") - GET("avgfamsz.comparison_est"))',
+          formula: '(GET("avgfamsz.est") - GET("avgfamsz.comparison_est"))',
         },
       },
       {
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("avgfamsz.sum") - GET("avgfamsz.previous_est"))',
+          formula: '(GET("avgfamsz.est") - GET("avgfamsz.previous_est"))',
         },
       },
     ],

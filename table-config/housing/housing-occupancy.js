@@ -20,17 +20,17 @@ module.exports = [
   },
   {
     title: 'Homeowner vacancy rate',
-    tooltip: 'Number of vacant units “for sale only,” divided by sum of owner-occupied units, vacant units that are “for sale only,” and vacant units that have been sold but not yet occupied. Quotient is multiplied by 100.',
+    tooltip: 'Number of vacant units “for sale only,” divided by estimate of owner-occupied units, vacant units that are “for sale only,” and vacant units that have been sold but not yet occupied. Quotient is multiplied by 100.',
     variable: 'hovacrt',
     special: true,
     decimal: 1,
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: calculator,
         options: {
-          procedure: [['vacsale.sum', 'divide', 'hovacu.sum'], 'multiply', 100],
+          procedure: [['vacsale.est', 'divide', 'hovacu.est'], 'multiply', 100],
         },
       },
       {
@@ -51,7 +51,7 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacsale.m")^2)-(( GET("vacsale.sum") ^2/ GET("hovacu.sum") ^2)*( GET("hovacu.m") ^2)))<0,((1/ GET("hovacu.sum") *(SQRT((GET("vacsale.m") ^2)+(( GET("vacsale.sum") ^2/ GET("hovacu.sum") ^2)*( GET("hovacu.m") ^2)))))*100),((1/ GET("hovacu.sum") *(SQRT((GET("vacsale.m") ^2)-(( GET("vacsale.sum") ^2/ GET("hovacu.sum") ^2)*( GET("hovacu.m") ^2)))))*100))',
+          formula: 'IF(((GET("vacsale.m")^2)-(( GET("vacsale.est") ^2/ GET("hovacu.est") ^2)*( GET("hovacu.m") ^2)))<0,((1/ GET("hovacu.est") *(SQRT((GET("vacsale.m") ^2)+(( GET("vacsale.est") ^2/ GET("hovacu.est") ^2)*( GET("hovacu.m") ^2)))))*100),((1/ GET("hovacu.est") *(SQRT((GET("vacsale.m") ^2)-(( GET("vacsale.est") ^2/ GET("hovacu.est") ^2)*( GET("hovacu.m") ^2)))))*100))',
         },
       },
       {
@@ -72,7 +72,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("hovacrt.m")/ 1.645) / GET("hovacrt.sum") * 100)',
+          formula: '((GET("hovacrt.m")/ 1.645) / GET("hovacrt.est") * 100)',
         },
       },
       {
@@ -86,7 +86,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("hovacrt.sum") - GET("hovacrt.comparison_est"))',
+          formula: '(GET("hovacrt.est") - GET("hovacrt.comparison_est"))',
         },
       },
       {
@@ -100,7 +100,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("hovacrt.sum") - GET("hovacrt.previous_est"))',
+          formula: '(GET("hovacrt.est") - GET("hovacrt.previous_est"))',
         },
       },
       {
@@ -114,17 +114,17 @@ module.exports = [
   },
   {
     title: 'Rental vacancy rate',
-    tooltip: 'Number of vacant units “for rent,” divided by sum of renter-occupied units, vacant units that are “for rent,” and vacant units that have been rented but not yet occupied. Quotient is multiplied by 100.',
+    tooltip: 'Number of vacant units “for rent,” divided by estimate of renter-occupied units, vacant units that are “for rent,” and vacant units that have been rented but not yet occupied. Quotient is multiplied by 100.',
     variable: 'rntvacrt',
     special: true,
     decimal: 1,
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: calculator,
         options: {
-          procedure: [['vacrnt.sum', 'divide', 'rntvacu.sum'], 'multiply', 100],
+          procedure: [['vacrnt.est', 'divide', 'rntvacu.est'], 'multiply', 100],
         },
       },
       {
@@ -145,7 +145,7 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacrnt.m")^2)-(( GET("vacrnt.sum") ^2/ GET("rntvacu.sum") ^2)*( GET("rntvacu.m") ^2)))<0,((1/ GET("rntvacu.sum") *(SQRT((GET("vacrnt.m") ^2)+(( GET("vacrnt.sum") ^2/ GET("rntvacu.sum") ^2)*( GET("rntvacu.m") ^2)))))*100),((1/ GET("rntvacu.sum") *(SQRT((GET("vacrnt.m") ^2)-(( GET("vacrnt.sum") ^2/ GET("rntvacu.sum") ^2)*( GET("rntvacu.m") ^2)))))*100))',
+          formula: 'IF(((GET("vacrnt.m")^2)-(( GET("vacrnt.est") ^2/ GET("rntvacu.est") ^2)*( GET("rntvacu.m") ^2)))<0,((1/ GET("rntvacu.est") *(SQRT((GET("vacrnt.m") ^2)+(( GET("vacrnt.est") ^2/ GET("rntvacu.est") ^2)*( GET("rntvacu.m") ^2)))))*100),((1/ GET("rntvacu.est") *(SQRT((GET("vacrnt.m") ^2)-(( GET("vacrnt.est") ^2/ GET("rntvacu.est") ^2)*( GET("rntvacu.m") ^2)))))*100))',
         },
       },
       {
@@ -166,7 +166,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("rntvacrt.m")/ 1.645) / GET("rntvacrt.sum") * 100)',
+          formula: '((GET("rntvacrt.m")/ 1.645) / GET("rntvacrt.est") * 100)',
         },
       },
       {
@@ -180,7 +180,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.comparison_est"))',
+          formula: '(GET("rntvacrt.est") - GET("rntvacrt.comparison_est"))',
         },
       },
       {
@@ -194,7 +194,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("rntvacrt.sum") - GET("rntvacrt.previous_est"))',
+          formula: '(GET("rntvacrt.est") - GET("rntvacrt.previous_est"))',
         },
       },
       {

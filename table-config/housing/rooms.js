@@ -65,17 +65,17 @@ module.exports = [
     hidePercentChange: true,
     specialCalculations: [
       {
-        column: 'sum',
+        column: 'est',
         aggregator: interpolate,
         options: {
           bins: binsForMdrms,
         },
       },
       {
-        column: 'sum',
+        column: 'est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.sum") / 1000)',
+          formula: '(GET("mdrms.est") / 1000)',
         },
       },
       {
@@ -97,7 +97,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdrms.m")/ 1.645) / GET("mdrms.sum") * 100)',
+          formula: '((GET("mdrms.m")/ 1.645) / GET("mdrms.est") * 100)',
         },
       },
       {
@@ -170,7 +170,7 @@ module.exports = [
         column: 'difference_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.sum") - GET("mdrms.comparison_est"))',
+          formula: '(GET("mdrms.est") - GET("mdrms.comparison_est"))',
         },
       },
       {
@@ -184,7 +184,7 @@ module.exports = [
         column: 'change_est',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.sum") - GET("mdrms.previous_est"))',
+          formula: '(GET("mdrms.est") - GET("mdrms.previous_est"))',
         },
       },
       {
