@@ -62,45 +62,45 @@ module.exports = [
         },
       },
       {
-        column: 'cv',
-        aggregator: formula,
-        options: {
-          formula: '(316)*((GET("uwpopsmpl.sum"))^-0.679)',
-        },
-      },
-      {
-        column: 'comparison_cv',
-        aggregator: formula,
-        options: {
-          formula: '(316)*((GET("uwpopsmpl.comparison_sum"))^-0.679)',
-        },
-      },
-      {
-        column: 'previous_cv',
-        aggregator: formula,
-        options: {
-          formula: '(316)*((GET("uwpopsmpl.previous_sum"))^-0.679)',
-        },
-      },
-      {
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '((((GET("mntrvtm.cv"))/(100))*(1.645))*(GET("mntrvtm.sum")))',
+          formula: '(1/GET("wrkrnothm.sum")) * SQRT((GET("agttm.m")^2) + (GET("agttm.sum") / (GET("wrkrnothm.sum")^2) * (GET("wrkrnothm.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("mntrvtm.comparison_cv"))/(100))*(1.645))*(GET("mntrvtm.comparison_sum")))',
+          formula: '(1/GET("wrkrnothm.comparison_sum")) * SQRT((GET("agttm.comparison_m")^2) + (GET("agttm.comparison_sum") / (GET("wrkrnothm.comparison_sum")^2) * (GET("wrkrnothm.comparison_m")^2)))',
         },
       },
       {
         column: 'previous_m',
         aggregator: formula,
         options: {
-          formula: '((((GET("mntrvtm.previous_cv"))/(100))*(1.645))*(GET("mntrvtm.previous_sum")))',
+          formula: '(1/GET("wrkrnothm.previous_sum")) * SQRT((GET("agttm.previous_m")^2) + (GET("agttm.previous_sum") / (GET("wrkrnothm.previous_sum")^2) * (GET("wrkrnothm.previous_m")^2)))',
+        },
+      },
+      {
+        column: 'cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("m")/1.645/GET("sum")*100)',
+        },
+      },
+      {
+        column: 'comparison_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("comparison_m")/1.645/GET("comparison_sum")*100)',
+        },
+      },
+      {
+        column: 'previous_cv',
+        aggregator: formula,
+        options: {
+          formula: '(GET("previous_m")/1.645/GET("previous_sum")*100)',
         },
       },
       {

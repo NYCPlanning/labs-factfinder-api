@@ -6,7 +6,7 @@ function guessYear(data, foundBins) {
   const yearValue = data[firstObject].dataset;
   const thisYear = yearValue.slice(-4);
 
-  if (thisYear === '2016') {
+  if (thisYear === '2017') {
     return laterSet;
   }
 

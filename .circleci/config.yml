@@ -30,7 +30,12 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn test
+      - run:
+          name:
+          command: |
+            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+              export DATABASE_URL=$STAGING_DATABASE_URL && yarn test
+            fi
 
       # deploy
       - run:

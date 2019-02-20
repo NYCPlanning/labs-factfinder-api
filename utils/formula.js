@@ -4,13 +4,24 @@ const _ = require('lodash');
 const { get } = _;
 const { Parser } = FormulaParser;
 
-function runFormulaFor(data, sumKey, rowConfig) {
+function runFormulaFor(data, sumKey, rowConfig, variable) {
   const { formula } = rowConfig;
   const parser = new Parser();
 
-  parser.setFunction('GET', ([path]) => get(data, path));
+  parser.setFunction('GET', ([path]) => {
+    const first = get(data, path);
+    const fallback = get(data[variable], path);
 
-  const { result } = parser.parse(formula);
+    if (typeof first === 'number') return first;
+
+    return fallback;
+  }); // fallback to current object
+
+  const { result, error } = parser.parse(formula);
+
+  if (error && get(data[variable], 'dataset') === 'y2013_2017') {
+    throw new Error(error);
+  }
 
   return result;
 }

@@ -1,6 +1,3 @@
 {
-  "ignore": ["test-output"],
-  "events": {
-    "restart": "sleep 3; npm run saveoutput"
-  }
+  "ignore": ["test-output"]
 }

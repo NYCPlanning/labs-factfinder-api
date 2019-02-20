@@ -34,7 +34,7 @@ describe('Special variables', () => {
         res.type.should.equal('application/json');
 
         const rowObject = res.body
-          .find(obj => obj.variable === 'mdfaminc' && obj.dataset === 'y2012_2016');
+          .find(obj => obj.variable === 'mdfaminc' && obj.dataset === 'y2013_2017');
 
         // it should have two properties in it, "sum" and "previous_sum"
         // this gets the keys of the thresholds object and counts them
@@ -54,7 +54,7 @@ describe('normal variables with complex case logic', () => {
         res.status.should.equal(200);
         res.type.should.equal('application/json');
 
-        const rowObject = res.body.find(obj => obj.variable === 'lgfrlep1' && obj.dataset === 'y2012_2016');
+        const rowObject = res.body.find(obj => obj.variable === 'lgfrlep1' && obj.dataset === 'y2013_2017');
         expect(!!rowObject.change_percentage_point).to.equal(true);
         done();
       });
@@ -68,7 +68,7 @@ describe('normal variables with complex case logic', () => {
         res.status.should.equal(200);
         res.type.should.equal('application/json');
 
-        const rowObject = res.body.find(obj => obj.variable === 'lgthalep1' && obj.dataset === 'y2012_2016');
+        const rowObject = res.body.find(obj => obj.variable === 'lgthalep1' && obj.dataset === 'y2013_2017');
         expect(!!rowObject.change_percentage_point).to.equal(true);
         done();
       });
@@ -83,7 +83,7 @@ describe('normal variables with complex case logic', () => {
         res.status.should.equal(200);
         res.type.should.equal('application/json');
 
-        const rowObject = res.body.find(obj => obj.variable === 'lgmkhm1' && obj.dataset === 'y2012_2016');
+        const rowObject = res.body.find(obj => obj.variable === 'lgmkhm1' && obj.dataset === 'y2013_2017');
         expect((rowObject.difference_percentage === null)).to.equal(false);
         done();
       });
@@ -98,7 +98,7 @@ describe('normal variables with complex case logic', () => {
         res.status.should.equal(200);
         res.type.should.equal('application/json');
 
-        const rowObject = res.body.find(obj => obj.variable === 'lgmkhm1' && obj.dataset === 'y2012_2016');
+        const rowObject = res.body.find(obj => obj.variable === 'lgmkhm1' && obj.dataset === 'y2013_2017');
         expect((rowObject.difference_percentage === null)).to.equal(false);
         done();
       });
@@ -114,7 +114,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
       res.status.should.equal(200);
       res.type.should.equal('application/json');
 
-      const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2012_2016');
+      const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2013_2017');
       expect(rowObject.previous_sum).to.equal(0);
       expect(rowObject.sum).to.equal(0);
       expect(rowObject.change_percentage_point).to.equal('0.0000');
@@ -131,7 +131,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
       res.status.should.equal(200);
       res.type.should.equal('application/json');
 
-      const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2012_2016');
+      const rowObject = res.body.find(obj => obj.variable === 'oscasia' && obj.dataset === 'y2013_2017');
       expect(rowObject.previous_sum).to.equal(0);
       expect(rowObject.sum).to.equal(0);
       expect(rowObject.change_percentage_point).to.equal(0);
@@ -150,7 +150,7 @@ it('pop30t34 change pct pt significance should be coded a true', (done) => {
       res.status.should.equal(200);
       res.type.should.equal('application/json');
 
-      const rowObject = res.body.find(obj => obj.variable === 'pop30t34' && obj.dataset === 'y2012_2016');
+      const rowObject = res.body.find(obj => obj.variable === 'pop30t34' && obj.dataset === 'y2013_2017');
       expect(rowObject.change_percentage_point_significant).to.equal(false);
       done();
     });
@@ -168,7 +168,7 @@ it('cw_crpld Change percent MOE should only be null if previous estimate is 0', 
       res.status.should.equal(200);
       res.type.should.equal('application/json');
 
-      const rowObject = res.body.find(obj => obj.variable === 'cw_crpld' && obj.dataset === 'y2012_2016');
+      const rowObject = res.body.find(obj => obj.variable === 'cw_crpld' && obj.dataset === 'y2013_2017');
 
       // change_percent_m should be present bc change_percent is
       expect((rowObject.change_percent !== null)).to.equal(true);
@@ -188,7 +188,7 @@ it('sthrnafr single geog: percentage point difference not all always graying', (
       res.status.should.equal(200);
       res.type.should.equal('application/json');
 
-      const rowObject = res.body.find(obj => obj.variable === 'sthrnafr' && obj.dataset === 'y2012_2016');
+      const rowObject = res.body.find(obj => obj.variable === 'sthrnafr' && obj.dataset === 'y2013_2017');
 
       // change_percent_m should be present bc change_percent is
       expect(rowObject.percent_significant).to.equal(false);

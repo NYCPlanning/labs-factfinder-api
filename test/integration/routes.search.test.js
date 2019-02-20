@@ -29,25 +29,26 @@ describe('GET /search', () => {
       });
   });
 
-  it('requires q as a query param', (done) => {
-    chai.request(server)
-      .get('/search')
-      .end((err, res) => {
-        const array = res.body;
-        // response should be an array
-        array.length.should.equal(0);
-        done();
-      });
-  });
+  // geosearch no longer takes blank params
+  // it('requires q as a query param', (done) => {
+  //   chai.request(server)
+  //     .get('/search')
+  //     .end((err, res) => {
+  //       const array = res.body;
+  //       // response should be an array
+  //       array.length.should.equal(0);
+  //       done();
+  //     });
+  // });
 
-  it('returns results if q is null', (done) => {
-    chai.request(server)
-      .get('/search?q=')
-      .end((err, res) => {
-        const array = res.body;
-        // response should be an array
-        array.length.should.be.above(0);
-        done();
-      });
-  });
+  // it('returns results if q is null', (done) => {
+  //   chai.request(server)
+  //     .get('/search?q=')
+  //     .end((err, res) => {
+  //       const array = res.body;
+  //       // response should be an array
+  //       array.length.should.be.above(0);
+  //       done();
+  //     });
+  // });
 });
