@@ -96,9 +96,10 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           m as comparison_m
         FROM comparison_enriched_selection
       )
-    SELECT 
+    SELECT
       *,
       -- change_percentage_point_significant --
+      -- (actually reflect reliability, issue #57) --
       CASE
         WHEN ((((change_percentage_point_m) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
           TRUE
@@ -107,14 +108,16 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
       END AS change_percentage_point_significant,
 
       -- significant --
+      -- (actually reflect reliability, issue #57) --
       CASE
         WHEN ((((difference_m) / 1.645) / nullif(ABS(difference_sum), 0)) * 100) < 20 THEN true
         ELSE false
       END AS significant,
 
       -- percent_significant --
+      -- (actually reflect reliability, issue #57) --
       CASE
-        WHEN ((((difference_percent_m) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20 THEN 
+        WHEN ((((difference_percent_m) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20 THEN
           true
         ELSE false
       END AS percent_significant
@@ -155,6 +158,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         END AS change_percentage_point_m,
 
         -- change_significant --
+        -- (actually reflect reliability, issue #57) --
         CASE
           WHEN ((((change_m) / 1.645) / nullif(ABS(change_sum), 0)) * 100) < 20 THEN
             TRUE
@@ -163,6 +167,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         END AS change_significant,
 
         -- change_percent_significant --
+        -- (actually reflect reliability, issue #57) --
         CASE
           WHEN ((((change_percent_m) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
             TRUE
