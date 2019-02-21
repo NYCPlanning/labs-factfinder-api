@@ -75,7 +75,7 @@ describe('normal variables with complex case logic', () => {
   });
 
   // lgmkhm1
-  it('data with at least one non-null percentage point should be calculated: lgmkhm1 difference_percentage should be calculated', (done) => {
+  it('data with at least one non-null percentage point should be calculated: lgmkhm1 difference_percent should be calculated', (done) => {
     chai.request(server)
       .get('/profile/733/social?compare=4104')
       .end((err, res) => {
@@ -84,13 +84,13 @@ describe('normal variables with complex case logic', () => {
         res.type.should.equal('application/json');
 
         const rowObject = res.body.find(obj => obj.variable === 'lgmkhm1' && obj.dataset === 'y2013_2017');
-        expect((rowObject.difference_percentage === null)).to.equal(false);
+        expect((rowObject.difference_percent === null)).to.equal(false);
         done();
       });
   });
 
   // lgmkhm1
-  it('data with at least one non-null percentage point should be calculated: lgmkhm1 difference_percentage should be calculated', (done) => {
+  it('data with at least one non-null percentage point should be calculated: lgmkhm1 difference_percent should be calculated', (done) => {
     chai.request(server)
       .get('/profile/843/social?compare=4104')
       .end((err, res) => {
@@ -99,7 +99,7 @@ describe('normal variables with complex case logic', () => {
         res.type.should.equal('application/json');
 
         const rowObject = res.body.find(obj => obj.variable === 'lgmkhm1' && obj.dataset === 'y2013_2017');
-        expect((rowObject.difference_percentage === null)).to.equal(false);
+        expect((rowObject.difference_percent === null)).to.equal(false);
         done();
       });
   });
