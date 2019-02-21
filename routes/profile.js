@@ -80,7 +80,8 @@ const appendIsReliable = data => (data.map((row) => {
   if (codingThresholds.sum) appendedRow.is_reliable = false;
   if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
 
-  // calculate significance
+  // !!!!!! These calculations were changed from determining statistical SIGNIFICANCE to determining statistical RELIABILITY in PR #39, variable names were NOT updated to reflect this calculation change
+  // !!!!!! These names will be updated in a broader refactor of PFF, Visit issue #57 in labs-factfinder waffle to get more info
   appendedRow.significant = ((((difference_m) / 1.645) / Math.abs(difference_sum)) * 100) < 20;
   appendedRow.change_significant = ((((change_m) / 1.645) / Math.abs(change_sum)) * 100) < 20;
   appendedRow.change_percent_significant = ((((change_percent_m) / 1.645) / Math.abs(change_percent)) * 100) < 20;
