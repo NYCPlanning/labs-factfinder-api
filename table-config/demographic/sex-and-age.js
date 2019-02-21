@@ -196,7 +196,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdage.m")/ 1.645) / GET("mdage.estimate") * 100)',
+          formula: '((GET("mdage.moe")/ 1.645) / GET("mdage.estimate") * 100)',
         },
       },
       {
@@ -232,7 +232,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdage.moe"),2) + POWER(GET("mdage.comparison_moe"),2))',
         },
       },
       {
@@ -246,7 +246,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdage.m"),2) + POWER(GET("mdage.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdage.moe"),2) + POWER(GET("mdage.previous_moe"),2))',
         },
       },
     ],

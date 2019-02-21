@@ -107,7 +107,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdewrk.m")/ 1.645) / GET("mdewrk.estimate") * 100)',
+          formula: '((GET("mdewrk.moe")/ 1.645) / GET("mdewrk.estimate") * 100)',
         },
       },
       {
@@ -172,7 +172,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdewrk.moe"),2) + POWER(GET("mdewrk.comparison_moe"),2))',
         },
       },
       {
@@ -186,7 +186,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdewrk.m"),2) + POWER(GET("mdewrk.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdewrk.moe"),2) + POWER(GET("mdewrk.previous_moe"),2))',
         },
       },
       {
@@ -200,7 +200,7 @@ module.exports = [
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdewrk.m")^2)+((GET("mdewrk.estimate")/GET("mdewrk.previous_estimate"))^2*GET("mdewrk.previous_moe")^2)))/GET("mdewrk.previous_estimate"))',
+          formula: '((SQRT((GET("mdewrk.moe")^2)+((GET("mdewrk.estimate")/GET("mdewrk.previous_estimate"))^2*GET("mdewrk.previous_moe")^2)))/GET("mdewrk.previous_estimate"))',
         },
       },
     ],
@@ -239,7 +239,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdemftwrk.m")/ 1.645) / GET("mdemftwrk.estimate") * 100)',
+          formula: '((GET("mdemftwrk.moe")/ 1.645) / GET("mdemftwrk.estimate") * 100)',
         },
       },
       {
@@ -304,7 +304,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdemftwrk.moe"),2) + POWER(GET("mdemftwrk.comparison_moe"),2))',
         },
       },
       {
@@ -318,7 +318,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdemftwrk.m"),2) + POWER(GET("mdemftwrk.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdemftwrk.moe"),2) + POWER(GET("mdemftwrk.previous_moe"),2))',
         },
       },
       {
@@ -332,7 +332,7 @@ module.exports = [
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdemftwrk.m")^2)+((GET("mdemftwrk.estimate")/GET("mdemftwrk.previous_estimate"))^2*GET("mdemftwrk.previous_moe")^2)))/GET("mdemftwrk.previous_estimate"))',
+          formula: '((SQRT((GET("mdemftwrk.moe")^2)+((GET("mdemftwrk.estimate")/GET("mdemftwrk.previous_estimate"))^2*GET("mdemftwrk.previous_moe")^2)))/GET("mdemftwrk.previous_estimate"))',
         },
       },
     ],
@@ -371,7 +371,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdefftwrk.m")/ 1.645) / GET("mdefftwrk.estimate") * 100)',
+          formula: '((GET("mdefftwrk.moe")/ 1.645) / GET("mdefftwrk.estimate") * 100)',
         },
       },
       {
@@ -436,7 +436,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdefftwrk.moe"),2) + POWER(GET("mdefftwrk.comparison_moe"),2))',
         },
       },
       {
@@ -450,7 +450,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdefftwrk.m"),2) + POWER(GET("mdefftwrk.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdefftwrk.moe"),2) + POWER(GET("mdefftwrk.previous_moe"),2))',
         },
       },
       {
@@ -464,7 +464,7 @@ module.exports = [
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdefftwrk.m")^2)+((GET("mdefftwrk.estimate")/GET("mdefftwrk.previous_estimate"))^2*GET("mdefftwrk.previous_moe")^2)))/GET("mdefftwrk.previous_estimate"))',
+          formula: '((SQRT((GET("mdefftwrk.moe")^2)+((GET("mdefftwrk.estimate")/GET("mdefftwrk.previous_estimate"))^2*GET("mdefftwrk.previous_moe")^2)))/GET("mdefftwrk.previous_estimate"))',
         },
       },
     ],

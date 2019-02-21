@@ -134,7 +134,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdvl.m")/ 1.645) / GET("mdvl.estimate") * 100)',
+          formula: '((GET("mdvl.moe")/ 1.645) / GET("mdvl.estimate") * 100)',
         },
       },
       {
@@ -201,7 +201,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdvl.moe"),2) + POWER(GET("mdvl.comparison_moe"),2))',
         },
       },
       {
@@ -215,7 +215,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdvl.m"),2) + POWER(GET("mdvl.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdvl.moe"),2) + POWER(GET("mdvl.previous_moe"),2))',
         },
       },
     ],

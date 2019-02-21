@@ -124,7 +124,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdgr.m")/ 1.645) / GET("mdgr.estimate") * 100)',
+          formula: '((GET("mdgr.moe")/ 1.645) / GET("mdgr.estimate") * 100)',
         },
       },
       {
@@ -192,7 +192,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdgr.moe"),2) + POWER(GET("mdgr.comparison_moe"),2))',
         },
       },
       {
@@ -206,7 +206,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdgr.m"),2) + POWER(GET("mdgr.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdgr.moe"),2) + POWER(GET("mdgr.previous_moe"),2))',
         },
       },
       {
@@ -220,7 +220,7 @@ module.exports = [
         column: 'change_percent_moe',
         aggregator: formula,
         options: {
-          formula: '((SQRT((GET("mdgr.m")^2)+((GET("mdgr.estimate")/GET("mdgr.previous_estimate"))^2*GET("mdgr.previous_moe")^2)))/GET("mdgr.previous_estimate"))',
+          formula: '((SQRT((GET("mdgr.moe")^2)+((GET("mdgr.estimate")/GET("mdgr.previous_estimate"))^2*GET("mdgr.previous_moe")^2)))/GET("mdgr.previous_estimate"))',
         },
       },
     ],

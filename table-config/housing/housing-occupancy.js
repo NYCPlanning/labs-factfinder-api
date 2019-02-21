@@ -51,7 +51,7 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacsale.m")^2)-(( GET("vacsale.estimate") ^2/ GET("hovacu.estimate") ^2)*( GET("hovacu.m") ^2)))<0,((1/ GET("hovacu.estimate") *(SQRT((GET("vacsale.m") ^2)+(( GET("vacsale.estimate") ^2/ GET("hovacu.estimate") ^2)*( GET("hovacu.m") ^2)))))*100),((1/ GET("hovacu.estimate") *(SQRT((GET("vacsale.m") ^2)-(( GET("vacsale.estimate") ^2/ GET("hovacu.estimate") ^2)*( GET("hovacu.m") ^2)))))*100))',
+          formula: 'IF(((GET("vacsale.moe")^2)-(( GET("vacsale.estimate") ^2/ GET("hovacu.estimate") ^2)*( GET("hovacu.moe") ^2)))<0,((1/ GET("hovacu.estimate") *(SQRT((GET("vacsale.moe") ^2)+(( GET("vacsale.estimate") ^2/ GET("hovacu.estimate") ^2)*( GET("hovacu.moe") ^2)))))*100),((1/ GET("hovacu.estimate") *(SQRT((GET("vacsale.moe") ^2)-(( GET("vacsale.estimate") ^2/ GET("hovacu.estimate") ^2)*( GET("hovacu.moe") ^2)))))*100))',
         },
       },
       {
@@ -72,7 +72,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("hovacrt.m")/ 1.645) / GET("hovacrt.estimate") * 100)',
+          formula: '((GET("hovacrt.moe")/ 1.645) / GET("hovacrt.estimate") * 100)',
         },
       },
       {
@@ -93,7 +93,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("hovacrt.moe"),2) + POWER(GET("hovacrt.comparison_moe"),2))',
         },
       },
       {
@@ -107,7 +107,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("hovacrt.m"),2) + POWER(GET("hovacrt.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("hovacrt.moe"),2) + POWER(GET("hovacrt.previous_moe"),2))',
         },
       },
     ],
@@ -145,7 +145,7 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: 'IF(((GET("vacrnt.m")^2)-(( GET("vacrnt.estimate") ^2/ GET("rntvacu.estimate") ^2)*( GET("rntvacu.m") ^2)))<0,((1/ GET("rntvacu.estimate") *(SQRT((GET("vacrnt.m") ^2)+(( GET("vacrnt.estimate") ^2/ GET("rntvacu.estimate") ^2)*( GET("rntvacu.m") ^2)))))*100),((1/ GET("rntvacu.estimate") *(SQRT((GET("vacrnt.m") ^2)-(( GET("vacrnt.estimate") ^2/ GET("rntvacu.estimate") ^2)*( GET("rntvacu.m") ^2)))))*100))',
+          formula: 'IF(((GET("vacrnt.moe")^2)-(( GET("vacrnt.estimate") ^2/ GET("rntvacu.estimate") ^2)*( GET("rntvacu.moe") ^2)))<0,((1/ GET("rntvacu.estimate") *(SQRT((GET("vacrnt.moe") ^2)+(( GET("vacrnt.estimate") ^2/ GET("rntvacu.estimate") ^2)*( GET("rntvacu.moe") ^2)))))*100),((1/ GET("rntvacu.estimate") *(SQRT((GET("vacrnt.moe") ^2)-(( GET("vacrnt.estimate") ^2/ GET("rntvacu.estimate") ^2)*( GET("rntvacu.moe") ^2)))))*100))',
         },
       },
       {
@@ -166,7 +166,7 @@ module.exports = [
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("rntvacrt.m")/ 1.645) / GET("rntvacrt.estimate") * 100)',
+          formula: '((GET("rntvacrt.moe")/ 1.645) / GET("rntvacrt.estimate") * 100)',
         },
       },
       {
@@ -187,7 +187,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("rntvacrt.moe"),2) + POWER(GET("rntvacrt.comparison_moe"),2))',
         },
       },
       {
@@ -201,7 +201,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("rntvacrt.m"),2) + POWER(GET("rntvacrt.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("rntvacrt.moe"),2) + POWER(GET("rntvacrt.previous_moe"),2))',
         },
       },
     ],

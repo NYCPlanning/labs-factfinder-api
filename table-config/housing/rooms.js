@@ -90,14 +90,14 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: '(GET("mdrms.m") / 1000)',
+          formula: '(GET("mdrms.moe") / 1000)',
         },
       },
       {
         column: 'cv',
         aggregator: formula,
         options: {
-          formula: '((GET("mdrms.m")/ 1.645) / GET("mdrms.estimate") * 100)',
+          formula: '((GET("mdrms.moe")/ 1.645) / GET("mdrms.estimate") * 100)',
         },
       },
       {
@@ -177,7 +177,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdrms.moe"),2) + POWER(GET("mdrms.comparison_moe"),2))',
         },
       },
       {
@@ -191,7 +191,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("mdrms.m"),2) + POWER(GET("mdrms.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("mdrms.moe"),2) + POWER(GET("mdrms.previous_moe"),2))',
         },
       },
     ],

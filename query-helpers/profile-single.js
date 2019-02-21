@@ -35,7 +35,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           -- previous_moe --
           CASE
             WHEN is_most_recent THEN
-              lag(m) over (order by variable, dataset)
+              LAG(moe) over (order by variable, dataset)
           END as previous_moe,
 
           -- previous_percent_moe --
@@ -135,7 +135,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
         END AS difference_percent,
 
         -- difference_moe --
-        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_moe, 0), 2)))) AS difference_moe,
+        (SQRT((POWER(coalesce(moe, 0), 2) + POWER(coalesce(comparison_moe, 0), 2)))) AS difference_moe,
 
         -- difference_percent_moe --
         (SQRT((POWER(coalesce(percent_moe, 0) * 100, 2) + POWER(coalesce(comparison_percent_moe, 0) * 100, 2)))) AS difference_percent_moe,
@@ -205,7 +205,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
           -- change_moe --
           CASE
             WHEN is_most_recent THEN
-              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_moe, 0), 2)))
+              ABS(SQRT(POWER(coalesce(moe, 0), 2) + POWER(coalesce(previous_moe, 0), 2)))
           END as change_moe,
 
           -- change_percent --
@@ -220,7 +220,7 @@ const buildSQL = function buildSQL(profile, geoid, compare) {
               coalesce(
                 ABS(estimate / NULLIF(previous_estimate,0))
                 * SQRT(
-                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(estimate, 2), 0))
+                  (POWER(coalesce(moe, 0) / 1.645, 2) / NULLIF(POWER(estimate, 2), 0))
                   + (POWER(previous_moe / 1.645, 2) / NULLIF(POWER(previous_estimate, 2), 0))
                 ) * 1.645,
                 0

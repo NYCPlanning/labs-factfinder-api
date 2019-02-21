@@ -107,7 +107,7 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("hh4.estimate")) * SQRT((GET("hhpop1.m")^2) + (GET("hhpop1.estimate") / (GET("hh4.estimate")^2) * (GET("hh4.m")^2)))',
+          formula: '(1/GET("hh4.estimate")) * SQRT((GET("hhpop1.moe")^2) + (GET("hhpop1.estimate") / (GET("hh4.estimate")^2) * (GET("hh4.moe")^2)))',
         },
       },
       {
@@ -163,14 +163,14 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("avghhsz.moe"),2) + POWER(GET("avghhsz.comparison_moe"),2))',
         },
       },
       {
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsz.m"),2) + POWER(GET("avghhsz.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("avghhsz.moe"),2) + POWER(GET("avghhsz.previous_moe"),2))',
         },
       },
     ],
@@ -222,7 +222,7 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("fam3.estimate")) * SQRT((GET("popinfms.m")^2) + (GET("popinfms.estimate") / (GET("fam3.estimate")^2) * (GET("fam3.m")^2)))',
+          formula: '(1/GET("fam3.estimate")) * SQRT((GET("popinfms.moe")^2) + (GET("popinfms.estimate") / (GET("fam3.estimate")^2) * (GET("fam3.moe")^2)))',
         },
       },
       {
@@ -257,7 +257,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("avgfmsz.moe"),2) + POWER(GET("avgfmsz.comparison_moe"),2))',
         },
       },
       {
@@ -271,7 +271,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avgfmsz.m"),2) + POWER(GET("avgfmsz.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("avgfmsz.moe"),2) + POWER(GET("avgfmsz.previous_moe"),2))',
         },
       },
     ],

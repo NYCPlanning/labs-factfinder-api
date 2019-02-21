@@ -44,7 +44,7 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("oochu4.estimate")) * SQRT((GET("popoochu.m")^2) + (GET("popoochu.estimate") / (GET("oochu4.estimate")^2) * (GET("oochu4.m")^2)))',
+          formula: '(1/GET("oochu4.estimate")) * SQRT((GET("popoochu.moe")^2) + (GET("popoochu.estimate") / (GET("oochu4.estimate")^2) * (GET("oochu4.moe")^2)))',
         },
       },
       {
@@ -100,7 +100,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + POWER(GET("avghhsooc.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("avghhsooc.moe"),2) + POWER(GET("avghhsooc.comparison_moe"),2))',
         },
       },
       {
@@ -114,7 +114,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsooc.m"),2) + (POWER(GET("avghhsooc.previous_moe"),2)))',
+          formula: 'SQRT(POWER(GET("avghhsooc.moe"),2) + (POWER(GET("avghhsooc.previous_moe"),2)))',
         },
       },
     ],
@@ -145,7 +145,7 @@ module.exports = [
         column: 'moe',
         aggregator: formula,
         options: {
-          formula: '(1/GET("rochu2.estimate")) * SQRT((GET("poprtochu.m")^2) + (GET("poprtochu.estimate") / (GET("rochu2.estimate")^2) * (GET("rochu2.m")^2)))',
+          formula: '(1/GET("rochu2.estimate")) * SQRT((GET("poprtochu.moe")^2) + (GET("poprtochu.estimate") / (GET("rochu2.estimate")^2) * (GET("rochu2.moe")^2)))',
         },
       },
       {
@@ -201,7 +201,7 @@ module.exports = [
         column: 'difference_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.comparison_moe"),2))',
+          formula: 'SQRT(POWER(GET("avghhsroc.moe"),2) + POWER(GET("avghhsroc.comparison_moe"),2))',
         },
       },
       {
@@ -215,7 +215,7 @@ module.exports = [
         column: 'change_moe',
         aggregator: formula,
         options: {
-          formula: 'SQRT(POWER(GET("avghhsroc.m"),2) + POWER(GET("avghhsroc.previous_moe"),2))',
+          formula: 'SQRT(POWER(GET("avghhsroc.moe"),2) + POWER(GET("avghhsroc.previous_moe"),2))',
         },
       },
     ],
