@@ -21,7 +21,7 @@ const block = (string) => {
             WHEN borocode = '5' THEN '085'
           END
         || ct2010 || cb2010 as fips
-      FROM nyc_census_blocks_2010
+      FROM nyc_census_blocks
     ) x
     WHERE
       bctcb2010 LIKE '%25${string}%25'

@@ -18,7 +18,7 @@ const neighborhood = (string) => {
       ntacode,
       ntacode as geolabel,
       ntacode as geoid
-    FROM support_admin_ntaboundaries
+    FROM nta_boundaries
     WHERE
       (
         LOWER(ntaname) LIKE LOWER('%25${string}%25')
