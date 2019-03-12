@@ -65,14 +65,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("wrkrnothm.sum")) * SQRT((GET("agttm.m")^2) + (GET("agttm.sum") / (GET("wrkrnothm.sum")^2) * (GET("wrkrnothm.m")^2)))',
+          formula: '(1 / GET("wrkrnothm.sum")) * SQRT((GET("agttm.m")^2) + ((GET("agttm.sum") / (GET("wrkrnothm.sum")))^2 * (GET("wrkrnothm.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("wrkrnothm.comparison_sum")) * SQRT((GET("agttm.comparison_m")^2) + (GET("agttm.comparison_sum") / (GET("wrkrnothm.comparison_sum")^2) * (GET("wrkrnothm.comparison_m")^2)))',
+          formula: '(1 / GET("wrkrnothm.comparison_sum")) * SQRT((GET("agttm.comparison_m")^2) + ((GET("agttm.comparison_sum") / (GET("wrkrnothm.comparison_sum")))^2 * (GET("wrkrnothm.comparison_m")^2)))',
         },
       },
       {
