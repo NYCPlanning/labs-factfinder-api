@@ -44,14 +44,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("oochu4.sum")) * SQRT((GET("popoochu.m")^2) + (GET("popoochu.sum") / (GET("oochu4.sum")^2) * (GET("oochu4.m")^2)))',
+          formula: '(1 / GET("oochu4.sum")) * SQRT((GET("popoochu.m")^2) + ((GET("popoochu.sum") / (GET("oochu4.sum")))^2 * (GET("oochu4.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("oochu4.comparison_sum")) * SQRT((GET("popoochu.comparison_m")^2) + (GET("popoochu.comparison_sum") / (GET("oochu4.comparison_sum")^2) * (GET("oochu4.comparison_m")^2)))',
+          formula: '(1 / GET("oochu4.comparison_sum")) * SQRT((GET("popoochu.comparison_m")^2) + ((GET("popoochu.comparison_sum") / (GET("oochu4.comparison_sum")))^2 * (GET("oochu4.comparison_m")^2)))',
         },
       },
       {
@@ -145,14 +145,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("rochu2.sum")) * SQRT((GET("poprtochu.m")^2) + (GET("poprtochu.sum") / (GET("rochu2.sum")^2) * (GET("rochu2.m")^2)))',
+          formula: '(1 / GET("rochu2.sum")) * SQRT((GET("poprtochu.m")^2) + ((GET("poprtochu.sum") / (GET("rochu2.sum")))^2 * (GET("rochu2.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("rochu2.comparison_sum")) * SQRT((GET("poprtochu.comparison_m")^2) + (GET("poprtochu.comparison_sum") / (GET("rochu2.comparison_sum")^2) * (GET("rochu2.comparison_m")^2)))',
+          formula: '(1 / GET("rochu2.comparison_sum")) * SQRT((GET("poprtochu.comparison_m")^2) + ((GET("poprtochu.comparison_sum") / (GET("rochu2.comparison_sum")))^2 * (GET("rochu2.comparison_m")^2)))',
         },
       },
       {

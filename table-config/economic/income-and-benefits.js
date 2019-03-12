@@ -280,14 +280,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("hh5.sum")) * SQRT((GET("aghhinc.m")^2) + (GET("aghhinc.sum") / (GET("hh5.sum")^2) * (GET("hh5.m")^2)))',
+          formula: '(1 / GET("hh5.sum")) * SQRT((GET("aghhinc.m")^2) + ((GET("aghhinc.sum") / (GET("hh5.sum")))^2 * (GET("hh5.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("hh5.comparison_sum")) * SQRT((GET("aghhinc.comparison_m")^2) + (GET("aghhinc.comparison_sum") / (GET("hh5.comparison_sum")^2) * (GET("hh5.comparison_m")^2)))',
+          formula: '(1 / GET("hh5.comparison_sum")) * SQRT((GET("aghhinc.comparison_m")^2) + ((GET("aghhinc.comparison_sum") / (GET("hh5.comparison_sum")))^2 * (GET("hh5.comparison_m")^2)))',
         },
       },
       {
@@ -748,14 +748,14 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("pop_6.sum")) * SQRT((GET("agip15pl.m")^2) + (GET("agip15pl.sum") / (GET("pop_6.sum")^2) * (GET("pop_6.m")^2)))',
+          formula: '(1 / GET("pop_6.sum")) * SQRT((GET("agip15pl.m")^2) + ((GET("agip15pl.sum") / (GET("pop_6.sum")))^2 * (GET("pop_6.m")^2)))',
         },
       },
       {
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("pop_6.comparison_sum")) * SQRT((GET("agip15pl.comparison_m")^2) + (GET("agip15pl.comparison_sum") / (GET("pop_6.comparison_sum")^2) * (GET("pop_6.comparison_m")^2)))',
+          formula: '(1 / GET("pop_6.comparison_sum")) * SQRT((GET("agip15pl.comparison_m")^2) + ((GET("agip15pl.comparison_sum") / (GET("pop_6.comparison_sum")))^2 * (GET("pop_6.comparison_m")^2)))',
         },
       },
       {
