@@ -1,4 +1,5 @@
 const calculator = require('../../utils/calculator');
+
 const formula = require('../../utils/formula');
 
 module.exports = [
@@ -107,7 +108,7 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("hh4.sum")) * SQRT((GET("hhpop1.m")^2) + (GET("hhpop1.sum") / (GET("hh4.sum")^2) * (GET("hh4.m")^2)))',
+          formula: '(1 / GET("hh4.sum")) * SQRT((GET("hhpop1.m")^2) + ((GET("hhpop1.sum") / (GET("hh4.sum")))^2 * (GET("hh4.m")^2)))',
         },
       },
       {
@@ -135,7 +136,7 @@ module.exports = [
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("hh4.comparison_sum")) * SQRT((GET("hhpop1.comparison_m")^2) + (GET("hhpop1.comparison_sum") / (GET("hh4.comparison_sum")^2) * (GET("hh4.comparison_m")^2)))',
+          formula: '(1 / GET("hh4.comparison_sum")) * SQRT((GET("hhpop1.comparison_m")^2) + ((GET("hhpop1.comparison_sum") / (GET("hh4.comparison_sum")))^2 * (GET("hh4.comparison_m")^2)))',
         },
       },
       {
@@ -222,7 +223,7 @@ module.exports = [
         column: 'm',
         aggregator: formula,
         options: {
-          formula: '(1/GET("fam3.sum")) * SQRT((GET("popinfms.m")^2) + (GET("popinfms.sum") / (GET("fam3.sum")^2) * (GET("fam3.m")^2)))',
+          formula: '(1 / GET("fam3.sum")) * SQRT((GET("popinfms.m")^2) + ((GET("popinfms.sum") / (GET("fam3.sum")))^2 * (GET("fam3.m")^2)))',
         },
       },
       {
@@ -236,7 +237,7 @@ module.exports = [
         column: 'comparison_m',
         aggregator: formula,
         options: {
-          formula: '(1/GET("fam3.comparison_sum")) * SQRT((GET("popinfms.comparison_m")^2) + (GET("popinfms.comparison_sum") / (GET("fam3.comparison_sum")^2) * (GET("fam3.comparison_m")^2)))',
+          formula: '(1 / GET("fam3.comparison_sum")) * SQRT((GET("popinfms.comparison_m")^2) + ((GET("popinfms.comparison_sum") / (GET("fam3.comparison_sum")))^2 * (GET("fam3.comparison_m")^2)))',
         },
       },
       {
