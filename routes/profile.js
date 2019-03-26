@@ -1,6 +1,10 @@
 const express = require('express');
 const _ = require('lodash');
 
+const {
+  get, camelCase, find, merge,
+} = _;
+
 const Selection = require('../models/selection');
 const buildProfileSQL = require('../query-helpers/profile');
 const buildProfileSingleSQL = require('../query-helpers/profile-single');
@@ -17,11 +21,14 @@ router.use((req, res, next) => {
   next();
 });
 
-const {
-  get, camelCase, find, merge,
-} = _;
-
-const appendRowConfig = (data, profile, match) => {
+/*
+ * Augments raw SQL row data by TODO: nestProfile explainer, and adding 'config' data:
+ * - rowConfig: TODO
+ * - special: boolean indicating if this row was derived by a special calculation
+ * - category: normalized (camelCased) category name
+ * - numGeoids: The number of geoids (i.e. individual selection 'units') that were used to compute the row values
+ */
+function appendRowConfig(data, profile, match) {
   const fullDataset = nestProfile(data, 'object', 'dataset', 'variable');
 
   return data
@@ -41,10 +48,10 @@ const appendRowConfig = (data, profile, match) => {
       // specifically assigns properties to this object.
       rowWithConfig.codingThresholds = {};
 
-      // if the row is "special" and the number of geoids in the
-      // selection are greater than 1
-      // then, delete the unneeded special calculations data
-
+      /*
+       * If this variable (row) has columns that require special calculation for aggregate datasets (geoids.length >1),
+       * then replace raw SQL values with recalculated aggreate values
+       */
       if (rowWithConfig.special && (match.geoids.length > 1)) {
         const currentYear = get(fullDataset, dataset);
         const newRowObject = delegateAggregator(rowWithConfig, rowWithConfig.rowConfig, currentYear);
@@ -53,49 +60,76 @@ const appendRowConfig = (data, profile, match) => {
 
       return rowWithConfig;
     });
-};
+}
 
-const appendIsReliable = data => (data.map((row) => {
-  const appendedRow = row;
-  appendedRow.is_reliable = false;
-  appendedRow.comparison_is_reliable = false;
+/*
+ * Augments SQL row by adding an `is_reliable` boolean flag and statistical
+ * reliability values:
+ * - is_reliable: true if "cv" < 20 and value has not been top/bottom coded
+ * - comparison_is_reliable: true if comparison "cv" < 20 and value has not been top/bottom coded
+ * - significant: true if difference  significance < 20
+ * - change_significant: true if change significance < 20
+ * - change_percent_significant
+ */
+function appendIsReliable(data) {
+  return data.map((row) => {
+    const appendedRow = row;
+    appendedRow.is_reliable = false;
+    appendedRow.comparison_is_reliable = false;
 
-  const {
-    cv,
-    comparison_cv,
-    codingThresholds,
-    change_m,
-    change_sum,
-    change_percent_m,
-    change_percent,
-    difference_sum,
-    difference_m,
-  } = appendedRow;
+    const {
+      cv,
+      comparison_cv,
+      codingThresholds,
+      change_m,
+      change_sum,
+      change_percent_m,
+      change_percent,
+      difference_sum,
+      difference_m,
+    } = appendedRow;
 
-  // set reliability to true if cv is less than 20
-  if (cv !== null && cv < 20) appendedRow.is_reliable = true;
-  if (comparison_cv !== null && comparison_cv < 20) appendedRow.comparison_is_reliable = true;
+    // set reliability to true if cv is less than 20
+    if (cv !== null && cv < 20) appendedRow.is_reliable = true;
+    if (comparison_cv !== null && comparison_cv < 20) appendedRow.comparison_is_reliable = true;
 
-  // set reliability to false if the value is top or bottom-coded
-  if (codingThresholds.sum) appendedRow.is_reliable = false;
-  if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
+    // set reliability to false if the value is top or bottom-coded
+    if (codingThresholds.sum) appendedRow.is_reliable = false;
+    if (codingThresholds.comparison_sum) appendedRow.comparison_is_reliable = false;
 
-  // calculate significance
-  appendedRow.significant = ((((difference_m) / 1.645) / Math.abs(difference_sum)) * 100) < 20;
-  appendedRow.change_significant = ((((change_m) / 1.645) / Math.abs(change_sum)) * 100) < 20;
-  appendedRow.change_percent_significant = ((((change_percent_m) / 1.645) / Math.abs(change_percent)) * 100) < 20;
+    // calculate significance
+    appendedRow.significant = ((((difference_m) / 1.645) / Math.abs(difference_sum)) * 100) < 20;
+    appendedRow.change_significant = ((((change_m) / 1.645) / Math.abs(change_sum)) * 100) < 20;
+    appendedRow.change_percent_significant = ((((change_percent_m) / 1.645) / Math.abs(change_percent)) * 100) < 20;
 
-  return appendedRow;
-}));
-
-const invalidCompare = (compare) => {
+    return appendedRow;
+  });
+}
+function invalidCompare(compare) {
   const cityOrBoro = compare.match(/[0-5]{1}/);
   const nta = compare.match(/[A-Z]{2}[0-9]{2}/);
   const puma = compare.match(/[0-9]{4}/);
 
   if (cityOrBoro || nta || puma) return false;
   return true;
-};
+}
+
+function invalidProfile(profile) {
+  const validProfiles = ['decennial', 'demographic', 'social', 'economic', 'housing'];
+  return !validProfiles.includes(profile);
+}
+
+function getQuery(match, profile, compare) {
+  if (profile === 'decennial') {
+    return buildDecennialSQL(match.geoids, compare);
+  }
+
+  if (match.geoids.length === 1) {
+    return buildProfileSingleSQL(profile, match.geoids[0], compare);
+  }
+
+  return buildProfileSQL(profile, match.geoids, compare);
+}
 
 router.get('/:id/:profile', (req, res) => {
   const { app } = req;
@@ -107,22 +141,12 @@ router.get('/:id/:profile', (req, res) => {
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
 
   // validate profile
-  const validProfiles = ['decennial', 'demographic', 'social', 'economic', 'housing'];
-  if (validProfiles.indexOf(profile) === -1) res.status(500).send({ error: 'invalid profile' });
+  if (invalidProfile(profile)) res.status(500).send({ error: 'invalid profile' });
 
   Selection.findOne({ _id })
     .then((match) => {
-      let SQL;
-
-      if (profile === 'decennial') {
-        SQL = buildDecennialSQL(match.geoids, compare);
-      } else if (match.geoids.length === 1) {
-        SQL = buildProfileSingleSQL(profile, match.geoids[0], compare);
-      } else {
-        SQL = buildProfileSQL(profile, match.geoids, compare);
-      }
-
-      app.db.query(SQL)
+      const query = getQuery(match, profile, compare);
+      app.db.query(query)
         .then(data => appendRowConfig(data, profile, match))
         .then(data => appendIsReliable(data))
         .then((data) => {

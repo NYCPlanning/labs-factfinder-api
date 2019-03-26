@@ -1,3 +1,6 @@
+/*
+ * A 'Profile' is ACS (American Community Survey) data from a single Survey dataset
+ */
 // return a comma-separated string of single-quoted numbers from an array of numbers
 function stringifyArray(array) {
   return `'${array.join("','")}'`;
@@ -13,7 +16,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
   return /**/`
     WITH
       filtered_selection AS (
-        SELECT *
+        SELECT
         FROM ${profile}
         WHERE geoid IN (${idStrings})
       ),
