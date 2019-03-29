@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const guessYear = require('../utils/guess-year');
 
-const { get, isArray, clone } = _;
+const { get, clone } = _;
 const { round } = Math;
 
-const DESIGN_FACTOR = 1.5;
+const getBins = require('./get-bins');
+const { DESIGN_FACTOR, STANDARD_ERROR } = require('../data/special-calculations/constants');
 
 function findCumulativePercentage(scenario, sum, index) {
   const copiedBins = clone(scenario);
@@ -17,35 +17,18 @@ function findCumulativePercentage(scenario, sum, index) {
   return (cumulativeSum / sum) * 100;
 }
 
-function calculateMedianError(data, column, options) {
-  const { bins, multipleBins, designFactor = DESIGN_FACTOR } = options;
+function calculateMedianError(data, variable, year, options) {
+  const { designFactor = DESIGN_FACTOR } = options;
 
-  let foundBins = bins;
+  const bins = getBins(variable, year);
+  const scenario = bins.map((bin) => {
+    const [key] = bin;
+    const sum = get(data, `${key}.sum`);
 
-  const sumKey = (function computeSumKey() {
-    if (column.length === 1) return 'sum';
-    return column.replace('_m', '_sum');
-  }());
-
-  let scenario = data;
-
-  // if we provide an array of bins in the configuration,
-  // it's implied that the first bins should be used for the earlier
-  // time period, and the last bin should be used for the later
-  if (multipleBins) {
-    foundBins = guessYear(data, foundBins);
-  }
-
-  if (!isArray(scenario)) {
-    scenario = foundBins.map((bin) => {
-      const [key] = bin;
-      const sum = get(data, `${key}.${sumKey}`);
-
-      return {
-        quantity: sum,
-      };
-    });
-  }
+    return {
+      quantity: sum,
+    };
+  });
 
   if (scenario.some(obj => obj.quantity === null)) return null;
 
@@ -54,27 +37,24 @@ function calculateMedianError(data, column, options) {
     0,
   );
 
-  const standardError = designFactor * ((
-    (93 / (7 * sum)) * 2500
-  ) ** 0.5);
-
+  const standardError = STANDARD_ERROR(designFactor);
   const pUpper = 50 + standardError;
   const pLower = 50 - standardError;
 
-  const upperCategoryIndex = foundBins
+  const upperCategoryIndex = bins
     .findIndex((__, currentBin) => round(pUpper) > findCumulativePercentage(scenario, sum, currentBin)
         && round(pUpper) < findCumulativePercentage(scenario, sum, currentBin + 1));
 
-  const lowerCategoryIndex = foundBins
+  const lowerCategoryIndex = bins
     .findIndex((__, currentBin) => round(pLower) > findCumulativePercentage(scenario, sum, currentBin)
         && round(pLower) < findCumulativePercentage(scenario, sum, currentBin + 1));
 
-  const upperCategory = foundBins[upperCategoryIndex];
-  const lowerCategory = foundBins[lowerCategoryIndex];
+  const upperCategory = bins[upperCategoryIndex];
+  const lowerCategory = bins[lowerCategoryIndex];
 
-  const upperA2SubsequentBin = (foundBins[upperCategoryIndex + 1] || foundBins[upperCategoryIndex])[1][0];
+  const upperA2SubsequentBin = (bins[upperCategoryIndex + 1] || bins[upperCategoryIndex])[1][0];
 
-  const lowerA2SubsequentBin = (foundBins[lowerCategoryIndex + 1] || foundBins[lowerCategoryIndex])[1][0];
+  const lowerA2SubsequentBin = (bins[lowerCategoryIndex + 1] || bins[lowerCategoryIndex])[1][0];
 
   const inputs = {
     upper: {
