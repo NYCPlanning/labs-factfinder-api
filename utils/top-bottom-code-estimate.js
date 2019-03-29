@@ -1,40 +1,23 @@
 const _ = require('lodash');
-const topBottomCodings = require('../metadata/top-bottom-codings');
+const topBottomCodings = require('../special-calculations/data/top-bottom-codings');
 
 const { get } = _;
 
 /*
-  Top and bottom "code" estimated medians based on a set of conditions.
-
-  Latest:
-    single-geography estimates - use "all", except when NTA (then use "nta")
-    multi-geography aggregates - use "nta"
-
-  Earlier:
-    single-geography estimates - use "all", except when NTA and PUMA (then use "nta")
-    multi-geography aggregates - use "nta"
-*/
-
-function topBottomCodeEstimate(estimate, row) {
-  const is_most_recent = get(row, 'is_most_recent');
-  const timeframe = is_most_recent ? 'latest' : 'earlier';
-  const variable = get(row, 'variable');
-  const geotype = get(row, 'geotype');
-  const geoids = get(row, 'numGeoids');
-
+ * Conditionally top- or bottom-codes an estimated median value, using configured coding values.
+ * Returns the coded estimate, as well as the direction the estimate was coded if it was coded.
+ * NOTE: all estimates calculated via interpolation & top- or bottom-coded here are for multi-geography
+ * aggregates, so coding values will always be those for 'nta' geographic type designations
+ * @param{Number} estimate - The estimated median to be potentially coded
+ * @param{string} variable - The name of the variable this estimate value belongs to
+ * @param{string} year - The year of the dataset this variable belongs to
+ * @returns{Object}
+ */
+function topBottomCodeEstimate(estimate, variable, year) {
   let mutatedEstimate = estimate;
-  let geographicTypeDesignation = 'nta';
   let codingThreshold = null;
 
-  if (is_most_recent) {
-    if (geoids === 1 && (geotype !== 'NTA2010')) {
-      geographicTypeDesignation = 'all';
-    }
-  } else if (geoids === 1 && (geotype !== 'NTA2010' && geotype !== 'PUMA2010')) {
-    geographicTypeDesignation = 'all';
-  }
-
-  const codingRule = get(topBottomCodings, `${timeframe}.${variable}.${geographicTypeDesignation}`);
+  const codingRule = get(topBottomCodings, `${year}.${variable}`);
 
   if (estimate <= get(codingRule, 'lower')) {
     mutatedEstimate = get(codingRule, 'lower');
