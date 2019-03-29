@@ -1,320 +1,107 @@
-// return a comma-separated string of single-quoted numbers from an array of numbers
-function stringifyArray(array) {
-  return `'${array.join("','")}'`;
+const { CV_CONST, CUR_YEAR, PREV_YEAR } = require('../special-calculations/data/constants');
+
+/*
+ * Returns the appropriate second half of the geoid WHERE clause
+ * If 'ids' is an array, returns an 'IN (...ids)' clause, with the quoted ids joined by ','
+ * Else, if 'ids' is a single id, returns an '= id' clause, with id in quotes
+ */
+function formatGeoidWhereClause(ids) {
+  if (Array.isArray(ids)) return `IN ('${ids.join("','")}')`;
+  return `= '${ids}'`;
 }
 
-const buildSQL = function buildSQL(profile, ids, compare) {
-  const idStrings = stringifyArray(ids);
-  // const { length } = idStrings;
-  // WARNING: although our Carto backend will prevent any
-  // malicious SQL injection, maintainers might consider
-  // migrating to Postgres which would make it very easy for
-  // malicious code to be inserted
-  return /**/`
-    WITH
-      filtered_selection AS (
-        SELECT *
-        FROM ${profile}
-        WHERE geoid IN (${idStrings})
-      ),
+const profileSQL = (profile, ids, isPrevious = false) => `
+  WITH
+  /*
+   * enriched_profile: profile data joined with meta data
+   * from factfinder_metadata, filtered for given year
+   * and geoids
+   */
+  enriched_profile AS (
+    SELECT *
+    FROM ${profile} p
+    INNER JOIN factfinder_metadata ffm
+    ON ffm.variablename = p.variable
+    WHERE p.geoid ${formatGeoidWhereClause(ids)}
+    AND p.dataset = '${isPrevious ? PREV_YEAR : CUR_YEAR}'
+  ),
 
-      enriched_selection AS (
-        SELECT *
-        FROM filtered_selection
-        INNER JOIN factfinder_metadata
-          ON factfinder_metadata.variablename = filtered_selection.variable
-      ),
-
-      main_numbers AS (
-        SELECT
-          *,
-
-          -- cv --
-          (((m / 1.645) / NULLIF(SUM,0)) * 100) AS cv,
-
-          -- previous_sum --
-          CASE
-            WHEN is_most_recent THEN
-              lag(sum) over (order by variable, dataset)
-          END AS previous_sum,
-
-          -- previous_m --
-          CASE
-            WHEN is_most_recent THEN
-              lag(m) over (order by variable, dataset)
-          END AS previous_m
-        FROM (
-          SELECT
-            -- sum --
-            sum(e) AS sum,
-
-            -- m --
-            sqrt(sum(power(m, 2))) AS m,
-
-            -- is_most_recent --
-            CASE
-              WHEN max(dataset) over () = dataset THEN
-                TRUE
-              ELSE
-                FALSE
-            END AS is_most_recent,
-
-            base,
-            category,
-            variable,
-            profile,
-            dataset
-          FROM enriched_selection
-          GROUP BY variable, dataset, base, category, profile
-        ) x
-      ),
-
-      base_numbers AS (
-        SELECT
-          -- base_sum --
-          sum(e) AS base_sum,
-
-          -- base_m --
-          sqrt(sum(power(m, 2))) AS base_m,
-
-          -- base_join --
-          max(base) AS base_join,
-
-          -- base_dataset --
-          max(dataset) AS base_dataset,
-
-          -- previous_base_sum --
-          lag(sum(e)) over (order by variable, dataset) AS previous_base_sum,
-
-          -- previous_base_m --
-          lag(sqrt(sum(power(m, 2)))) over (order by variable, dataset) AS previous_base_m
-        FROM enriched_selection
-        WHERE base = variable
-        GROUP BY variable, dataset
-      ),
-
-      comparison_selection AS (
-        SELECT *
-        FROM ${profile}
-        WHERE geoid = '${compare}'
-      ),
-
-      comparison_enriched_selection AS (
-        SELECT *
-        FROM comparison_selection
-        INNER JOIN factfinder_metadata
-          ON factfinder_metadata.variablename = comparison_selection.variable
-      ),
-
-      comparison_main_numbers AS (
-        SELECT
-          *
-        FROM (
-          SELECT
-            -- comparison_sum --
-            e AS comparison_sum,
-
-            -- comparison_m --
-            m AS comparison_m,
-
-            -- comparison_percent --
-            (p / 100) AS comparison_percent,
-
-            -- comparison_percent_m --
-            (z / 100) AS comparison_percent_m,
-
-            -- comparison_cv --
-            c AS comparison_cv,
-
-            -- comparison_join --
-            base AS comparison_join,
-
-            -- comparison_variable --
-            variable AS comparison_variable,
-
-            -- comparison_dataset --
-            dataset AS comparison_dataset
-          FROM comparison_enriched_selection
-        ) x
-      )
-
+  /*
+   * base: an aggregation of enriched_profile that sums the
+   * value of all base variables for the given selection
+   */
+  base AS (
     SELECT
-      *,
+      --- sum ---
+      SUM(e) as base_sum,
+      SQRT(SUM(POWER(m, 2))) AS base_m,
+      base
+      FROM enriched_profile
+      WHERE base = variable
+      GROUP BY base
+  )
 
-      -- significant --
-      -- (actually reflect reliability, issue #57) --
-      CASE
-        WHEN ((((difference_m) / 1.645) / nullif(ABS(difference_sum), 0)) * 100) < 20
-        THEN true
-        ELSE false
-      END AS significant,
+  /*
+   * an aggregation of enriched selection, joined with base that aggregates
+   * e and m for all rows for a given 'variable' in the selection, and adds
+   * additional aggregate values cv, percent, percent_m, and is_reliable
+   * Columns: id, sum, m, cv, variable, variablename, base, category, profile, percent, percent_m, is_reliable
+   */
+  SELECT *,
+    --- percent ---
+    CASE
+      WHEN base_sum = 0 THEN 0
+      WHEN base_sum IS NULL THEN 0
+      ELSE sum / base_sum
+    END AS percent,
+    --- percent_m ---
+    CASE
+      WHEN base_sum = 0 THEN 0
+      WHEN base_sum IS NULL THEN 0
+      WHEN POWER(m, 2) - POWER(sum / base_sum, 2) * POWER(base_m, 2) < 0
+        THEN (1 / base_sum) * SQRT(POWER(m, 2) + POWER(sum / base_sum, 2) * POWER(base_m, 2))
+      ELSE (1 / base_sum) * SQRT(POWER(m, 2) - POWER(sum / base_sum, 2) * POWER(base_m, 2))
+    END AS percent_m,
+    --- is_reliable ---
+    CASE
+      WHEN cv < 20 THEN true
+      ELSE false
+    END AS is_reliable
+  FROM (
+    SELECT
+      --- id ---
+      ENCODE(CONVERT_TO(variable, 'UTF-8'), 'base64') AS id,
+      --- sum ---
+      SUM(e) AS sum,
+      --- m ---
+      SQRT(SUM(POWER(m, 2))) AS m,
+      --- cv ---
+      (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100) AS cv,
+      --- variable ---
+      REGEXP_REPLACE(
+        LOWER(variable),
+        '[^A-Za-z0-9]', '_', 'g'
+      ) AS variable,
+      --- variablename ---
+      variablename,
+      --- base ---
+      base,
+      --- category ---
+      REGEXP_REPLACE(
+        LOWER(category),
+        '[^A-Za-z0-9]', '_', 'g'
+      ) AS category,
+      --- profile ---
+      REGEXP_REPLACE(
+        LOWER(profile),
+        '[^A-Za-z0-9]', '_', 'g'
+      ) AS profile
+    FROM enriched_profile
+    GROUP BY variable, variablename, base, category, profile
+    ORDER BY variable, base, category
+  ) AS variables
+  LEFT JOIN base
+  ON variables.base = base.base
+`;
 
-      -- percent_significant --
-      -- (actually reflect reliability, issue #57) --
-      CASE
-        WHEN ((((difference_percent_m) / 1.645) / nullif(ABS(difference_percent), 0)) * 100) < 20
-        THEN true
-        ELSE false
-      END AS percent_significant,
-
-      -- change_percent_significant --
-      -- (actually reflect reliability, issue #57) --
-      CASE
-        WHEN ((((change_percent_m) / 1.645) / nullif(ABS(change_percent), 0)) * 100) < 20 THEN
-          TRUE
-        ELSE
-          FALSE
-      END AS change_percent_significant,
-
-      -- change_percentage_point_significant --
-      -- (actually reflect reliability, issue #57) --
-      CASE
-        WHEN ((((change_percentage_point_m) / 1.645) / nullif(ABS(change_percentage_point), 0)) * 100) < 20 THEN
-          TRUE
-        ELSE
-          FALSE
-      END AS change_percentage_point_significant
-
-    FROM (
-      SELECT
-        *,
-
-        -- difference_sum --
-        (sum - comparison_sum) AS difference_sum,
-
-        -- difference_percent --
-        CASE
-          WHEN (((percent - comparison_percent) * 100) < 0 AND ((percent - comparison_percent) * 100) > -0.05) THEN
-            0
-          ELSE
-            (coalesce(percent, 0) - (coalesce(comparison_percent,0))) * 100
-        END AS difference_percent,
-
-        -- difference_m --
-        (SQRT((POWER(coalesce(m, 0), 2) + POWER(coalesce(comparison_m, 0), 2)))) AS difference_m,
-
-        -- difference_percent_m --
-        (SQRT((POWER(coalesce(percent_m, 0) * 100, 2) + POWER(coalesce(comparison_percent_m, 0) * 100, 2)))) AS difference_percent_m,
-
-        -- change_percentage_point --
-        CASE
-          WHEN (percent = null AND previous_percent = null) THEN
-            null
-          WHEN (is_most_recent) THEN
-            coalesce(percent, 0) - coalesce(previous_percent, 0)
-        END AS change_percentage_point,
-
-        -- change_percentage_point_m --
-        CASE
-          WHEN is_most_recent THEN
-            (SQRT((POWER(coalesce(previous_percent_m, 0), 2) + POWER(coalesce(percent_m, 0), 2))))
-        END AS change_percentage_point_m,
-
-        -- change_significant --
-        -- (actually reflect reliability, issue #57) --
-        CASE
-          WHEN ((((change_m) / 1.645) / nullif(ABS(change_sum), 0)) * 100) < 20 THEN
-            TRUE
-          ELSE
-            FALSE
-        END AS change_significant
-
-      FROM (
-        SELECT
-          -- id --
-          ENCODE(CONVERT_TO(variable || dataset, 'UTF-8'), 'base64') AS id,
-          base,
-
-          -- variablename --
-          variable AS variablename,
-          category,
-
-          -- dataset --
-          regexp_replace(lower(dataset), '[^A-Za-z0-9]', '_', 'g') AS dataset,
-
-          -- profile --
-          regexp_replace(lower(profile), '[^A-Za-z0-9]', '_', 'g') AS profile,
-
-          -- variable --
-          regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-          is_most_recent,
-          sum,
-          m,
-          cv,
-
-          -- percent --
-          ROUND((sum / NULLIF(base_sum,0))::numeric, 4) AS percent,
-
-          -- previous_percent --
-          ROUND((previous_sum / NULLIF(previous_base_sum,0))::numeric, 4) AS previous_percent,
-          previous_sum,
-          previous_m,
-
-          -- percent_m --
-          CASE
-            WHEN (POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
-              THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) + POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-            ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-          END AS percent_m,
-
-          -- previous_percent_m --
-          CASE
-            WHEN (POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2)) < 0
-              THEN (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) + POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
-            ELSE (1 / NULLIF(previous_base_sum,0)) * SQRT(POWER(previous_m, 2) - POWER(previous_sum / NULLIF(previous_base_sum,0), 2) * POWER(previous_base_m, 2))
-          END AS previous_percent_m,
-
-          comparison_cv,
-          comparison_m,
-          comparison_sum,
-          comparison_percent_m,
-          comparison_percent,
-
-          -- change_sum --
-          CASE
-            WHEN is_most_recent THEN
-              sum - previous_sum
-          END AS change_sum,
-
-          -- change_m --
-          CASE
-            WHEN is_most_recent THEN
-              ABS(SQRT(POWER(coalesce(m, 0), 2) + POWER(coalesce(previous_m, 0), 2)))
-          END AS change_m,
-
-          -- change_percent --
-          CASE
-            WHEN is_most_recent THEN
-              ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4)
-          END AS change_percent,
-
-          -- change_percent_m --
-          CASE
-            WHEN is_most_recent AND previous_sum != 0 THEN
-              coalesce(
-                ABS(sum / NULLIF(previous_sum,0))
-                * SQRT(
-                  (POWER(coalesce(m, 0) / 1.645, 2) / NULLIF(POWER(sum, 2),0))
-                 + (POWER(previous_m / 1.645, 2) / NULLIF(POWER(previous_sum, 2),0))
-                ) * 1.645,
-                0
-              )
-            ELSE
-              null
-          END AS change_percent_m
-
-        FROM main_numbers
-
-        INNER JOIN comparison_main_numbers
-          ON main_numbers.variable = comparison_main_numbers.comparison_variable
-          AND main_numbers.dataset = comparison_main_numbers.comparison_dataset
-
-        LEFT OUTER JOIN base_numbers
-          ON main_numbers.base = base_numbers.base_join
-          AND main_numbers.dataset = base_numbers.base_dataset
-      ) precalculations
-    ) prework
-  `;
-};
-
-module.exports = buildSQL;
+module.exports = profileSQL;

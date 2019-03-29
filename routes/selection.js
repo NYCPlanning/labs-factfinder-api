@@ -11,7 +11,7 @@ const getFeatures = (type, geoids) => {
   const inString = geoids.map(geoid => `'${geoid}'`).join(',');
   const selectionClause = summaryLevels[type](false);
   const SQL = `
-    SELECT * FROM (${selectionClause}) normalized 
+    SELECT * FROM (${selectionClause}) normalized
     WHERE geoid in (${inString})`;
 
   return carto.SQL(SQL, 'geojson', 'post')

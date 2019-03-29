@@ -1,59 +1,41 @@
-const _ = require('lodash');
-const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
-const medianOfRanges = require('../utils/median-of-ranges');
+const { find } = require('lodash');
 
-const { isArray } = Array;
-const { get, set } = _;
+const topBottomCodeEstimate = require('./top-bottom-code-estimate');
+const medianOfRanges = require('./median-of-ranges');
+const getBins = require('./get-bins');
 
-function interpolate(data, sumKey = 'sum', options, variable, row) {
-  const { bins, multipleBins, referenceSumKey = sumKey } = options;
-  let scenario = data;
-  let foundBins = bins;
+/*
+ * Interpolates a median value from a set of median values for ranges of the same data point,
+ * and top- or bottom-codes the estimated median based on configured coding values
+ * @param{Array} data - The full profile dataset, as an array of objects representing rows
+ * @param{string} variable - The name of the variable for which values are being calculated
+ * @param{string} year - The year of the given dataset
+ * @param{Object} row - All values for the given variable as an object
+ */
+function interpolate(data, variable, year) {
+  const bins = getBins(variable, year);
+  const scenario = bins.map((bin) => {
+    const [key, range] = bin;
+    const [min, max] = range;
+    const { sum } = find(data, ['variable', key]);
 
-  // if we provide an array of bins in the configuration,
-  // it's implied that the first bins should be used for the earlier
-  // time period, and the last bin should be used for the later
-  if (multipleBins) {
-    const [earlySet, laterSet] = foundBins;
-
-    // guess which year it is
-    const [firstObject] = Object.keys(data) || [];
-    const thisYear = get(data, `${firstObject}.dataset`).slice(-4);
-
-    if (thisYear === '2000' || thisYear === '2017') {
-      foundBins = laterSet;
-    } else {
-      foundBins = earlySet;
-    }
-  }
-
-  // this is done in an effort to make this utility more generic
-  // and therefore, testable
-  if (!isArray(scenario)) {
-    scenario = foundBins.map((bin) => {
-      const [key, range] = bin;
-      const [min, max] = range;
-      const sum = get(data, `${key}.${referenceSumKey}`);
-
-      return {
-        quantity: sum,
-        bounds: {
-          lower: min,
-          upper: max,
-        },
-      };
-    });
-  }
+    return {
+      quantity: sum,
+      bounds: {
+        lower: min,
+        upper: max,
+      },
+    };
+  });
 
   const naturalMedian = medianOfRanges(scenario);
 
-  const { mutatedEstimate: trimmedEstimate, codingThreshold } = topBottomCodeEstimate(naturalMedian, row);
+  const {
+    mutatedEstimate: trimmedEstimate,
+    codingThreshold,
+  } = topBottomCodeEstimate(naturalMedian, variable, year);
 
-  if (codingThreshold) {
-    set(row, `codingThresholds.${sumKey}`, codingThreshold);
-  }
-
-  return trimmedEstimate;
+  return { trimmedEstimate, codingThreshold };
 }
 
 module.exports = interpolate;
