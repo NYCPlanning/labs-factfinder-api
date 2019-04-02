@@ -1,4 +1,4 @@
-const CV_CONST = 1.645;
+const { CV_ CONST } = require('data/special-calculations/constants');
 
 module.exports = {
   // sum values
