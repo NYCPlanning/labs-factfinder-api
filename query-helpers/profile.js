@@ -1,4 +1,5 @@
 // return a comma-separated string of single-quoted numbers from an array of numbers
+
 function stringifyArray(array) {
   return `'${array.join("','")}'`;
 }
@@ -254,8 +255,7 @@ const buildSQL = function buildSQL(profile, ids, compare) {
           CASE
             WHEN (POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) < 0
               THEN (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) + POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-            ELSE (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2))
-          END AS percent_m,
+            ELSE j (1 / NULLIF(base_sum,0)) * SQRT(POWER(m, 2) - POWER(sum / NULLIF(base_sum,0), 2) * POWER(base_m, 2)) END AS percent_m,
 
           -- previous_percent_m --
           CASE

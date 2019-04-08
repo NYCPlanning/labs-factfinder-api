@@ -25,11 +25,9 @@ router.get('/:id/:profile', async (req, res) => {
     const isAggregate = selectedGeo.geoids.length > 1;
 
     // get data from postgres
-    const [baseData, previousBaseData, profileData, previousProfileData] = await Promise.all([
-      app.db.query(baseProfileQuery(profile)),
-      app.db.query(baseProfileQuery(profile, /*is previous*/ true)),
+    const [profileData, previousProfileData] = await Promise.all([
       app.db.query(profileQuery(profile, selectedGeo.geoids)),
-      app.db.query(profileQUery(profile, selectedGeo.geoids, /*is previous*/ true)),
+      app.db.query(profileQuery(profile, selectedGeo.geoids, /*is previous*/ true)),
     ]);
 
     // turn into DataFrames and join current and prev
@@ -37,27 +35,25 @@ router.get('/:id/:profile', async (req, res) => {
 
     // column name overrides for "previous_data"
     profileDF = profileDF.join(
-      new DataIngestor(previousProfileData, profile, isAggregate, /* is previous*/ true).processRaw()
+      new DataIngestor(previousProfileData, profile, isAggregate, /*is previous*/ true).processRaw().prefixCols('previous')
     );
 
-    // do change calculations!
-
-
     // if compare, get compare data
-    //if (compare) const compareProfile = await app.db-query(profileQuery(profile, compare, curYear));
-    // do compare ingestion
-    // do difference calculations
+    if (compare) const compareProfileData = await app.db-query(profileQuery(profile, compare));
+    profileDF = profileDF.join(
+      new DataIngestor(compareProfileData, profile, isAggregate, /*is previous*/ false, /*is compare*/ true).processRaw().prefixCols('comparison')
+    );
+
+    // easier to do the remaining calculations on array of objects
+    const profileObj = profileDf.toCollection();
+
+    profileObj.map(row => calculateChangeAndDifference(row));
+
   } catch(e) {
     console.log("Failed to get some data from postgres", e);
     return res.status(500).send({ error: 'Failed to query database' });
   }
 });
-
-function calculateChangeValues(df) {
-  df.chain(
-    
-  );
-}
 
 function invalidCompare(comp) {
   const cityOrBoro = comp.match(/[0-5]{1}/);
@@ -70,5 +66,7 @@ function invalidCompare(comp) {
 
 function invalidProfile(pro) {
   const validProfiles = ['decennial', 'demographic', 'social', 'economic', 'housing'];
+
+    row.change_
   return !validProfiles.includes(pro);
 }

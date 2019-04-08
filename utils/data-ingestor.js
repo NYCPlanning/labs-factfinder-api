@@ -6,10 +6,10 @@ const calculateMedianError = require('../utils/calculate-median-error');
 const interpolate = require('../utils/interpolate');
 const formula = require('../utils/formula');
 const formulas = require('../utils/formulas');
-const { INFLATION_FACTOR, PREVIOUS_COLS } = require('../data/special-calculations/constants');
+const { INFLATION_FACTOR, RENAME_COLS } = require('../data/special-calculations/constants');
 
 class DataIngester {
-  constructor(data, profileType, isAggregate, isPrevious = false) {
+  constructor(data, profileType, isAggregate, isPrevious = false, isCompare = false) {
     this.data = data;
     this.profileType = profileType;
     this.isAggregate = isAggregate;
@@ -24,13 +24,15 @@ class DataIngester {
       d = this.recalculate(d);
     }
 
-    if (this.isPrevious) {
-      PREVIOUS_COLS.forEach((colName) => {
-        d.rename(colName, `previous_${colName}`);
-      });
-    }
     return d;
   }
+
+  prefixColumns(prefix) {
+    if (this.isPrevious) {
+      RENAME_COLS.forEach((colName) => {
+        d.rename(colName, `${prefix}_${colName}`);
+      });
+    }
 
   makeBaseDataFrame() {
     let d = new df.DataFrame(this.data);

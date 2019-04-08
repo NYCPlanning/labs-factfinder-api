@@ -3,28 +3,58 @@ const { CUR_YEAR, PREV_YEAR } = require('data/special-calculations/constants');
 function stringifyArray(ar) {
   return `'${ar.join("','")}'`;
 }
+
 const profileSQL = (profile, ids, isPrevious) => `
   SELECT
-    --- sum ---
-    SUM(e) AS sum,
-    --- m ---
-    SQRT(SUM(POWER(m, 2))) AS m,
-    --- cv (uses m & sum, recomputed) ---
-    (((SQRT(SUM(POWER(m, 2))) / 1.645) / NULLIF(SUM(e), 0)) * 100) AS cv,
+    sum,
+    m,
+    cv,
+    universe_sum,
+    universe_m,
+    CASE
+      WHEN universe_sum = 0 THEN null
+      ELSE sum / universe_sum
+    AS percent,
+    CASE
+      WHEN universe_sum = 0 THEN null
+      WHEN POWER(m, 2) - POWER(sum / universe_sum, 2) * POWER(universe_m, 2) < 0
+        THEN (1 / universe_sum) * SQRT(POWER(m, 2) + POWER(sum / universe_sum, 2) * POWER(base_m, 2))
+      ELSE (1 / universe_sum) * SQRT(POWER(m, 2) - POWER(sum / universe_sum, 2) * POWER(base_m, 2))  
+    AS percent_m
     profile,
     category,
     base,
-    LOWER(variable) as variable
+    variable
   FROM (
-    SELECT *
+    SELECT
+      --- sum ---
+      SUM(e) AS sum,
+      --- m ---
+      SQRT(SUM(POWER(m, 2))) AS m,
+      --- cv (uses m & sum, recomputed) ---
+      (((SQRT(SUM(POWER(m, 2))) / 1.645) / NULLIF(SUM(e), 0)) * 100) AS cv,
+      profile,
+      category,
+      base,
+      LOWER(variable) as variable
     FROM ${profile} p
     INNER JOIN factfinder_metadata ffm
-    ON ffm.variablename = p.variable
+    ON p.variable = ffm.variablename
     WHERE p.geoid IN (${stringifyArray(ids)})
     AND p.dataset = '${isPrevious ? PREV_YEAR : CUR_YEAR}'
-  ) raw_profile
-  GROUP BY variable, base, category, profile
-  ORDER BY variable, base, category
+    GROUP BY variable, base, category, profile
+    ORDER BY variable, base, category
+  ) profile
+  LEFT JOIN (
+    SELECT
+      SUM(e) as universe_sum,
+      SQRT(SUM(POWER(m, 2))) as universe_m,
+      LOWER(variable) as variable
+    FROM ${profile} base
+    WHERE base.dataset = '${isPrevious ? PREV_YEAR : CUR_YEAR}'
+    GROUP BY variable
+  ) universe
+  ON profile.variable = universe.variable
 `;
 
 module.exports = profileSQL;

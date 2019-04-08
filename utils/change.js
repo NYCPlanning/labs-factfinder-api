@@ -1,43 +1,44 @@
-const { CV_CONST } = require('data/special-calculations/constants');
+const { CV_CONST } = require('../data/special-calculations/constants');
 
-function changeSum(row) {
-  const sum = row.get('sum');
-  const previous_sum = row.get('previous_sum');
-  if(exists(sum) && exists(previous_sum)) {
-    row.get('change_sum', sum - previous_sum);
-  }
-}
-function changeM(row) {
-  const m = row.get('m');
-  const previous_m = row.get('previous_m');
-  if(exists(m) && exists(previous_m)) {
-    row.set('change_m',
-      abs(sqrt(m^2 + previous_m^2)));
-  }
-}
-
-function changePercent(row) {
-  const sum = row.get('sum');
-  const previous_sum = row.get('previous_sum');
-  if(exists(sum) && exists(previous_sum) && previous_sum !== 0 ) {
-    row.set('change_percent', 
-      (sum - previous_sum) / previous_sum);
-  } 
-}
-
-function changePercentM(row) {
-  const sum = row.get('sum');
-  const previous_sum = row.get('previous_sum');
-
-  if(exists(sum) && exists(previous_sum) && previous_sum !== 0) {
-    row.set('change_percent_m', 
-      abs(sum / previous_sum) * 
-      sqrt(((m/CV_CONST)/sum)^2 + ((previous_m/CV_CONST)/previous_sum)^2) *
-      CV_CONST
-    );
-  }
-}
-
+const { abs, sqrt } = Math;
 function exists(val) {
-  return typeof val !== undefined;
+  return val !== undefined;
 }
+
+function calculateChanges(row) {
+  if (exists(row.sum) && exists(row.previous_sum)) {
+    row.change_sum = row.sum - row.previous_sum;
+    row.change_m = abs(sqrt((row.m ** 2) + (row.previous_m ** 2)));
+
+    row.change_significant = ((row.change_m / CV_CONST) / row.change_sum) * 100 < 20;
+  }
+}
+
+function calculateChangePercents(row) {
+  if (exists(row.sum) && exists(row.previous_sum) && row.previous_sum !== 0) {
+    row.change_percent = (row.sum - row.previous_sum) / row.previous_sum;
+    row.change_percent_m = abs(row.sum / row.previous_sum)
+      * sqrt((((row.m / CV_CONST) / row.sum) ** 2) + (((row.previous_m / CV_CONST) / row.previous_sum) ** 2))
+      * CV_CONST;
+
+    row.change_percent_significant = ((row.change_percent_m / CV_CONST) / abs(row.change_percent)) * 100 < 20;
+  }
+}
+
+function calculateChangePercentagePoints(row) {
+  if (exists(row.percent) && exists(row.previous_percent)) {
+    row.change_percentage_point = row.percent - row.previous_percent;
+    row.change_percentage_point_m = sqrt((row.percent_m ** 2) + (row.percent_m ** 2));
+
+    row.change_percentage_point_significant = ((row.change_percentage_point_m / CV_CONST) / abs(row.change_percentage_point)) * 100 < 20;
+  }
+}
+
+
+function doChangeCalculations(row) {
+  calculateChanges(row);
+  calculateChangePercents(row);
+  calculateChangePercentagePoints(row);
+}
+
+module.exports = doChangeCalculations;
