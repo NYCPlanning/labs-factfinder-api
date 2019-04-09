@@ -1,27 +1,27 @@
 module.exports = [
   {
-    name: 'mdhhinc',
-    type: 'median',
-    options: { designFactor: 1.5, transform: { type: 'inflate' } },
+    variable: 'mdhhinc',
+    specialType: 'median',
+    options: { designFactor: 1.5, transform: { specialType: 'inflate' } },
   },
   {
-    name: 'mnhhinc',
-    type: 'mean',
+    variable: 'mnhhinc',
+    specialType: 'mean',
     options: { args: ['hh2', 'aghhinc'] },
   },
   {
-    name: 'mdfaminc',
-    type: 'median',
-    options: { designFactor: 1.5, transform: { type: 'inflate' } },
+    variable: 'mdfaminc',
+    specialType: 'median',
+    options: { designFactor: 1.5, transform: { specialType: 'inflate' } },
   },
   {
-    name: 'mdnfinc',
-    type: 'median',
-    options: { designFactor: 1.5, transform: { type: 'inflate' } },
+    variable: 'mdnfinc',
+    specialType: 'median',
+    options: { designFactor: 1.5, transform: { specialType: 'inflate' } },
   },
   {
-    name: 'percapinc',
-    type: 'mean',
+    variable: 'percapinc',
+    specialType: 'mean',
     options: { args: ['pop_6', 'agip15pl'] },
   },
 ];

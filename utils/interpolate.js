@@ -9,7 +9,7 @@ function interpolate(data, variable, year, options, row) {
   const scenario = bins.map((bin) => {
     const [key, range] = bin;
     const [min, max] = range;
-    const sum = get(data, `${key}.sum`);
+    const [{ sum }] = data.filter(row => row.variable == key);
 
     return {
       quantity: sum,
@@ -20,9 +20,10 @@ function interpolate(data, variable, year, options, row) {
     };
   });
 
+  debugger;
   const naturalMedian = medianOfRanges(scenario);
 
-  const { mutatedEstimate: trimmedEstimate, codingThreshold } = topBottomCodeEstimate(naturalMedian, row);
+  const { mutatedEstimate: trimmedEstimate, codingThreshold } = topBottomCodeEstimate(naturalMedian, variable, year, row.numGeoids, row.geotype);
 
   return { trimmedEstimate, codingThreshold };
 }

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { CUR_YEAR } = require('../data/special-calculations/constants');
 const topBottomCodings = require('../metadata/top-bottom-codings');
 
 const { get } = _;
@@ -15,26 +16,21 @@ const { get } = _;
     multi-geography aggregates - use "nta"
 */
 
-function topBottomCodeEstimate(estimate, row) {
-  const is_most_recent = get(row, 'is_most_recent');
-  const timeframe = is_most_recent ? 'latest' : 'earlier';
-  const variable = get(row, 'variable');
-  const geotype = get(row, 'geotype');
-  const geoids = get(row, 'numGeoids');
+function topBottomCodeEstimate(estimate, variable, year, numGeoids, geotype) {
 
   let mutatedEstimate = estimate;
   let geographicTypeDesignation = 'nta';
   let codingThreshold = null;
 
-  if (is_most_recent) {
-    if (geoids === 1 && (geotype !== 'NTA2010')) {
+  if (year === CUR_YEAR) {
+    if (numGeoids === 1 && (geotype !== 'NTA2010')) {
       geographicTypeDesignation = 'all';
     }
-  } else if (geoids === 1 && (geotype !== 'NTA2010' && geotype !== 'PUMA2010')) {
+  } else if (numGeoids === 1 && (geotype !== 'NTA2010' && geotype !== 'PUMA2010')) {
     geographicTypeDesignation = 'all';
   }
 
-  const codingRule = get(topBottomCodings, `${timeframe}.${variable}.${geographicTypeDesignation}`);
+  const codingRule = get(topBottomCodings, `${year}.${variable}.${geographicTypeDesignation}`);
 
   if (estimate <= get(codingRule, 'lower')) {
     mutatedEstimate = get(codingRule, 'lower');

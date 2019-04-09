@@ -37,37 +37,41 @@ router.get('/:id/:profile', async (req, res) => {
     // create Dataframe from profile data
     let profileDF = new DataIngestor(profileData, profile, isAggregate).processRaw();
 
-    // join with previous profile data, and with renamed columns
-    profileDF = profileDF.join(
-      new DataIngestor(previousProfileData, profile, isAggregate, /* is previous */ true).processRaw('previous'),
-      'variable',
-    );
-
-    // if compare, get compare data
-    if (compare) {
-      const compareProfileData = await app.db.query(profileQuery(profile, compare));
-      profileDF = profileDF.join(
-        new DataIngestor(compareProfileData, profile, isAggregate).processRaw('comparison'),
-        'variable',
-      );
-    }
-
-    // easier to do the remaining calculations on array of objects
-    const profileObj = profileDF.toCollection();
-
-    // TODO move all of this "config" into the front end
-    const variables = tableConfigs[profile] || [];
-
-    profileObj.forEach((row) => {
-      const updatedRow = row;
-      doChangeCalculations(updatedRow);
-      if (compare) doDifferenceCalculations(updatedRow);
-      // TODO remove when config is in front end
-      updatedRow.rowConfig = find(variables, ['variable', updatedRow.variable]) || {};
-    });
-    // send profileObj as response
-    return res.send({ data: profileObj });
+//    // join with previous profile data, and with renamed columns
+//    profileDF = profileDF.join(
+//      new DataIngestor(previousProfileData, profile, isAggregate, /* is previous */ true).processRaw('previous'),
+//      'variable',
+//    );
+//
+//    // if compare, get compare data
+//    if (compare) {
+//      const compareProfileData = await app.db.query(profileQuery(profile, compare));
+//      profileDF = profileDF.join(
+//        new DataIngestor(compareProfileData, profile, isAggregate).processRaw('comparison'),
+//        'variable',
+//      );
+//    }
+//
+//    // easier to do the remaining calculations on array of objects
+//    const profileObj = profileDF.toCollection();
+//
+//    // TODO move all of this "config" into the front end
+//    const variables = tableConfigs[profile] || [];
+//
+//    /* eslint-disable */
+//    profileObj.map((row) => {
+//      const updatedRow = row;
+//      doChangeCalculations(updatedRow);
+//      if (compare) doDifferenceCalculations(updatedRow);
+//      // TODO remove when config is in front end
+//      updatedRow.rowConfig = find(variables, ['variable', updatedRow.variable]) || {};
+//    });
+//    /* eslint-enable */
+//    // send profileObj as response
+//    return res.send({ data: profileObj });
+    return res.send({message: "OK"});
   } catch (e) {
+    console.log(e);
     return res.status(500).send({ error: 'Failed to create profile' });
   }
 });
@@ -86,3 +90,5 @@ function invalidProfile(pro) {
   if (validProfiles.includes(pro)) return false;
   return true;
 }
+
+module.exports = router;

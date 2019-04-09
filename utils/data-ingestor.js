@@ -6,7 +6,12 @@ const calculateMedianError = require('../utils/calculate-median-error');
 const interpolate = require('../utils/interpolate');
 const formula = require('../utils/formula');
 const formulas = require('../utils/formulas');
-const { INFLATION_FACTOR, RENAME_COLS } = require('../data/special-calculations/constants');
+const {
+  INFLATION_FACTOR,
+  RENAME_COLS,
+  PREV_YEAR,
+  CUR_YEAR,
+} = require('../data/special-calculations/constants');
 
 class DataIngester {
   constructor(data, profileType, isAggregate, isPrevious = false) {
@@ -42,7 +47,7 @@ class DataIngester {
   }
 
   recalculate(d) {
-    d = d.join(new df.DataFrame(specialCalcConfigs[this.profileType], ['variable', 'specialType']), 'variable');
+    d = d.leftJoin(new df.DataFrame(specialCalcConfigs[this.profileType], ['variable', 'specialType']), 'variable');
     return this.applyAggregateCalculations(d);
   }
 
@@ -55,7 +60,7 @@ class DataIngester {
     if (type === undefined) return;
 
     const variable = row.get('variable');
-    const year = row.get('dataset');
+    const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
     const options = find(specialCalcConfigs[this.special], ['variable', variable]);
     this.recomputeSum(row, type, variable, year, options);
     this.recomputeM(row, type, variable, year, options);
@@ -65,7 +70,7 @@ class DataIngester {
     let sum;
 
     if (type === 'median') {
-      const { trimmedEstimate, codingThreshold } = interpolate(this.data, year, options, row.toDict());
+      const { trimmedEstimate, codingThreshold } = interpolate(this.data, variable, year, options, row.toDict());
       sum = trimmedEstimate;
       if (codingThreshold) {
         row.set('codingThreshold', codingThreshold);

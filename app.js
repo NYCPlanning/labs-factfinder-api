@@ -31,7 +31,7 @@ app.use(compression());
 app.use('/search', require('./routes/search'));
 app.use('/selection', require('./routes/selection'));
 app.use('/profile', require('./routes/profile'));
-app.use('/new-profile', require('./routes/profile'));
+app.use('/profile-new', require('./routes/profile-new'));
 
 app.use((req, res) => {
   res.status(404).json({

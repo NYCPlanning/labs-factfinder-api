@@ -1,5 +1,7 @@
+const { PREV_YEAR, CUR_YEAR } = require('../data/special-calculations/constants');
+
 const topBottomCodings = {
-  latest: {
+  CUR_YEAR: {
     mdage: {
       all: {
         upper: 115,
@@ -101,7 +103,7 @@ const topBottomCodings = {
       },
     },
   },
-  earlier: {
+  PREV_YEAR: {
     mdage: {
       all: {
         upper: 115,
