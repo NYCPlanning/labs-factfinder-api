@@ -9,7 +9,7 @@ const formulas = require('../utils/formulas');
 const { INFLATION_FACTOR, RENAME_COLS } = require('../data/special-calculations/constants');
 
 class DataIngester {
-  constructor(data, profileType, isAggregate, isPrevious = false, isCompare = false) {
+  constructor(data, profileType, isAggregate, isPrevious = false) {
     this.data = data;
     this.profileType = profileType;
     this.isAggregate = isAggregate;
@@ -68,7 +68,10 @@ class DataIngester {
     if (type === 'median') {
       const { trimmedEstimate, codingThreshold } = interpolate(this.data, year, options, row.toDict());
       sum = trimmedEstimate;
-      if (codingThreshold) row.set('codingThreshold', codingThreshold);
+      if (codingThreshold) {
+        row.set('codingThreshold', codingThreshold);
+        row.set('is_reliable', false);
+      }
     } else {
       sum = formula.execute(this.data, variable, formulas[type], options.args);
     }

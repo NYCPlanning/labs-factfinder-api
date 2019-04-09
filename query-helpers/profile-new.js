@@ -14,16 +14,21 @@ const profileSQL = (profile, ids, isPrevious) => `
     CASE
       WHEN universe_sum = 0 THEN null
       ELSE sum / universe_sum
-    AS percent,
+    END AS percent,
     CASE
       WHEN universe_sum = 0 THEN null
       WHEN POWER(m, 2) - POWER(sum / universe_sum, 2) * POWER(universe_m, 2) < 0
         THEN (1 / universe_sum) * SQRT(POWER(m, 2) + POWER(sum / universe_sum, 2) * POWER(base_m, 2))
       ELSE (1 / universe_sum) * SQRT(POWER(m, 2) - POWER(sum / universe_sum, 2) * POWER(base_m, 2))  
-    AS percent_m
+    END AS percent_m
+    CASE 
+      WHEN cv < 20 THEN true
+      ELSE false
+    END AS is_reliable
     profile,
     category,
     base,
+    unittype,
     variable
   FROM (
     SELECT
@@ -33,10 +38,8 @@ const profileSQL = (profile, ids, isPrevious) => `
       SQRT(SUM(POWER(m, 2))) AS m,
       --- cv (uses m & sum, recomputed) ---
       (((SQRT(SUM(POWER(m, 2))) / 1.645) / NULLIF(SUM(e), 0)) * 100) AS cv,
-      profile,
-      category,
-      base,
-      LOWER(variable) as variable
+      LOWER(variable) as variable,
+      ffm.*
     FROM ${profile} p
     INNER JOIN factfinder_metadata ffm
     ON p.variable = ffm.variablename
