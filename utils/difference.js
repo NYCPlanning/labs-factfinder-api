@@ -31,10 +31,8 @@ function calculateDifferencePercents(row) {
 }
 
 function doDifferenceCalculations(row) {
-  const updatedRow = row;
-  calculateDifferences(updatedRow);
-  calculateDifferencePercents(updatedRow);
-  return updatedRow;
+  calculateDifferences(row);
+  calculateDifferencePercents(row);
 }
 
 module.exports = doDifferenceCalculations;

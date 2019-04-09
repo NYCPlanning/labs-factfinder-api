@@ -6,18 +6,20 @@ function exists(val) {
 }
 
 function calculateChanges(row) {
-  if (exists(row.sum) && exists(row.previous_sum)) {
-    row.change_sum = row.sum - row.previous_sum;
+  const updatedRow;
+  if (exists(updatedRow.sum) && exists(updatedRow.previous_sum)) {
+    updateRow.change_sum = updatedRow.sum - updatedRow.previous_sum;
 
-    if(exists(row.previous_m)) {
-      row.change_m = abs(sqrt((row.m ** 2) + (row.previous_m ** 2)));
+    if(exists(updatedRow.previous_m)) {
+      updatedRow.change_m = abs(sqrt((updatedRow.m ** 2) + (updatedRow.previous_m ** 2)));
 
-      row.change_significant = (((row.change_m / CV_CONST) / abs(row.change_sum)) * 100) < 20;
+      updatedRow.change_significant = (((updatedRow.change_m / CV_CONST) / abs(updatedRow.change_sum)) * 100) < 20;
     }
   }
 }
 
 function calculateChangePercents(row) {
+  const updatedRow;
   if (exists(row.sum) && exists(row.previous_sum) && row.previous_sum !== 0) {
     row.change_percent = (row.sum - row.previous_sum) / row.previous_sum;
 
@@ -44,11 +46,9 @@ function calculateChangePercentagePoints(row) {
 
 
 function doChangeCalculations(row) {
-  const updatedRow = row;
-  calculateChanges(updatedRow);
-  calculateChangePercents(updatedRow);
-  calculateChangePercentagePoints(updatedRow);
-  return updatedRow;
+  calculateChanges(row);
+  calculateChangePercents(row);
+  calculateChangePercentagePoints(row);
 }
 
 module.exports = doChangeCalculations;

@@ -27,12 +27,11 @@ class DataIngester {
     return d;
   }
 
-  prefixColumns(prefix) {
-    if (this.isPrevious) {
-      RENAME_COLS.forEach((colName) => {
-        d.rename(colName, `${prefix}_${colName}`);
-      });
-    }
+  static prefixColumns(d, prefix) {
+    RENAME_COLS.forEach((colName) => {
+      d.rename(colName, `${prefix}_${colName}`);
+    });
+  }
 
   makeBaseDataFrame() {
     let d = new df.DataFrame(this.data);
@@ -70,9 +69,11 @@ class DataIngester {
       sum = trimmedEstimate;
       if (codingThreshold) {
         row.set('codingThreshold', codingThreshold);
+        // if codingThreshold is set, indicates value was top- or bottom-coded,
+        // meaning the v alue is not reliable
         row.set('is_reliable', false);
       }
-    } else {
+    } else { // type == mean, ratio, rate
       sum = formula.execute(this.data, variable, formulas[type], options.args);
     }
 
@@ -95,6 +96,8 @@ class DataIngester {
   }
 
   applyTransform(val, opts) {
+    if (!opts) return val;
+
     // inflations are special scalar transforms only applied to prev year dataset
     if (opts.type === 'inflate' && !this.isPrevious) return val;
 

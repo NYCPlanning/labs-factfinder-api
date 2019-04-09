@@ -1,4 +1,4 @@
-const { CUR_YEAR, PREV_YEAR } = require('data/special-calculations/constants');
+const { CUR_YEAR, PREV_YEAR } = require('../data/special-calculations/constants');
 
 function stringifyArray(ar) {
   return `'${ar.join("','")}'`;
@@ -21,7 +21,7 @@ const profileSQL = (profile, ids, isPrevious) => `
         THEN (1 / universe_sum) * SQRT(POWER(m, 2) + POWER(sum / universe_sum, 2) * POWER(base_m, 2))
       ELSE (1 / universe_sum) * SQRT(POWER(m, 2) - POWER(sum / universe_sum, 2) * POWER(base_m, 2))  
     END AS percent_m
-    CASE 
+    CASE
       WHEN cv < 20 THEN true
       ELSE false
     END AS is_reliable

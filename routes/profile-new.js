@@ -2,11 +2,12 @@ const express = require('express');
 const _ = require('lodash');
 
 const Selection = require('../models/selection');
-const profileQuery = require('../query-helpers/base_profile');
+const profileQuery = require('../query-helpers/profile-new');
 const DataIngestor = require('../utils/data-ingestor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/change');
 const tableConfigs = require('../table-config');
+
 const { find } = _;
 
 const router = express.Router();
@@ -38,14 +39,16 @@ router.get('/:id/:profile', async (req, res) => {
 
     // join with previous profile data, and with renamed columns
     profileDF = profileDF.join(
-      new DataIngestor(previousProfileData, profile, isAggregate, /*is previous*/ true).processRaw().prefixCols('previous')
+      new DataIngestor(previousProfileData, profile, isAggregate, /*is previous*/ true).processRaw('previous'),
+      'variable'
     );
 
     // if compare, get compare data
     if (compare) {
-      const compareProfileData = await app.db-query(profileQuery(profile, compare));
+      const compareProfileData = await app.db.query(profileQuery(profile, compare));
       profileDF = profileDF.join(
-        new DataIngestor(compareProfileData, profile, isAggregate, /*is previous*/ false).processRaw().prefixCols('comparison')
+        new DataIngestor(compareProfileData, profile, isAggregate).processRaw('comparison'),
+        'variable'
       );
     }
 
@@ -58,34 +61,29 @@ router.get('/:id/:profile', async (req, res) => {
 
     profileObj.map(row => {
       const updatedRow = row;
-      calculateChangeAndDifference(updatedRow)
+      doChangeCalculations(updatedRow);
+      if(compare) doDifferenceCalculations(updatedRow);
       // TODO remove when config is in front end
-      row.rowConfig = find(variables, ['variable', variable]) || {};
+      updatedRow.rowConfig = find(variables, ['variable', variable]) || {};
     });
-
+    //send profileObj as response
+    return res.send({data: profileOb});
   } catch(e) {
     return res.status(500).send({ error: 'Failed to create profile' });
   }
 });
-
-function calculateChangeAndDifference(row) {
-  const updatedRow = row;
-  doChangeCalculations(updatedRow);
-  doDifferenceCalculations(updatedRow);
-  return row;
-}
 
 function invalidCompare(comp) {
   const cityOrBoro = comp.match(/[0-5]{1}/);
   const nta = comp.match(/[A-Z]{2}[0-9]{2}/);
   const puma = comp.match(/[0-9]{4}/);
 
-  return (cityOrBoro || nta || puma) return false;
+  if (cityOrBoro || nta || puma) return false;
   return true;
 }
 
 function invalidProfile(pro) {
   const validProfiles = ['decennial', 'demographic', 'social', 'economic', 'housing'];
-  return validProfiles.includes(pro) return false;
+  if (validProfiles.includes(pro)) return false;
   return true;
 }
