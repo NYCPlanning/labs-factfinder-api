@@ -6,11 +6,11 @@ function exists(val) {
 }
 
 function calculateChanges(row) {
-  const updatedRow;
+  const updatedRow = row;
   if (exists(updatedRow.sum) && exists(updatedRow.previous_sum)) {
-    updateRow.change_sum = updatedRow.sum - updatedRow.previous_sum;
+    updatedRow.change_sum = updatedRow.sum - updatedRow.previous_sum;
 
-    if(exists(updatedRow.previous_m)) {
+    if (exists(updatedRow.previous_m)) {
       updatedRow.change_m = abs(sqrt((updatedRow.m ** 2) + (updatedRow.previous_m ** 2)));
 
       updatedRow.change_significant = (((updatedRow.change_m / CV_CONST) / abs(updatedRow.change_sum)) * 100) < 20;
@@ -19,27 +19,28 @@ function calculateChanges(row) {
 }
 
 function calculateChangePercents(row) {
-  const updatedRow;
-  if (exists(row.sum) && exists(row.previous_sum) && row.previous_sum !== 0) {
-    row.change_percent = (row.sum - row.previous_sum) / row.previous_sum;
+  const updatedRow = row;
+  if (exists(updatedRow.sum) && exists(updatedRow.previous_sum) && updatedRow.previous_sum !== 0) {
+    updatedRow.change_percent = (updatedRow.sum - updatedRow.previous_sum) / updatedRow.previous_sum;
 
-    if(exists(row.percent_m)) {
-      row.change_percent_m = abs(row.sum / row.previous_sum)
-        * sqrt((((row.m / CV_CONST) / row.sum) ** 2) + (((row.previous_m / CV_CONST) / row.previous_sum) ** 2))
+    if (exists(updatedRow.percent_m)) {
+      updatedRow.change_percent_m = abs(updatedRow.sum / updatedRow.previous_sum)
+        * sqrt((((updatedRow.m / CV_CONST) / updatedRow.sum) ** 2) + (((updatedRow.previous_m / CV_CONST) / updatedRow.previous_sum) ** 2))
         * CV_CONST;
-  
-      row.change_percent_significant = (((row.change_percent_m / CV_CONST) / abs(row.change_percent)) * 100) < 20;
+
+      updatedRow.change_percent_significant = (((updatedRow.change_percent_m / CV_CONST) / abs(updatedRow.change_percent)) * 100) < 20;
     }
   }
 }
 
 function calculateChangePercentagePoints(row) {
-  if (exists(row.percent) && exists(row.previous_percent)) {
-    row.change_percentage_point = row.percent - row.previous_percent;
-    if(exists(row.percent_m)) {
-      row.change_percentage_point_m = sqrt((row.percent_m ** 2) + (row.previous_percent_m ** 2));
-  
-      row.change_percentage_point_significant = ((row.change_percentage_point_m / CV_CONST) / abs(row.change_percentage_point)) * 100 < 20;
+  const updatedRow = row;
+  if (exists(updatedRow.percent) && exists(updatedRow.previous_percent)) {
+    updatedRow.change_percentage_point = updatedRow.percent - updatedRow.previous_percent;
+    if (exists(updatedRow.percent_m)) {
+      updatedRow.change_percentage_point_m = sqrt((updatedRow.percent_m ** 2) + (updatedRow.previous_percent_m ** 2));
+
+      updatedRow.change_percentage_point_significant = ((updatedRow.change_percentage_point_m / CV_CONST) / abs(updatedRow.change_percentage_point)) * 100 < 20;
     }
   }
 }

@@ -7,12 +7,10 @@ const RENAME_COLS = [
   'percent',
   'percent_m',
   'codingThreshold',
-  'is_reliable'
+  'is_reliable',
 ];
 
-const STANDARD_ERROR = (designFactor) => designFactor * ((
-    (93 / (7 * sum)) * 2500
-  ) ** 0.5);
+const STANDARD_ERROR = (designFactor, sum) => designFactor * (((93 / (7 * sum)) * 2500) ** 0.5);
 
 const CUR_YEAR = 'Y2013-2017';
 const PREV_YEAR = 'Y2006-2010';
@@ -21,6 +19,7 @@ module.exports = {
   INFLATION_MULTIPLIER,
   CV_CONST,
   RENAME_COLS,
-  CUR_YEAR, 
+  STANDARD_ERROR,
+  CUR_YEAR,
   PREV_YEAR,
 };

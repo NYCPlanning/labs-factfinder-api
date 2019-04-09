@@ -25,13 +25,13 @@ router.get('/:id/:profile', async (req, res) => {
   if (invalidProfile(profile)) res.status(500).send({ error: 'invalid profile' });
 
   try {
-    const selectedGeo = await Selection.findOne({_id});
+    const selectedGeo = await Selection.findOne({ _id });
     const isAggregate = selectedGeo.geoids.length > 1;
 
     // get data from postgres
     const [profileData, previousProfileData] = await Promise.all([
       app.db.query(profileQuery(profile, selectedGeo.geoids)),
-      app.db.query(profileQuery(profile, selectedGeo.geoids, /*is previous*/ true)),
+      app.db.query(profileQuery(profile, selectedGeo.geoids, /* is previous */ true)),
     ]);
 
     // create Dataframe from profile data
@@ -39,8 +39,8 @@ router.get('/:id/:profile', async (req, res) => {
 
     // join with previous profile data, and with renamed columns
     profileDF = profileDF.join(
-      new DataIngestor(previousProfileData, profile, isAggregate, /*is previous*/ true).processRaw('previous'),
-      'variable'
+      new DataIngestor(previousProfileData, profile, isAggregate, /* is previous */ true).processRaw('previous'),
+      'variable',
     );
 
     // if compare, get compare data
@@ -48,27 +48,26 @@ router.get('/:id/:profile', async (req, res) => {
       const compareProfileData = await app.db.query(profileQuery(profile, compare));
       profileDF = profileDF.join(
         new DataIngestor(compareProfileData, profile, isAggregate).processRaw('comparison'),
-        'variable'
+        'variable',
       );
     }
 
     // easier to do the remaining calculations on array of objects
-    const profileObj = profileDf.toCollection();
+    const profileObj = profileDF.toCollection();
 
-    //TODO move all of this "config" into the front end
-    const categoryNormalized = camelCase(category);
-    const variables = get(tableConfigs, `${profile}.${categoryNormalized}`) || [];
+    // TODO move all of this "config" into the front end
+    const variables = tableConfigs[profile] || [];
 
-    profileObj.map(row => {
+    profileObj.forEach((row) => {
       const updatedRow = row;
       doChangeCalculations(updatedRow);
-      if(compare) doDifferenceCalculations(updatedRow);
+      if (compare) doDifferenceCalculations(updatedRow);
       // TODO remove when config is in front end
-      updatedRow.rowConfig = find(variables, ['variable', variable]) || {};
+      updatedRow.rowConfig = find(variables, ['variable', updatedRow.variable]) || {};
     });
-    //send profileObj as response
-    return res.send({data: profileOb});
-  } catch(e) {
+    // send profileObj as response
+    return res.send({ data: profileObj });
+  } catch (e) {
     return res.status(500).send({ error: 'Failed to create profile' });
   }
 });
