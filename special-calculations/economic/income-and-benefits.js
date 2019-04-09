@@ -2,7 +2,7 @@ module.exports = [
   {
     variable: 'mdhhinc',
     specialType: 'median',
-    options: { designFactor: 1.5, transform: { specialType: 'inflate' } },
+    options: { designFactor: 1.5, transform: { type: 'inflate' } },
   },
   {
     variable: 'mnhhinc',
@@ -12,12 +12,12 @@ module.exports = [
   {
     variable: 'mdfaminc',
     specialType: 'median',
-    options: { designFactor: 1.5, transform: { specialType: 'inflate' } },
+    options: { designFactor: 1.5, transform: { type: 'inflate' } },
   },
   {
     variable: 'mdnfinc',
     specialType: 'median',
-    options: { designFactor: 1.5, transform: { specialType: 'inflate' } },
+    options: { designFactor: 1.5, transform: { type: 'inflate' } },
   },
   {
     variable: 'percapinc',

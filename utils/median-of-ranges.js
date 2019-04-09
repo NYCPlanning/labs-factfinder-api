@@ -1,5 +1,5 @@
 function medianOfRanges(ranges) {
-  const rangeGroups = (() => {
+ const rangeGroups = (() => {
     let upper = 0;
 
     return ranges.map((range) => {

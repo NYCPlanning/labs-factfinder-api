@@ -37,11 +37,11 @@ router.get('/:id/:profile', async (req, res) => {
     // create Dataframe from profile data
     let profileDF = new DataIngestor(profileData, profile, isAggregate).processRaw();
 
-//    // join with previous profile data, and with renamed columns
-//    profileDF = profileDF.join(
-//      new DataIngestor(previousProfileData, profile, isAggregate, /* is previous */ true).processRaw('previous'),
-//      'variable',
-//    );
+    // join with previous profile data, and with renamed columns
+    profileDF = profileDF.join(
+      new DataIngestor(previousProfileData, profile, isAggregate, /* is previous */ true).processRaw('previous'),
+      'variable',
+    );
 //
 //    // if compare, get compare data
 //    if (compare) {
@@ -69,7 +69,8 @@ router.get('/:id/:profile', async (req, res) => {
 //    /* eslint-enable */
 //    // send profileObj as response
 //    return res.send({ data: profileObj });
-    return res.send({message: "OK"});
+    debugger;
+    return res.send({ data: profileDF.count() });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ error: 'Failed to create profile' });

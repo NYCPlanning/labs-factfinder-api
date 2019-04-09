@@ -1,10 +1,14 @@
 const _ = require('lodash');
 
-const { get, clone } = _;
+const { get, clone, find } = _;
 const { round } = Math;
 
 const getBins = require('./get-bins');
-const { DESIGN_FACTOR, STANDARD_ERROR } = require('../data/special-calculations/constants');
+const { DESIGN_FACTOR } = require('../data/special-calculations/constants');
+
+function getStandardError(designFactor, sum) {
+  return designFactor * (((93 / (7 * sum)) * 2500) ** 0.5);
+}
 
 function findCumulativePercentage(scenario, sum, index) {
   const copiedBins = clone(scenario);
@@ -23,7 +27,7 @@ function calculateMedianError(data, variable, year, options) {
   const bins = getBins(variable, year);
   const scenario = bins.map((bin) => {
     const [key] = bin;
-    const sum = get(data, `${key}.sum`);
+    const { sum } = find(data, [ 'variable', key ]);
 
     return {
       quantity: sum,
@@ -37,7 +41,7 @@ function calculateMedianError(data, variable, year, options) {
     0,
   );
 
-  const standardError = STANDARD_ERROR(designFactor);
+  const standardError = getStandardError(designFactor, sum);
   const pUpper = 50 + standardError;
   const pLower = 50 - standardError;
 

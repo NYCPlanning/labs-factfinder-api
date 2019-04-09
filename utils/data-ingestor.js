@@ -4,8 +4,8 @@ const df = require('dataframe-js');
 const specialCalcConfigs = require('../special-calculations');
 const calculateMedianError = require('../utils/calculate-median-error');
 const interpolate = require('../utils/interpolate');
-const formula = require('../utils/formula');
-const formulas = require('../utils/formulas');
+const executeFormula = require('../utils/formula');
+
 const {
   INFLATION_FACTOR,
   RENAME_COLS,
@@ -22,20 +22,26 @@ class DataIngester {
     this.extraColumns = ['codingThreshold'];
   }
 
-  processRaw() {
+  processRaw(columnPrefix = '') {
+    debugger;
     let d = this.makeBaseDataFrame();
 
     if (this.isAggregate) {
       d = this.recalculate(d);
     }
 
+    if(columnPrefix) {
+      d = this.prefixColumns(d, columnPrefix);
+    }
+
     return d;
   }
 
-  static prefixColumns(d, prefix) {
+  prefixColumns(d, prefix) {
     RENAME_COLS.forEach((colName) => {
-      d.rename(colName, `${prefix}_${colName}`);
+      d = d.rename(colName, `${prefix}_${colName}`);
     });
+    return d;
   }
 
   makeBaseDataFrame() {
@@ -48,56 +54,64 @@ class DataIngester {
 
   recalculate(d) {
     d = d.leftJoin(new df.DataFrame(specialCalcConfigs[this.profileType], ['variable', 'specialType']), 'variable');
-    return this.applyAggregateCalculations(d);
+    d = this.applyAggregateCalculations(d);
+    return d;
   }
 
   applyAggregateCalculations(d) {
-    return d.chain(row => this.recomputeSpecialVars(row));
+    d = d.chain(row => this.recomputeSpecialVars(row));
+    return d;
   }
 
   recomputeSpecialVars(row) {
-    const type = row.get('specialType');
-    if (type === undefined) return;
+    let updatedRow = row;
+    const specialType = updatedRow.get('specialType');
+    if (specialType === undefined) return updatedRow;
 
-    const variable = row.get('variable');
+    const variable = updatedRow.get('variable');
     const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
-    const options = find(specialCalcConfigs[this.special], ['variable', variable]);
-    this.recomputeSum(row, type, variable, year, options);
-    this.recomputeM(row, type, variable, year, options);
+    const { options } = find(specialCalcConfigs[this.profileType], ['variable', variable]);
+    updatedRow = this.recomputeSum(updatedRow, specialType, variable, year, options);
+    updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
+    return updatedRow
   }
 
-  recomputeSum(row, type, variable, year, options) {
+  recomputeSum(row, specialType, variable, year, options) {
+    let updatedRow = row;
     let sum;
 
-    if (type === 'median') {
-      const { trimmedEstimate, codingThreshold } = interpolate(this.data, variable, year, options, row.toDict());
+    if (specialType === 'median') {
+      if (variable === 'mdfaminc') debugger;
+      const { trimmedEstimate, codingThreshold } = interpolate(this.data, variable, year, options, updatedRow.toDict());
       sum = trimmedEstimate;
       if (codingThreshold) {
-        row.set('codingThreshold', codingThreshold);
+        updatedRow = updatedRow.set('codingThreshold', codingThreshold);
         // if codingThreshold is set, indicates value was top- or bottom-coded,
         // meaning the v alue is not reliable
-        row.set('is_reliable', false);
+        updatedRow = updatedRow.set('is_reliable', false);
       }
-    } else { // type == mean, ratio, rate
-      sum = formula.execute(this.data, variable, formulas[type], options.args);
+    } else { // specialType == mean, ratio, rate
+      const formulaName = options.formulaName || 'sum';
+      sum = executeFormula(this.data, variable, formulaName, options.args);
     }
+sum = this.applyTransform(sum, options.transform);
 
-    sum = this.applyTransform(sum, options.transform);
-
-    row.set('sum', sum);
+    return updatedRow.set('sum', sum);
   }
 
-  recomputeM(row, type, variable, year, options) {
+  recomputeM(row, specialType, variable, year, options) {
+    let updatedRow = row;
     let m;
-    if (type === 'median') {
+    if (specialType === 'median') {
       m = calculateMedianError(this.data, variable, year, options);
     } else {
-      m = formulas.execute(this.data, variable, formulas[type], options.args);
+      const formulaName = options.formulaName || 'm';
+      m = executeFormula(this.data, variable, formulaName, options.args);
     }
 
     m = this.applyTransform(m, options.transform);
 
-    row.set('m', m);
+    return updatedRow.set('m', m);
   }
 
   applyTransform(val, opts) {
