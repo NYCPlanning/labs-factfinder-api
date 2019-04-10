@@ -1,10 +1,10 @@
 const _ = require('lodash');
 
-const { get, clone, find } = _;
+const { clone, find } = _;
 const { round } = Math;
 
 const getBins = require('./get-bins');
-const { DESIGN_FACTOR } = require('../data/special-calculations/constants');
+const { DESIGN_FACTOR } = require('../special-calculations/data/constants');
 
 function getStandardError(designFactor, sum) {
   return designFactor * (((93 / (7 * sum)) * 2500) ** 0.5);
@@ -27,7 +27,7 @@ function calculateMedianError(data, variable, year, options) {
   const bins = getBins(variable, year);
   const scenario = bins.map((bin) => {
     const [key] = bin;
-    const { sum } = find(data, [ 'variable', key ]);
+    const { sum } = find(data, ['variable', key]);
 
     return {
       quantity: sum,

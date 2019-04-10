@@ -11,10 +11,10 @@ const {
   RENAME_COLS,
   PREV_YEAR,
   CUR_YEAR,
-} = require('../data/special-calculations/constants');
+} = require('../special-calculations/data/constants');
 
 class DataIngester {
-  constructor(data, profileType, isAggregate, isPrevious = false) {
+  constructor(data, profileType, isAggregate = false, isPrevious = false) {
     this.data = data;
     this.profileType = profileType;
     this.isAggregate = isAggregate;
@@ -23,24 +23,16 @@ class DataIngester {
   }
 
   processRaw(columnPrefix = '') {
-    debugger;
     let d = this.makeBaseDataFrame();
 
     if (this.isAggregate) {
       d = this.recalculate(d);
     }
 
-    if(columnPrefix) {
-      d = this.prefixColumns(d, columnPrefix);
+    if (columnPrefix) {
+      d = prefixColumns(d, columnPrefix);
     }
 
-    return d;
-  }
-
-  prefixColumns(d, prefix) {
-    RENAME_COLS.forEach((colName) => {
-      d = d.rename(colName, `${prefix}_${colName}`);
-    });
     return d;
   }
 
@@ -53,6 +45,7 @@ class DataIngester {
   }
 
   recalculate(d) {
+    // join with special calculation configuration
     d = d.leftJoin(new df.DataFrame(specialCalcConfigs[this.profileType], ['variable', 'specialType']), 'variable');
     d = this.applyAggregateCalculations(d);
     return d;
@@ -64,16 +57,20 @@ class DataIngester {
   }
 
   recomputeSpecialVars(row) {
-    let updatedRow = row;
-    const specialType = updatedRow.get('specialType');
-    if (specialType === undefined) return updatedRow;
-
-    const variable = updatedRow.get('variable');
-    const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
-    const { options } = find(specialCalcConfigs[this.profileType], ['variable', variable]);
-    updatedRow = this.recomputeSum(updatedRow, specialType, variable, year, options);
-    updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
-    return updatedRow
+    try { 
+      let updatedRow = row;
+      const specialType = updatedRow.get('specialType');
+      if (specialType === undefined) return updatedRow;
+  
+      const variable = updatedRow.get('variable');
+      const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
+      const { options } = find(specialCalcConfigs[this.profileType], ['variable', variable]);
+      updatedRow = this.recomputeSum(updatedRow, specialType, variable, year, options);
+      updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
+      return updatedRow;
+    } catch(e) {
+      console.log(`Failed to update special vars for ${variable}:`, e);
+    }
   }
 
   recomputeSum(row, specialType, variable, year, options) {
@@ -81,7 +78,6 @@ class DataIngester {
     let sum;
 
     if (specialType === 'median') {
-      if (variable === 'mdfaminc') debugger;
       const { trimmedEstimate, codingThreshold } = interpolate(this.data, variable, year, options, updatedRow.toDict());
       sum = trimmedEstimate;
       if (codingThreshold) {
@@ -91,21 +87,21 @@ class DataIngester {
         updatedRow = updatedRow.set('is_reliable', false);
       }
     } else { // specialType == mean, ratio, rate
-      const formulaName = options.formulaName || 'sum';
+      const formulaName = getFormulaName(options, 'sum');
       sum = executeFormula(this.data, variable, formulaName, options.args);
     }
-sum = this.applyTransform(sum, options.transform);
+    sum = this.applyTransform(sum, options.transform);
 
     return updatedRow.set('sum', sum);
   }
 
   recomputeM(row, specialType, variable, year, options) {
-    let updatedRow = row;
+    const updatedRow = row;
     let m;
     if (specialType === 'median') {
       m = calculateMedianError(this.data, variable, year, options);
     } else {
-      const formulaName = options.formulaName || 'm';
+      const formulaName = getFormulaName(options, 'm');
       m = executeFormula(this.data, variable, formulaName, options.args);
     }
 
@@ -122,6 +118,18 @@ sum = this.applyTransform(sum, options.transform);
 
     return val * (opts.type === 'inflate' ? INFLATION_FACTOR : opts.factor);
   }
+}
+
+function prefixColumns(d, prefix) {
+  RENAME_COLS.forEach((colName) => {
+    d = d.rename(colName, `${prefix}_${colName}`);
+  });
+  return d;
+}
+
+function getFormulaName(options, valType) {
+  if(options.formulaName) return options.formulaName[valType];
+  return valType; 
 }
 
 module.exports = DataIngester;

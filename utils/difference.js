@@ -1,4 +1,4 @@
-const { CV_CONST } = require('../data/special-calculations/constants');
+const { CV_CONST } = require('../special-calculations/data/constants');
 
 const { abs, sqrt } = Math;
 

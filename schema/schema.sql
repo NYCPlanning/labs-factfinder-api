@@ -78,7 +78,12 @@ CREATE TABLE factfinder_metadata (
 DROP TABLE IF EXISTS decennial_dictionary;
 CREATE TABLE decennial_dictionary (
   variablename text, 
-  producttype text,
+ const { CUR_YEAR, PREV_YEAR } = require('../special-calculations/data/constants');
+
+function stringifyIds(ids) {
+  if (Array.isArray(ids)) return `'${ids.join("','")}'`;
+  return `'${ids}'`;
+} producttype text,
   dataset text,
   profile text,
   category text,

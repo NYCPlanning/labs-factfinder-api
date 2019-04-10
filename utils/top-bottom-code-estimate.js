@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { CUR_YEAR } = require('../data/special-calculations/constants');
-const topBottomCodings = require('../metadata/top-bottom-codings');
+const { CUR_YEAR } = require('../special-calculations/data/constants');
+const topBottomCodings = require('../special-calculations/data/top-bottom-codings');
 
 const { get } = _;
 
@@ -17,7 +17,6 @@ const { get } = _;
 */
 
 function topBottomCodeEstimate(estimate, variable, year, numGeoids, geotype) {
-
   let mutatedEstimate = estimate;
   let geographicTypeDesignation = 'nta';
   let codingThreshold = null;

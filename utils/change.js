@@ -1,4 +1,4 @@
-const { CV_CONST } = require('../data/special-calculations/constants');
+const { CV_CONST } = require('../special-calculations/data/constants');
 
 const { abs, sqrt } = Math;
 function exists(val) {
@@ -47,6 +47,7 @@ function calculateChangePercentagePoints(row) {
 
 
 function doChangeCalculations(row) {
+  if(row.variable === 'mnhhinc') debugger;
   calculateChanges(row);
   calculateChangePercents(row);
   calculateChangePercentagePoints(row);

@@ -12,7 +12,7 @@ function execute(data, variable, formulaName, args = []) {
   const parser = new Parser();
 
   parser.setFunction('GET', ([path]) => {
-    // if 'path' includes a '.', this means we want a value namespaced in a 
+    // if 'path' includes a '.', this means we want a value namespaced in a
     // different variable context, so set targetVariable accordingly
     const targetVariable = path.includes('.') ? path.split('.')[0] : variable;
 
@@ -26,7 +26,7 @@ function execute(data, variable, formulaName, args = []) {
 
   const { result, error } = parser.parse(formulaStr);
   if (error) {
-    console.log(" variable", variable);
+    console.log("variable", variable);
     console.log('formula', formulaStr);
     throw new Error(error);
   }
