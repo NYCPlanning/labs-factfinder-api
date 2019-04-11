@@ -1,12 +1,12 @@
 module.exports = [
   {
     variable: 'avghhsz',
-    type: 'mean',
+    specialType: 'mean',
     options: { args: ['hhpop', 'hh1'] },
   },
   {
     variable: 'avgfmsz',
-    type: 'mean',
+    specialType: 'mean',
     options: { args: ['popinfms', 'fam1'] },
   },
 ];

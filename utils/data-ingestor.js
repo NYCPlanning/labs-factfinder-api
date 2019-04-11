@@ -23,6 +23,7 @@ class DataIngester {
   }
 
   processRaw(columnPrefix = '') {
+    debugger;
     let d = this.makeBaseDataFrame();
 
     if (this.isAggregate) {
@@ -57,22 +58,26 @@ class DataIngester {
   }
 
   recomputeSpecialVars(row) {
+    let updatedRow = row;
+    const variable = updatedRow.get('variable');
+
     try {
-      let updatedRow = row;
       const specialType = updatedRow.get('specialType');
 
       // only special variables need to have sum & m recomputed
       if (specialType === undefined) return updatedRow;
 
-      const variable = updatedRow.get('variable');
       const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
       const { options } = find(specialCalcConfigs[this.profileType], ['variable', variable]);
 
       updatedRow = this.recomputeSum(updatedRow, specialType, variable, year, options);
-      updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
+      // decennial profiles do not have MOE values
+      if(this.profileType !== 'decennial') {
+        updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
+      }
 
       return updatedRow;
-    } catch(e) {
+    } catch (e) {
       console.log(`Failed to update special vars for ${variable}:`, e);
     }
   }
@@ -132,8 +137,8 @@ function prefixColumns(d, prefix) {
 }
 
 function getFormulaName(options, valType) {
-  if(options.formulaName) return options.formulaName[valType];
-  return valType; 
+  if (options.formulaName) return options.formulaName[valType];
+  return valType;
 }
 
 module.exports = DataIngester;

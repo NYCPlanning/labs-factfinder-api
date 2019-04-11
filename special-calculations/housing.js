@@ -7,13 +7,13 @@ module.export = [
   // gross rent
   {
     variable: 'mdgr',
-    type: 'median',
+    specialType: 'median',
     options: { designFactor: 1.6, transform: { type: INFLATE } },
   },
   // housing occupancy
   {
     variable: 'hovacrt',
-    type: 'mean',
+    specialType: 'mean',
     options: {
       args: ['vacsale', 'hovacu'],
       formulaName: { m: 'rate' },
@@ -22,7 +22,7 @@ module.export = [
   },
   {
     variable: 'rntvacrt',
-    type: 'mean',
+    specialType: 'mean',
     options: {
       args: ['vacrnt', 'rntvacu'],
       formulaName: { m: 'rate' },
@@ -32,24 +32,24 @@ module.export = [
   // housing tenure
   {
     variable: 'avghhsooc',
-    type: 'mean',
+    specialType: 'mean',
     options: { args: ['popoochu', 'oochu1'] },
   },
   {
     variable: 'avghhsroc',
-    type: 'mean',
+    specialType: 'mean',
     options: { args: ['poprtochu', 'rochu1'] },
   },
   // rooms
   {
     variable: 'mdrms',
-    type: 'median',
+    specialType: 'median',
     options: { transform: { type: SCALE, factor: 0.001 } },
   },
   // value
   {
     variable: 'mdvl',
-    type: 'median',
+    specialType: 'median',
     options: { designFactor: 1.4, transform: { type: INFLATE } },
   },
 ];

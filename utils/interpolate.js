@@ -1,4 +1,4 @@
-const { get, find } = require('lodash');
+const { find } = require('lodash');
 
 const topBottomCodeEstimate = require('./top-bottom-code-estimate');
 const medianOfRanges = require('./median-of-ranges');
@@ -9,7 +9,7 @@ function interpolate(data, variable, year, options, row) {
   const scenario = bins.map((bin) => {
     const [key, range] = bin;
     const [min, max] = range;
-    const { sum } = find(data, [ 'variable', key ]);
+    const { sum } = find(data, ['variable', key]);
 
     return {
       quantity: sum,
@@ -22,7 +22,10 @@ function interpolate(data, variable, year, options, row) {
 
   const naturalMedian = medianOfRanges(scenario);
 
-  const { mutatedEstimate: trimmedEstimate, codingThreshold } = topBottomCodeEstimate(naturalMedian, variable, year, row.numGeoids, row.geotype);
+  const {
+    mutatedEstimate: trimmedEstimate,
+    codingThreshold,
+  } = topBottomCodeEstimate(naturalMedian, variable, year, row.numGeoids, row.geotype);
 
   return { trimmedEstimate, codingThreshold };
 }

@@ -34,6 +34,9 @@ const decennialProfileSQL = (profile, ids, isPrevious = false) => `
     GROUP BY relation
   )
 
+  /*
+   *
+   */
   SELECT *,
   --- percent ---
   CASE

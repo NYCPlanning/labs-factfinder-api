@@ -1,7 +1,7 @@
 module.exports = [
   {
     variable: 'mdage',
-    type: 'median',
+    specialType: 'median',
     options: { designFactor: 1.1 },
   },
 ];

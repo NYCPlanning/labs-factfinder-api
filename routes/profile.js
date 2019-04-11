@@ -7,7 +7,6 @@ const decennialQuery = require('../query-helpers/decennial-new');
 const DataIngestor = require('../utils/data-ingestor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
-const tableConfigs = require('../table-config');
 
 const { find } = _;
 
@@ -26,7 +25,6 @@ router.get('/:id/:profile', async (req, res) => {
 
   try {
     const selectedGeo = await Selection.findOne({ _id });
-    console.log(`selectedGeo: ${selectedGeo}`);
 
     const isAggregate = selectedGeo.geoids.length > 1;
 
@@ -39,7 +37,6 @@ router.get('/:id/:profile', async (req, res) => {
       app.db.query(queryBuilder(profile, selectedGeo.geoids, /* is previous */ true)),
     ]);
     console.log(`Finished in ${(new Date().getTime() - profile_now) / 1000} seconds`);
-
     // create Dataframe from profile data
     let profileDF = new DataIngestor(profileData, profile, isAggregate).processRaw();
 
@@ -51,7 +48,7 @@ router.get('/:id/:profile', async (req, res) => {
 
     console.log('Querying for compare profile data');
     const compare_now = new Date().getTime();
-    const compareProfileData = await app.db.query(profileQuery(profile, compare));
+    const compareProfileData = await app.db.query(queryBuilder(profile, compare));
     console.log(`Finished in ${(new Date().getTime() - compare_now) / 1000} seconds`);
 
     profileDF = profileDF.join(
@@ -63,15 +60,11 @@ router.get('/:id/:profile', async (req, res) => {
     // easier to do the remaining calculations on array of objects
     const profileObj = profileDF.toCollection();
 
-    // TODO move all of this "config" into the front end
-    const variables = tableConfigs[profile] || [];
-
     console.log('Starting change & difference calculations');
     const calc_now = new Date().getTime();
     /* eslint-disable */
     profileObj.map((row) => {
       doChangeCalculations(row);
-      debugger;
       doDifferenceCalculations(row);
     });
     /* eslint-enable */

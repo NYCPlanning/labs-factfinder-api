@@ -1,5 +1,5 @@
 const topBottomCodings = {
-  latest: {
+  'Y2013-2017': {
     mdage: {
       all: {
         upper: 115,
@@ -101,7 +101,7 @@ const topBottomCodings = {
       },
     },
   },
-  earlier: {
+  'Y2006-2010': {
     mdage: {
       all: {
         upper: 115,
