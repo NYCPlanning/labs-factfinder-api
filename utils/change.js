@@ -47,7 +47,6 @@ function calculateChangePercentagePoints(row) {
 
 
 function doChangeCalculations(row) {
-  if(row.variable === 'mnhhinc') debugger;
   calculateChanges(row);
   calculateChangePercents(row);
   calculateChangePercentagePoints(row);

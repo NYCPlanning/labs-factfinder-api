@@ -1,6 +1,5 @@
-
 const topBottomCodings = {
-  'Y2013-2017': {
+  latest: {
     mdage: {
       all: {
         upper: 115,
@@ -17,8 +16,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 225000,
-        lower: 11000,
+        upper: 200000,
+        lower: 9999,
       },
     },
     mdfaminc: {
@@ -27,8 +26,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 225000,
-        lower: 11000,
+        upper: 200000,
+        lower: 9999,
       },
     },
     mdnfinc: {
@@ -37,8 +36,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 225000,
-        lower: 11000,
+        upper: 200000,
+        lower: 9999,
       },
     },
     mdewrk: {
@@ -47,8 +46,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 112500,
-        lower: 2800,
+        upper: 100000,
+        lower: 2499,
       },
     },
     mdemftwrk: {
@@ -57,8 +56,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 112500,
-        lower: 2800,
+        upper: 100000,
+        lower: 2499,
       },
     },
     mdefftwrk: {
@@ -67,8 +66,8 @@ const topBottomCodings = {
         lower: 2500,
       },
       nta: {
-        upper: 112500,
-        lower: 2800,
+        upper: 100000,
+        lower: 2499,
       },
     },
     mdrms: {
@@ -102,7 +101,7 @@ const topBottomCodings = {
       },
     },
   },
-  'Y2006-2010': {
+  earlier: {
     mdage: {
       all: {
         upper: 115,

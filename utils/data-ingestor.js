@@ -57,16 +57,20 @@ class DataIngester {
   }
 
   recomputeSpecialVars(row) {
-    try { 
+    try {
       let updatedRow = row;
       const specialType = updatedRow.get('specialType');
+
+      // only special variables need to have sum & m recomputed
       if (specialType === undefined) return updatedRow;
-  
+
       const variable = updatedRow.get('variable');
       const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
       const { options } = find(specialCalcConfigs[this.profileType], ['variable', variable]);
+
       updatedRow = this.recomputeSum(updatedRow, specialType, variable, year, options);
       updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
+
       return updatedRow;
     } catch(e) {
       console.log(`Failed to update special vars for ${variable}:`, e);

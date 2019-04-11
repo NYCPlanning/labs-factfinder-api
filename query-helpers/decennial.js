@@ -147,8 +147,7 @@ const buildSQL = function buildSQL(ids, compare) {
         'decennial' AS profile,
 
         -- variable --
-        regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-
+        regexp_replace(lower(variable), "[^A-Za-z0-9]", "_", "g") AS variable, 
         -- category --
         regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
 

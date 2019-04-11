@@ -3,9 +3,10 @@ const _ = require('lodash');
 
 const Selection = require('../models/selection');
 const profileQuery = require('../query-helpers/profile-new');
+const decennialQuery = require('../query-helpers/decennial-new');
 const DataIngestor = require('../utils/data-ingestor');
 const doChangeCalculations = require('../utils/change');
-const doDifferenceCalculations = require('../utils/change');
+const doDifferenceCalculations = require('../utils/difference');
 const tableConfigs = require('../table-config');
 
 const { find } = _;
@@ -17,7 +18,6 @@ router.get('/:id/:profile', async (req, res) => {
 
   const { id: _id, profile } = req.params;
   const { compare = '0' } = req.query;
-
   // validate compare
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
 
@@ -26,13 +26,19 @@ router.get('/:id/:profile', async (req, res) => {
 
   try {
     const selectedGeo = await Selection.findOne({ _id });
+    console.log(`selectedGeo: ${selectedGeo}`);
+
     const isAggregate = selectedGeo.geoids.length > 1;
 
+    const queryBuilder = getQueryBuilder(profile);
     // get data from postgres
+    console.log('Querying for profile data & previous profile data');
+    const profile_now = new Date().getTime();
     const [profileData, previousProfileData] = await Promise.all([
-      app.db.query(profileQuery(profile, selectedGeo.geoids)),
-      app.db.query(profileQuery(profile, selectedGeo.geoids, /* is previous */ true)),
+      app.db.query(queryBuilder(profile, selectedGeo.geoids)),
+      app.db.query(queryBuilder(profile, selectedGeo.geoids, /* is previous */ true)),
     ]);
+    console.log(`Finished in ${(new Date().getTime() - profile_now) / 1000} seconds`);
 
     // create Dataframe from profile data
     let profileDF = new DataIngestor(profileData, profile, isAggregate).processRaw();
@@ -43,7 +49,11 @@ router.get('/:id/:profile', async (req, res) => {
       'variable',
     );
 
+    console.log('Querying for compare profile data');
+    const compare_now = new Date().getTime();
     const compareProfileData = await app.db.query(profileQuery(profile, compare));
+    console.log(`Finished in ${(new Date().getTime() - compare_now) / 1000} seconds`);
+
     profileDF = profileDF.join(
       // 'compare' profiles are always NOT aggregate; they are comprised of a single geoid
       new DataIngestor(compareProfileData, profile).processRaw('comparison'),
@@ -56,22 +66,28 @@ router.get('/:id/:profile', async (req, res) => {
     // TODO move all of this "config" into the front end
     const variables = tableConfigs[profile] || [];
 
+    console.log('Starting change & difference calculations');
+    const calc_now = new Date().getTime();
     /* eslint-disable */
     profileObj.map((row) => {
-      const updatedRow = row;
-      doChangeCalculations(updatedRow);
-      doDifferenceCalculations(updatedRow);
-      // TODO remove when config is in front end
+      doChangeCalculations(row);
       debugger;
-      updatedRow.rowConfig = find(variables, ['variable', updatedRow.variable]) || {};
+      doDifferenceCalculations(row);
     });
     /* eslint-enable */
-    return res.send({ data: profileObj });
+    console.log(`Finished in ${(new Date().getTime() - calc_now) / 1000} seconds`);
+
+    return res.send(profileObj);
   } catch (e) {
     console.log(e); // eslint-disable-line
     return res.status(500).send({ error: 'Failed to create profile' });
   }
 });
+
+function getQueryBuilder(profile) {
+  if (profile === 'decennial') return decennialQuery;
+  return profileQuery;
+}
 
 function invalidCompare(comp) {
   const cityOrBoro = comp.match(/[0-5]{1}/);
