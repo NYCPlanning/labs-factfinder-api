@@ -1,187 +1,86 @@
-// return a comma-separated string of single-quoted numbers from an array of numbers
-function stringifyArray(array) {
-  return `'${array.join("','")}'`;
+const { DECENNIAL_CUR_YEAR, DECENNIAL_PREV_YEAR } = require('../special-calculations/data/constants');
+
+/*
+ * Returns the appropriate second half of the geoid WHERE clause
+ * If 'ids' is an array, returns an 'IN (...ids)' clause, with the quoted ids joined by ','
+ * Else, if 'ids' is a single id, returns an '= id' clause, with id in quotes
+ */
+function formatGeoidWhereClause(ids) {
+  if (Array.isArray(ids)) return `IN ('${ids.join("','")}')`;
+  return `= '${ids}'`;
 }
 
-const buildSQL = function buildSQL(ids, compare) {
-  const idStrings = stringifyArray(ids);
+/* NOTE: 'profile' is a noop param, to make invocation from route cleaner */
+const decennialProfileSQL = (profile, ids, isPrevious = false) => `
+  WITH
+  /* 
+   * enriched_profile: decennial data joined with meta data
+   * from decennial_dictionary, filtered for given year
+   * and geoids
+   */
+  enriched_profile AS (
+    SELECT *
+    FROM decennial d
+    INNER JOIN decennial_dictionary dd
+    ON dd.variablename = d.variable
+    WHERE d.geoid ${formatGeoidWhereClause(ids)}
+    AND d.year = '${isPrevious ? DECENNIAL_PREV_YEAR : DECENNIAL_CUR_YEAR}'
+  ),
 
-  return /**/`
-    WITH
-      filtered_selection AS (
-        SELECT *
-        FROM decennial
-        WHERE geoid IN (${idStrings})
-      ),
+  /* 
+   * base: an aggregation of enriched_profile that sums the
+   * value of all base variables for the given selection
+   */
+  base AS (
+    SELECT
+    --- sum ---
+    sum(value) as base_sum,
+    relation as base
+    FROM enriched_profile
+    WHERE relation = variable
+    GROUP BY relation
+  )
 
-      enriched_selection AS (
-        SELECT *
-        FROM filtered_selection
-        INNER JOIN decennial_dictionary
-          ON decennial_dictionary.variablename = filtered_selection.variable
-      ),
+  /*
+   * an aggregation of enriched selection, joined with base that sums
+   * value for all rows for a given 'variable' in the selection, and
+   * adds additional aggregate value percent.
+   * Columns: id, sum, variable, variablename, base, category, profile, percent
+   */
+  SELECT *,
+  --- percent ---
+  CASE
+    WHEN base_sum = 0 THEN 0
+    WHEN base_sum IS NULL THEN 0
+    ELSE sum / base_sum
+  END AS percent
+  FROM (
+    SELECT
+      --- id ---
+      ENCODE(CONVERT_TO(variable, 'UTF-8'), 'base64') AS id,
+      --- sum ---
+      SUM(value) AS sum,
+      --- variable ---
+      REGEXP_REPLACE(
+        LOWER(variable),
+        '[^A-Za-z0-9]', '_', 'g'
+      ) AS variable,
+      --- variablename ---
+      variablename,
+      --- base ---
+      relation AS base,
+      --- category ---
+      REGEXP_REPLACE(
+        LOWER(category),
+        '[^A-Za-z0-9]', '_', 'g'
+      ) AS category,
+      --- profile ---
+      'decennial' AS profile
+    FROM enriched_profile
+    GROUP BY variable, variablename, base, category
+  ) decennial
+  LEFT JOIN base
+  ON decennial.base = base.base
+`;
 
-      main_numbers AS (
-        SELECT
-          *,
-          -- previous_sum --
-          CASE
-            WHEN is_most_recent THEN
-              lag(sum) over (order by variable, year)
-          END as previous_sum
-        FROM (
-          SELECT
-
-            -- sum --
-            sum(value) AS sum,
-
-            -- relation --
-            max(relation) AS relation,
-
-            -- category --
-            max(category) AS category,
-            variable,
-
-            -- is_most_recent --
-            CASE
-              WHEN max(year) over () = year THEN
-                TRUE
-              ELSE
-                FALSE
-            END as is_most_recent,
-            year
-          FROM enriched_selection
-          GROUP BY variable, "year"
-        ) x
-      ),
-
-      base_numbers AS (
-        SELECT
-
-          -- base_sum --
-          sum(value) AS base_sum,
-
-          -- previous_base_sum --
-          lag(sum(value)) over (order by variable, year) AS previous_base_sum,
-
-          -- base_variable --
-          variable AS base_variable,
-
-          -- base_year --
-          year AS base_year
-        FROM enriched_selection
-        WHERE relation = variable
-        GROUP BY variable, "year"
-      ),
-
-      comparison_selection AS (
-        SELECT *
-        FROM decennial
-        WHERE geoid IN ('${compare}')
-      ),
-
-      comparison_enriched_selection AS (
-        SELECT *
-        FROM comparison_selection
-        INNER JOIN decennial_dictionary
-          ON decennial_dictionary.variablename = comparison_selection.variable
-      ),
-
-      comparison_main_numbers AS (
-        SELECT
-
-          -- comparison_sum --
-          sum(value) AS comparison_sum,
-
-          -- comparison_relation --
-          max(relation) AS comparison_relation,
-
-          -- comparison_variable --
-          variable AS comparison_variable,
-
-          -- comparison_year --
-          year AS comparison_year
-        FROM comparison_enriched_selection
-        GROUP BY variable, "year"
-      ),
-
-      comparison_base_numbers AS (
-        SELECT
-
-          -- comparison_base_sum --
-          sum(value) AS comparison_base_sum,
-
-          -- comparison_base_variable --
-          variable AS comparison_base_variable,
-
-          -- comparison_base_year --
-          year AS comparison_base_year
-        FROM comparison_enriched_selection
-        WHERE relation = variable
-        GROUP BY variable, "year"
-      )
-
-    SELECT *,
-
-      -- difference_sum --
-      (sum - comparison_sum) AS difference_sum,
-
-      -- difference_percent --
-      ((percent - comparison_percent) * 100) AS difference_percent,
-
-      -- change_sum --
-      (sum - previous_sum) AS change_sum,
-
-      -- change_percent --
-      ROUND(((sum - previous_sum) / NULLIF(previous_sum,0))::numeric, 4) AS change_percent,
-
-      -- change_percentage_point --
-      percent - previous_percent AS change_percentage_point
-    FROM (
-      SELECT *,
-
-        -- id --
-        ENCODE(CONVERT_TO(variable || year, 'UTF-8'), 'base64') As id,
-
-        -- profile --
-        'decennial' AS profile,
-
-        -- variable --
-        regexp_replace(lower(variable), '[^A-Za-z0-9]', '_', 'g') AS variable,
-
-        -- category --
-        regexp_replace(lower(category), '[^A-Za-z0-9]', '_', 'g') AS category,
-
-        -- significant --
-        true AS significant,
-
-        -- year --
-        'y' || year as year,
-
-        -- dataset --
-        'y' || year as dataset,
-
-        -- percent --
-        ROUND((sum / NULLIF(base_sum,0))::numeric, 4) as percent,
-
-        -- previous_percent --
-        ROUND((previous_sum / NULLIF(previous_base_sum,0))::numeric, 4) as previous_percent,
-
-        -- comparison_percent --
-        ROUND((comparison_sum / NULLIF(comparison_base_sum,0))::numeric, 4) as comparison_percent
-
-        FROM main_numbers
-        INNER JOIN comparison_main_numbers
-          ON main_numbers.variable = comparison_main_numbers.comparison_variable
-          AND main_numbers.year = comparison_main_numbers.comparison_year
-        LEFT OUTER JOIN base_numbers
-          ON main_numbers.relation = base_numbers.base_variable
-          AND main_numbers.year = base_numbers.base_year
-        LEFT OUTER JOIN comparison_base_numbers
-          ON main_numbers.relation = comparison_base_numbers.comparison_base_variable
-          AND main_numbers.year = comparison_base_numbers.comparison_base_year
-    ) precalculations
-  `;
-};
-
-module.exports = buildSQL;
+module.exports = decennialProfileSQL;

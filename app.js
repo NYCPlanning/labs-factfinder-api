@@ -1,5 +1,6 @@
 // simple express app to serve up custom APIs
 const express = require('express');
+const logger = require('morgan');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 
@@ -24,6 +25,7 @@ app.all('*', (req, res, next) => {
 });
 
 // middleware
+app.use(logger('common'));
 app.use(bodyParser.json());
 app.use(compression());
 
