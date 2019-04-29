@@ -83,7 +83,12 @@ class DataIngestor {
    * @returns{Dataframe}
    */
   recalculate(d) {
-    d = d.leftJoin(new df.DataFrame(specialCalculationConfigs[this.profileName], ['variable', 'specialType']), 'variable');
+    d = d.leftJoin(
+      new df.DataFrame(
+        specialCalculationConfigs[this.profileName], ['variable', 'specialType'],
+      ),
+      'variable',
+    );
     d = d.chain(row => this.recomputeSpecialVars(row));
     d = d.drop('specialType');
     return d;
@@ -119,9 +124,10 @@ class DataIngestor {
   recomputeSpecialVars(row) {
     let updatedRow = row;
 
-    // do not recalculate values for 'normal' rows
+    // do not recalculate values for 'normal' or 'noPercentOnly' rows,
+    // which do not require recalculation
     const specialType = updatedRow.get('specialType');
-    if (specialType === undefined) return updatedRow;
+    if (specialType === undefined || specialType === 'noPercentOnly') return updatedRow;
 
     // recalculate sum, and optionally m & cv
     const variable = updatedRow.get('variable');
@@ -129,13 +135,14 @@ class DataIngestor {
       const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
       const { options } = find(specialCalculationConfigs[this.profileName], ['variable', variable]);
 
-      updatedRow = this.recomputeSum(updatedRow, specialType, variable, year, options);
+      let wasCoded;
+      ({ updatedRow, wasCoded } = this.recomputeSum(updatedRow, specialType, variable, year, options));
 
       // decennial profiles do not have MOE values or CV values
       if (this.profileName !== 'decennial') {
-        updatedRow = this.recomputeM(updatedRow, specialType, variable, year, options);
-        updatedRow = this.recomputeCV(updatedRow, variable);
-        updatedRow = this.recomputeIsReliable(updatedRow, variable);
+        updatedRow = this.recomputeM(updatedRow, specialType, variable, year, wasCoded, options);
+        updatedRow = this.recomputeCV(updatedRow, variable, wasCoded);
+        updatedRow = this.recomputeIsReliable(updatedRow, variable, wasCoded);
       }
     } catch (e) {
       console.log(`Failed to update special vars for ${variable}:`, e); // eslint-disable-line
@@ -147,22 +154,25 @@ class DataIngestor {
   /*
    * Recomputes the 'sum' value for a given row, applying the appropriate calculation
    * based on the type of 'special' row. Additionally, scales the recomputed sum value
-   * if configured in 'options'
+   * if configured in 'options'. Returns a boolean to indicate if the value was coded,
+   * along with the updated row.
    * @param{Row} row - The row to operate on
    * @param{string} specialType - The type of this special variable
    * @param{string} variable - The variable for the given row
    * @param{string} year - The year for the given dataset
    * @param{Object} options - Additional configuration for special calculations
-   * @returns{Row}
+   * @returns{{row: Row, wasCoded: boolean}}
    */
   recomputeSum(row, specialType, variable, year, options) {
     let updatedRow = row;
     let sum;
+    let wasCoded = false;
 
     if (specialType === 'median') {
       const { trimmedEstimate, codingThreshold } = interpolate(this.data, variable, year);
       sum = trimmedEstimate;
       if (codingThreshold) {
+        wasCoded = true;
         updatedRow = updatedRow.set('codingThreshold', codingThreshold);
         // if codingThreshold is set, indicates value was top- or bottom-coded,
         // meaning the value is not reliable
@@ -172,9 +182,10 @@ class DataIngestor {
       const formulaName = getFormulaName(options, 'sum');
       sum = executeFormula(this.data, variable, formulaName, options.args);
     }
-    sum = this.applyTransform(sum, options.transform);
 
-    return updatedRow.set('sum', sum);
+    sum = this.applyTransform(sum, options.transform, wasCoded);
+
+    return { updatedRow: updatedRow.set('sum', sum), wasCoded };
   }
 
   /*
@@ -185,13 +196,18 @@ class DataIngestor {
    * @param{string} specialType - The type of this special variable
    * @param{string} variable - The variable for the given row
    * @param{string} year - The year for the given dataset
+   * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    * @param{Object} options - Additional configuration for special calculations
    * @returns{Row}
    */
-  recomputeM(row, specialType, variable, year, options) {
+  recomputeM(row, specialType, variable, year, wasCoded, options) {
     const updatedRow = row;
     let m;
-    if (specialType === 'median') {
+
+    // MOE should not be calculated for top- or bottom-coded values
+    if (wasCoded) {
+      m = null;
+    } else if (specialType === 'median') {
       m = calculateMedianError(this.data, variable, year, options);
     } else {
       const formulaName = getFormulaName(options, 'm');
@@ -207,11 +223,13 @@ class DataIngestor {
    * Recomputes 'cv' value for given row
    * @param{Row} row - The row to operate on
    * @param{string} variable - The variable for the given row
+   * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    * @returns{Row}
    */
-  recomputeCV(row, variable) {
+  recomputeCV(row, variable, wasCoded) {
     const updatedRow = row;
-    const cv = executeFormula(this.data, variable, 'cv');
+    // CV should not be computed for top- or bottom-coded values
+    const cv = wasCoded ? null : executeFormula(this.data, variable, 'cv');
     return updatedRow.set('cv', cv);
   }
 
@@ -219,34 +237,40 @@ class DataIngestor {
    * Recomputes 'is_reliable' value for given row
    * @param{Row} row - The row to operate on
    * @param{string} variable - The variable for the given row
+   * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    * @returns{Row}
    */
-  recomputeIsReliable(row, variable) {
+  recomputeIsReliable(row, variable, wasCoded) {
     const updatedRow = row;
-    const isReliable = executeFormula(this.data, variable, 'is_reliable');
+    // top- or bottom-coded values are not reliable
+    const isReliable = wasCoded ? false : executeFormula(this.data, variable, 'is_reliable');
     return updatedRow.set('is_reliable', isReliable);
   }
 
   /*
    * If transformOptions exists, then applies the appropriate transformation.
    * 'inflate' is a special transform type, which only applies to previous year data points
-   * (designated by this.isPrevious), and scales by INFLATION_FACTOR. Other allowed transformation
-   * is 'scale' type, and require transformOptions.factor; factor is applied as scalar transformation
+   * (designated by this.isPrevious), and scales by INFLATION_FACTOR, if the value was not top- or bottom-coded.
+   * Other allowed transformation is 'scale' type, and requires transformOptions.factor, where
+   * factor is applied as scalar transformation
    * @param{Number} val - The value to transform
-   * @param{Object} [transformOptions] - Object containing 'type', and optionally 'factor'; defines the transformation
+   * @param{Object} transformOptions - Object containing 'type', and optionally 'factor'; defines the transformation
+   * @param{Boolean} wasCoded - flag indicating if the value was top or bottom coded
    * @returns{Number}
    */
-  applyTransform(val, transformOptions) {
+  applyTransform(val, transformOptions, wasCoded) {
     if (!transformOptions) return val;
 
-    // inflations are special scalar transforms only applied to prev year dataset
+    // do not inflate if data is current (not isPrevious)
     if (transformOptions.type === 'inflate' && !this.isPrevious) return val;
-    // do inflation
+    // do not inflate if data was top or bottom coded
+    if (transformOptions.type === 'inflate' && wasCoded) return val;
+    // else if inflation; do special scalar transformation
     if (transformOptions.type === 'inflate') return val * INFLATION_FACTOR;
-    // do scalar transform
+    // else; do standard scalar transform
     if (transformOptions.type === 'scale' && transformOptions.factor) return val * transformOptions.factor;
 
-    // something unexpected happened with transformOptions -- just leave the value as is
+    // else something unexpected happened with transformOptions; just leave the value as is
     return val;
   }
 }

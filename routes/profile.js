@@ -1,14 +1,16 @@
 const express = require('express');
+const { find } = require('lodash');
 
 const Selection = require('../models/selection');
 const profileQuery = require('../query-helpers/profile');
 const decennialQuery = require('../query-helpers/decennial');
+const specialCalculationConfigs = require('../special-calculations');
 const DataIngestor = require('../utils/data-ingestor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
+const removePercentsFromSpecialVars = require('../utils/percent');
 
 const router = express.Router();
-
 router.get('/:id/:profileName', async (req, res) => {
   const { app } = req;
   const { id: _id, profileName } = req.params;
@@ -81,16 +83,23 @@ async function getProfileData(profileName, geoids, compare, db) {
   );
 
   // convert combined Dataframe to array of objects
-  // (change & difference calculations results in ad-hoc property addition,
-  // which is easier with objects than Dataframe rows)
+  // (change & difference calculations requires ad-hoc property addition,
+  // which is *MUCH* easier with objects than Dataframe rows)
+  // TODO: confirm using Dataframe is faster than just iterating over objects...
   return profileDF
     .toCollection()
     .map((row) => {
-      doChangeCalculations(row);
+      const varConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]) || {};
+      doChangeCalculations(row, varConfig);
       doDifferenceCalculations(row);
+      removePercentsFromSpecialVars(row, varConfig);
       return row;
     });
 }
+
+/*
+ *
+ */
 
 /*
  * Returns the appropriate query builder for the given profile type
