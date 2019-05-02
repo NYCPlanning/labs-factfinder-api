@@ -36,6 +36,10 @@ function calculateDifferences(row) {
  */
 function calculateDifferencePercents(row) {
   const updatedRow = row;
+
+  // do not calculate difference percents if either value was top- or bottom-coded
+  if (row.codingThreshold || row.comparison_codingThreshold) return;
+
   if (exists(updatedRow.percent) && exists(updatedRow.comparison_percent)) {
     updatedRow.difference_percent = executeFormula('delta_with_threshold', [updatedRow.percent * 100, updatedRow.comparison_percent * 100]);
 

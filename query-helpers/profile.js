@@ -44,7 +44,9 @@ const profileSQL = (profile, ids, isPrevious = false) => `
   /*
    * an aggregation of enriched selection, joined with base that aggregates
    * e and m for all rows for a given 'variable' in the selection, and adds
-   * additional aggregate values cv, percent, percent_m, and is_reliable
+   * additional aggregate values cv, percent, percent_m, and is_reliable.
+   * Note: m is coalesced to 0 if the value does not exist in the data
+   * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
    * Columns: id, sum, m, cv, variable, variablename, base, category, profile, percent, percent_m, is_reliable
    */
   SELECT *,
@@ -74,7 +76,10 @@ const profileSQL = (profile, ids, isPrevious = false) => `
       --- sum ---
       SUM(e) AS sum,
       --- m ---
-      SQRT(SUM(POWER(m, 2))) AS m,
+      CASE
+        WHEN SUM(m) IS NULL THEN 0
+        ELSE SQRT(SUM(POWER(m, 2)))
+      END as m,
       --- cv ---
       (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100) AS cv,
       --- variable ---

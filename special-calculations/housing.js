@@ -10,6 +10,15 @@ module.exports = [
     specialType: 'median',
     options: { designFactor: 1.6, transform: { type: INFLATE } },
   },
+  {
+    variable: 'grnorntpd',
+    specialType: 'noPercentOnly',
+  },
+  // gross rent as a percent
+  {
+    variable: 'grpintc',
+    specialType: 'noPercentOnly',
+  },
   // housing occupancy
   {
     variable: 'hovacrt',
@@ -18,6 +27,7 @@ module.exports = [
       args: ['vacsale', 'hovacu'],
       formulaName: { m: 'rate' },
       transform: { type: SCALE, factor: 100 },
+      noChangePercents: true,
     },
   },
   {
@@ -27,29 +37,39 @@ module.exports = [
       args: ['vacrnt', 'rntvacu'],
       formulaName: { m: 'rate' },
       transform: { type: SCALE, factor: 100 },
+      noChangePercents: true,
     },
   },
   // housing tenure
   {
     variable: 'avghhsooc',
     specialType: 'mean',
-    options: { args: ['popoochu', 'oochu1'] },
+    options: { args: ['popoochu', 'oochu1'], noChangePercents: true },
   },
   {
     variable: 'avghhsroc',
     specialType: 'mean',
-    options: { args: ['poprtochu', 'rochu1'] },
+    options: { args: ['poprtochu', 'rochu1'], noChangePercents: true },
   },
   // rooms
   {
     variable: 'mdrms',
     specialType: 'median',
-    options: { transform: { type: SCALE, factor: 0.001 } },
+    options: { transform: { type: SCALE, factor: 0.001 }, noChangePercents: true },
   },
   // value
   {
     variable: 'mdvl',
     specialType: 'median',
     options: { designFactor: 1.4, transform: { type: INFLATE } },
+  },
+  // selected monthly owner cost
+  {
+    variable: 'smpntc',
+    specialType: 'noPercentOnly',
+  },
+  {
+    variable: 'nmsmpntc',
+    specialType: 'noPercentOnly',
   },
 ];

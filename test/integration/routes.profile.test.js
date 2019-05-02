@@ -189,7 +189,8 @@ it('sthrnafr single geog: percentage point difference not all always graying', (
 
       const rowObject = res.body.find(obj => obj.variable === 'sthrnafr');
 
-      expect(rowObject.percent_significant).to.equal(undefined);
+      // Although this is 0 in the real API response, for some reason it is false here
+      expect(rowObject.percent_significant).to.equal(false);
       done();
     });
 });

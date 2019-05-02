@@ -30,23 +30,32 @@ module.exports = [
   // earnings
   {
     variable: 'mdewrk',
-    type: 'median',
+    specialType: 'median',
     options: { designFactor: 1.6, transform: { type: INFLATE } },
   },
   {
     variable: 'mdemftwrk',
-    type: 'median',
+    specialType: 'median',
     options: { designFactor: 1.6, transform: { type: INFLATE } },
   },
   {
     variable: 'mdefftwrk',
-    type: 'median',
+    specialType: 'median',
     options: { designFactor: 1.6, transform: { type: INFLATE } },
   },
   // commute to work
   {
     variable: 'mntrvtm',
-    type: 'mean',
+    specialType: 'mean',
     options: { args: ['agttm', 'wrkrnothm'] },
+  },
+  // health insurance coverage
+  {
+    variable: 'cni1864_2',
+    specialType: 'noPercentOnly',
+  },
+  {
+    variable: 'cvlf18t64',
+    specialType: 'noPercentOnly',
   },
 ];
