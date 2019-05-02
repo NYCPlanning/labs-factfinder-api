@@ -52,10 +52,10 @@ module.exports = [
   // health insurance coverage
   {
     variable: 'cni1864_2',
-    specialType: 'noPercentOnly',
+    specialType: 'removePercentsOnly',
   },
   {
     variable: 'cvlf18t64',
-    specialType: 'noPercentOnly',
+    specialType: 'removePercentsOnly',
   },
 ];

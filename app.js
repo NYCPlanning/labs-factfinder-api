@@ -25,7 +25,7 @@ app.all('*', (req, res, next) => {
 });
 
 // middleware
-app.use(logger('common'));
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(compression());
 

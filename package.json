@@ -20,7 +20,6 @@
     "cwait": "1.1.1",
     "d3": "^4.13.0",
     "d3-collection": "^1.0.4",
-    "dataframe-js": "^1.4.1",
     "debug": "^3.1.0",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
