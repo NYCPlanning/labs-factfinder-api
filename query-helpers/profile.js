@@ -10,6 +10,10 @@ function formatGeoidWhereClause(ids) {
   return `= '${ids}'`;
 }
 
+function isAggregate(ids) {
+  return !!ids.length;
+}
+
 const profileSQL = (profile, ids, isPrevious = false) => `
   WITH
   /*
@@ -42,22 +46,25 @@ const profileSQL = (profile, ids, isPrevious = false) => `
   )
 
   /*
-   * an aggregation of enriched selection, joined with base that aggregates
-   * e and m for all rows for a given 'variable' in the selection, and adds
-   * additional aggregate values cv, percent, percent_m, and is_reliable.
+   * An aggregation of enriched selection, joined with base. For true aggregate data selections,
+   * e, m, c, p, and z (sum, m, cv, percent, percent_m, respectively) are recalculated.
+   * For non-aggrenate data selections, the original values are selected using MAX as a noop aggregate function.
+   * is_reliable is calculated for all data selections.
    * Note: m is coalesced to 0 if the value does not exist in the data
    * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
    * Columns: id, sum, m, cv, variable, variablename, base, category, profile, percent, percent_m, is_reliable
    */
   SELECT *,
-    --- percent ---
+    --- percent (do not recalculate for non-aggregate selections)---
     CASE
+      WHEN NOT ${isAggregate(ids)} THEN percent
       WHEN base_sum = 0 THEN 0
       WHEN base_sum IS NULL THEN 0
       ELSE sum / base_sum
     END AS percent,
     --- percent_m ---
     CASE
+      WHEN NOT ${isAggregate(ids)} THEN percent_m
       WHEN base_sum = 0 THEN 0
       WHEN base_sum IS NULL THEN 0
       WHEN POWER(m, 2) - POWER(sum / base_sum, 2) * POWER(base_m, 2) < 0
@@ -75,13 +82,21 @@ const profileSQL = (profile, ids, isPrevious = false) => `
       ENCODE(CONVERT_TO(variable, 'UTF-8'), 'base64') AS id,
       --- sum ---
       SUM(e) AS sum,
-      --- m ---
+      --- m (do not recalculate for non-aggregate selections)---
       CASE
+        WHEN NOT ${isAggregate(ids)} THEN MAX(m)
         WHEN SUM(m) IS NULL THEN 0
         ELSE SQRT(SUM(POWER(m, 2)))
-      END as m,
-      --- cv ---
-      (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100) AS cv,
+      END AS m,
+      --- cv (do not recalculate for non-aggregate selections)---
+      CASE
+        WHEN NOT ${isAggregate(ids)} THEN MAX(c)
+        ELSE (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100) 
+      END AS cv,
+      --- percent (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)--
+      MAX(p) AS percent,
+      --- percent_m (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)---
+      MAX(z) AS percent_m,
       --- variable ---
       REGEXP_REPLACE(
         LOWER(variable),

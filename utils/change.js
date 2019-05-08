@@ -14,59 +14,59 @@ function doChangeCalculations(row, specialConfigs) {
 
 /*
  * Calculate change_sum, change_m, and change_significant
- * @param{Object} row - The row to do calculations for
+ * @param{Object} row - The row to update
  */
 function calculateChanges(row) {
-  const updatedRow = row;
-  if (exists(updatedRow.sum) && exists(updatedRow.previous_sum)) {
-    updatedRow.change_sum = executeFormula('delta', [updatedRow.sum, updatedRow.previous_sum]);
+  if (exists(row.sum) && exists(row.previous_sum)) {
+    row.change_sum = executeFormula('delta', [row.sum, row.previous_sum]);
 
-    if (exists(updatedRow.m) && exists(updatedRow.previous_m)) {
-      updatedRow.change_m = executeFormula('delta_m', [updatedRow.m, updatedRow.previous_m]);
+    if (exists(row.m) && exists(row.previous_m)) {
+      row.change_m = executeFormula('delta_m', [row.m, row.previous_m]);
 
-      if (updatedRow.change_sum !== 0) updatedRow.change_significant = executeFormula('significant', [updatedRow.change_sum, updatedRow.change_m]);
+      if (row.change_sum !== 0) row.change_significant = executeFormula('significant', [row.change_sum, row.change_m]);
     }
   }
 }
 
 /*
  * Calculate change_percent, change_percent_m, change_percent_significant
- * @param{Object} row - The row to do calculations for
- * @param{Object} varConfig - Special calculation config for the variable, or empty object
+ * @param{Object} row - The row to update
+ * @param{Object} rowConfig - Special calculation config for the row, or undefined
  */
-function calculateChangePercents(row, varConfig) {
-  const updatedRow = row;
-  // do not calculate change change percent values for variables with noChangePercents flag set to true
-  if (varConfig.noChangePercents) return;
+function calculateChangePercents(row, rowConfig) {
+  // do not calculate change percent values for special variables with noChangePercents flag set to true
+  if (rowConfig && rowConfig.noChangePercents) return;
 
-  if (exists(updatedRow.sum) && exists(updatedRow.previous_sum) && updatedRow.previous_sum !== 0) {
-    updatedRow.change_percent = executeFormula('change_pct', [updatedRow.sum, updatedRow.previous_sum]);
+  if (exists(row.sum) && exists(row.previous_sum) && row.previous_sum !== 0) {
+    row.change_percent = executeFormula('change_pct', [row.sum, row.previous_sum]);
 
-    if (exists(updatedRow.m) && exists(updatedRow.percent_m) && updatedRow.sum !== 0) {
-      updatedRow.change_percent_m = executeFormula('change_pct_m', [updatedRow.sum, updatedRow.previous_sum, updatedRow.m, updatedRow.previous_m]);
+    if (exists(row.m) && exists(row.percent_m) && row.sum !== 0) {
+      row.change_percent_m = executeFormula('change_pct_m', [row.sum, row.previous_sum, row.m, row.previous_m]);
 
-      if (updatedRow.change_percent !== 0) updatedRow.change_percent_significant = executeFormula('significant', [updatedRow.change_percent, updatedRow.change_percent_m]);
+      if (row.change_percent !== 0) row.change_percent_significant = executeFormula('significant', [row.change_percent, row.change_percent_m]);
     }
   }
 }
 
 /*
  * Calculate change_percentage_point, change_percentage_point_m, change_percentage_point_significant
- * @param{row} - The row to do calculations for
+ * @param{row} - The row to update
+ * @param{Object} rowConfig - Special calculation config for the row, or undefined
  */
-function calculateChangePercentagePoints(row) {
-  const updatedRow = row;
+function calculateChangePercentagePoints(row, rowConfig) {
+  // do not calculate change percentage point values for ANY special variables
+  if (rowConfig) return;
 
   // do not calculate change percentage points if either value was top- or bottom-coded
   if (row.codingThreshold || row.previous_codingThreshold) return;
 
-  if (exists(updatedRow.percent) && exists(updatedRow.previous_percent)) {
-    updatedRow.change_percentage_point = executeFormula('delta', [updatedRow.percent, updatedRow.previous_percent]);
+  if (exists(row.percent) && exists(row.previous_percent)) {
+    row.change_percentage_point = executeFormula('delta', [row.percent, row.previous_percent]);
 
-    if (exists(updatedRow.percent_m) && exists(updatedRow.previous_percent_m)) {
-      updatedRow.change_percentage_point_m = executeFormula('delta_m', [updatedRow.percent_m, updatedRow.previous_percent_m]);
+    if (exists(row.percent_m) && exists(row.previous_percent_m)) {
+      row.change_percentage_point_m = executeFormula('delta_m', [row.percent_m, row.previous_percent_m]);
 
-      if (updatedRow.change_percentage_point !== 0) updatedRow.change_percentage_point_significant = executeFormula('significant', [updatedRow.change_percentage_point, updatedRow.change_percentage_point_m]);
+      if (row.change_percentage_point !== 0) row.change_percentage_point_significant = executeFormula('significant', [row.change_percentage_point, row.change_percentage_point_m]);
     }
   }
 }

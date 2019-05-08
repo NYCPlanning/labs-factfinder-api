@@ -57,6 +57,7 @@ function executeWithData(data, variable, formulaName, args = []) {
 
   const { result, error } = parser.parse(formulaStr);
   if (error) {
+    console.log(`${formulaStr}`);
     throw new Error(`${error}: ${formulaName}`);
   }
 

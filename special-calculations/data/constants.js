@@ -4,16 +4,6 @@ const TRANSFORM_TYPE_INFLATE = 'inflate';
 const TRANSFORM_TYPE_SCALE = 'scale';
 const CV_CONST = 1.645;
 const DIFF_PERCENT_THRESHOLD = -0.05;
-const RENAME_COLS = [
-  'sum',
-  'm',
-  'cv',
-  'percent',
-  'percent_m',
-  'codingThreshold',
-  'is_reliable',
-];
-
 const CUR_YEAR = 'Y2013-2017';
 const PREV_YEAR = 'Y2006-2010';
 
@@ -26,7 +16,6 @@ module.exports = {
   TRANSFORM_TYPE_SCALE,
   CV_CONST,
   DIFF_PERCENT_THRESHOLD,
-  RENAME_COLS,
   CUR_YEAR,
   PREV_YEAR,
   DECENNIAL_CUR_YEAR,

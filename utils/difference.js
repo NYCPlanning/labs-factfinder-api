@@ -2,7 +2,7 @@ const { executeWithValues: executeFormula } = require('./formula');
 
 /*
  * Do calculations for all difference_* values for the given row
- * @param{Object} row - The row to do calculations for
+ * @param{Object} row - The row to update
  */
 function doDifferenceCalculations(row) {
   calculateDifferences(row);
@@ -11,18 +11,17 @@ function doDifferenceCalculations(row) {
 
 /*
  * Calculate difference_sum, difference_m, and significant
- * @param{row} - The row to do calculations for
+ * @param{row} - The row to update
  */
 function calculateDifferences(row) {
-  const updatedRow = row;
-  if (exists(updatedRow.sum) && exists(updatedRow.comparison_sum)) {
-    updatedRow.difference_sum = executeFormula('delta', [updatedRow.sum, updatedRow.comparison_sum]);
+  if (exists(row.sum) && exists(row.comparison_sum)) {
+    row.difference_sum = executeFormula('delta', [row.sum, row.comparison_sum]);
 
-    if (exists(updatedRow.m) && exists(updatedRow.comparison_m)) {
-      updatedRow.difference_m = executeFormula('delta_m', [updatedRow.m, updatedRow.comparison_m]);
+    if (exists(row.m) && exists(row.comparison_m)) {
+      row.difference_m = executeFormula('delta_m', [row.m, row.comparison_m]);
 
       // TODO rename difference_significant
-      if (updatedRow.difference_sum !== 0) updatedRow.significant = executeFormula('significant', [updatedRow.difference_sum, updatedRow.difference_m]);
+      if (row.difference_sum !== 0) row.significant = executeFormula('significant', [row.difference_sum, row.difference_m]);
     }
   }
 
@@ -35,19 +34,17 @@ function calculateDifferences(row) {
  * @param{row} - The row to do calculations for
  */
 function calculateDifferencePercents(row) {
-  const updatedRow = row;
-
   // do not calculate difference percents if either value was top- or bottom-coded
   if (row.codingThreshold || row.comparison_codingThreshold) return;
 
-  if (exists(updatedRow.percent) && exists(updatedRow.comparison_percent)) {
-    updatedRow.difference_percent = executeFormula('delta_with_threshold', [updatedRow.percent * 100, updatedRow.comparison_percent * 100]);
+  if (exists(row.percent) && exists(row.comparison_percent)) {
+    row.difference_percent = executeFormula('delta_with_threshold', [row.percent * 100, row.comparison_percent * 100]);
 
-    if (exists(updatedRow.percent_m) && exists(updatedRow.comparison_percent_m)) {
-      updatedRow.difference_percent_m = executeFormula('delta_m', [updatedRow.percent_m * 100, updatedRow.comparison_percent_m * 100]);
+    if (exists(row.percent_m) && exists(row.comparison_percent_m)) {
+      row.difference_percent_m = executeFormula('delta_m', [row.percent_m * 100, row.comparison_percent_m * 100]);
 
       // TODO rename difference_percent_significant
-      if (updatedRow.difference_percent !== 0) updatedRow.percent_significant = executeFormula('significant', [updatedRow.difference_percent, updatedRow.difference_percent_m]);
+      if (row.difference_percent !== 0) row.percent_significant = executeFormula('significant', [row.difference_percent, row.difference_percent_m]);
     }
   }
 }

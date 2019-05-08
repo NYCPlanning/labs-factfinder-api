@@ -18,23 +18,23 @@ const { CV_CONST, DIFF_PERCENT_THRESHOLD } = require('../special-calculations/da
  *   and are not represented here in the formulas for readability and easier implementation
  */
 module.exports = {
-  /***** sum calculations *****/
+  /** *** sum calculations **** */
   sum: (aggSum, universe) => `GET("${aggSum}.sum") / GET("${universe}.sum")`,
   // special mean calculation for 'ratio' type values TODO: get a better name for ratio
   sum_ratio: (observed, universe) => `GET("${observed}.sum") / (GET("${observed}.sum") + GET("${universe}.sum"))`,
 
-  /***** margin of error calculations *****/
+  /** *** margin of error calculations **** */
   m: (aggSum, universe) => `(1/GET("${universe}.sum")) * SQRT((GET("${aggSum}.m")^2) + ((GET("${aggSum}.sum") / GET("${universe}.sum"))^2 * (GET("${universe}.m")^2)))`,
   // special MOE calculation for 'rate' type values, copied from @emaurer in slack
   m_rate: (aggSum, universe) => `IF(GET("${universe}.sum")=0,0,IF(GET("${aggSum}.sum")=0,0,IF(((GET("${aggSum}.m")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.m")^2)))<0,((1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.m")^2)+((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.m")^2)))))*100),((1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.m")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.m")^2)))))*100))))`,
 
-  /***** coefficient of variation calculations *****/
+  /** *** coefficient of variation calculations **** */
   cv: `((GET("m") / "${CV_CONST}") / GET("sum")) * 100`,
 
-  /***** is_reliable calculation *****/
-  is_reliable: `GET("cv") < 20`,
+  /** *** is_reliable calculation **** */
+  is_reliable: 'GET("cv") < 20',
 
-  /***** change and difference calculations *****/
+  /** *** change and difference calculations **** */
   // Δ sum
   delta: (sum, compSum) => `${sum} - ${compSum}`,
   delta_with_threshold: (sum, compSum) => `IF(AND(${sum} - ${compSum} < 0, ${sum} - ${compSum} > ${DIFF_PERCENT_THRESHOLD}), 0, ${sum} - ${compSum})`,
