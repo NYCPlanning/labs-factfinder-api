@@ -54,7 +54,7 @@ const profileSQL = (profile, ids, isPrevious = false) => `
    * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
    * Columns: id, sum, m, cv, variable, variablename, base, category, profile, percent, percent_m, is_reliable
    */
-  SELECT *,
+  SELECT variables.*,
     --- percent (do not recalculate for non-aggregate selections)---
     CASE
       WHEN NOT ${isAggregate(ids)} THEN percent
@@ -91,7 +91,7 @@ const profileSQL = (profile, ids, isPrevious = false) => `
       --- cv (do not recalculate for non-aggregate selections)---
       CASE
         WHEN NOT ${isAggregate(ids)} THEN MAX(c)
-        ELSE (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100) 
+        ELSE (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100)
       END AS cv,
       --- percent (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)--
       MAX(p) AS percent,

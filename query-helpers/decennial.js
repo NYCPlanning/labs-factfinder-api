@@ -47,7 +47,7 @@ const decennialProfileSQL = (profile, ids, isPrevious = false) => `
    * adds additional aggregate value percent.
    * Columns: id, sum, variable, variablename, base, category, profile, percent
    */
-  SELECT *,
+  SELECT decennial.*,
   --- percent ---
   CASE
     WHEN base_sum = 0 THEN 0
