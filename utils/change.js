@@ -3,13 +3,14 @@ const { executeWithValues: executeFormula } = require('./formula');
 /*
  * Do calculations for all change_* values for the given row
  * @param{Object} row - The row to do calculations for
- * @param{Object} specialConfigs - The special calculation configs for this profile; used to determine
- * when change percent calculations should be skipped (noChangePercents = true)
+ * @param{Object} rowConfig - Special calculation config for the row, or undefined; used to determine
+ * when change percent calculations should be skipped (noChangePercents = true), and to skip percentage point
+ * calculations for all special variables
  */
-function doChangeCalculations(row, specialConfigs) {
+function doChangeCalculations(row, rowConfig) {
   calculateChanges(row);
-  calculateChangePercents(row, specialConfigs);
-  calculateChangePercentagePoints(row);
+  calculateChangePercents(row, rowConfig);
+  calculateChangePercentagePoints(row, rowConfig);
 }
 
 /*
@@ -40,7 +41,7 @@ function calculateChangePercents(row, rowConfig) {
   if (exists(row.sum) && exists(row.previous_sum) && row.previous_sum !== 0) {
     row.change_percent = executeFormula('change_pct', [row.sum, row.previous_sum]);
 
-    if (exists(row.m) && exists(row.percent_m) && row.sum !== 0) {
+    if (exists(row.m) && exists(row.previous_m) && row.sum !== 0) {
       row.change_percent_m = executeFormula('change_pct_m', [row.sum, row.previous_sum, row.m, row.previous_m]);
 
       if (row.change_percent !== 0) row.change_percent_significant = executeFormula('significant', [row.change_percent, row.change_percent_m]);
