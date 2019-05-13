@@ -36,7 +36,11 @@ function calculateChanges(row) {
  */
 function calculateChangePercents(row, rowConfig) {
   // do not calculate change percent values for special variables with noChangePercents flag set to true
-  if (rowConfig && rowConfig.noChangePercents) return;
+  if (rowConfig && rowConfig.noChangePercents) {
+    row.change_percent = null;
+    row.change_percent_m = null;
+    return;
+  }
 
   if (exists(row.sum) && exists(row.previous_sum) && row.previous_sum !== 0) {
     row.change_percent = executeFormula('change_pct', [row.sum, row.previous_sum]);
@@ -56,7 +60,11 @@ function calculateChangePercents(row, rowConfig) {
  */
 function calculateChangePercentagePoints(row, rowConfig) {
   // do not calculate change percentage point values for ANY special variables
-  if (rowConfig) return;
+  if (rowConfig) {
+    row.change_percentage_point = null;
+    row.change_percentage_point_m = null;
+    return;
+  }
 
   // do not calculate change percentage points if either value was top- or bottom-coded
   if (row.codingThreshold || row.previous_codingThreshold) return;

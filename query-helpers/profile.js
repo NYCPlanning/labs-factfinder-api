@@ -11,7 +11,7 @@ function formatGeoidWhereClause(ids) {
 }
 
 function isAggregate(ids) {
-  return !!ids.length;
+  return ids.length > 1;
 }
 
 const profileSQL = (profile, ids, isPrevious = false) => `

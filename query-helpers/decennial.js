@@ -13,7 +13,7 @@ function formatGeoidWhereClause(ids) {
 /* NOTE: 'profile' is a noop param, to make invocation from route cleaner */
 const decennialProfileSQL = (profile, ids, isPrevious = false) => `
   WITH
-  /* 
+  /*
    * enriched_profile: decennial data joined with meta data
    * from decennial_dictionary, filtered for given year
    * and geoids
@@ -27,7 +27,7 @@ const decennialProfileSQL = (profile, ids, isPrevious = false) => `
     AND d.year = '${isPrevious ? DECENNIAL_PREV_YEAR : DECENNIAL_CUR_YEAR}'
   ),
 
-  /* 
+  /*
    * base: an aggregation of enriched_profile that sums the
    * value of all base variables for the given selection
    */
