@@ -35,7 +35,11 @@ function calculateDifferences(row) {
  */
 function calculateDifferencePercents(row) {
   // do not calculate difference percents if either value was top- or bottom-coded
-  if (row.codingThreshold || row.comparison_codingThreshold) return;
+  if (row.codingThreshold || row.comparison_codingThreshold) {
+    row.difference_percent = null;
+    row.difference_percent_m = null;
+    return;
+  }
 
   if (exists(row.percent) && exists(row.comparison_percent)) {
     row.difference_percent = executeFormula('delta_with_threshold', [row.percent * 100, row.comparison_percent * 100]);

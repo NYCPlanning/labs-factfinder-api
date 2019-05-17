@@ -26,7 +26,6 @@ module.exports = [
     options: {
       args: ['vacsale', 'hovacu'],
       formulaName: { m: 'rate' },
-      transform: { type: SCALE, factor: 100 },
     },
     noChangePercents: true,
   },
@@ -36,7 +35,6 @@ module.exports = [
     options: {
       args: ['vacrnt', 'rntvacu'],
       formulaName: { m: 'rate' },
-      transform: { type: SCALE, factor: 100 },
     },
     noChangePercents: true,
   },
