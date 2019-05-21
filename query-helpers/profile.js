@@ -6,8 +6,8 @@ const { CV_CONST, CUR_YEAR, PREV_YEAR } = require('../special-calculations/data/
  * Else, if 'ids' is a single id, returns an '= id' clause, with id in quotes
  */
 function formatGeoidWhereClause(ids) {
-  if (Array.isArray(ids)) return `IN ('${ids.join("','")}')`;
-  return `= '${ids}'`;
+  if (ids.length > 1) return `IN ('${ids.join("','")}')`;
+  return `= '${ids[0]}'`;
 }
 
 function isAggregate(ids) {
@@ -57,14 +57,14 @@ const profileSQL = (profile, ids, isPrevious = false) => `
   SELECT variables.*,
     --- percent (do not recalculate for non-aggregate selections)---
     CASE
-      WHEN NOT ${isAggregate(ids)} THEN percent
+      WHEN NOT ${isAggregate(ids)} THEN percent / 100
       WHEN base_sum = 0 THEN 0
       WHEN base_sum IS NULL THEN 0
       ELSE sum / base_sum
     END AS percent,
     --- percent_m ---
     CASE
-      WHEN NOT ${isAggregate(ids)} THEN percent_m
+      WHEN NOT ${isAggregate(ids)} THEN percent_m / 100
       WHEN base_sum = 0 THEN 0
       WHEN base_sum IS NULL THEN 0
       WHEN POWER(m, 2) - POWER(sum / base_sum, 2) * POWER(base_m, 2) < 0
@@ -83,9 +83,10 @@ const profileSQL = (profile, ids, isPrevious = false) => `
       --- sum ---
       SUM(e) AS sum,
       --- m (do not recalculate for non-aggregate selections)---
+      --- coalesce null m to 0 ---
       CASE
-        WHEN NOT ${isAggregate(ids)} THEN MAX(m)
         WHEN SUM(m) IS NULL THEN 0
+        WHEN NOT ${isAggregate(ids)} THEN MAX(m)
         ELSE SQRT(SUM(POWER(m, 2)))
       END AS m,
       --- cv (do not recalculate for non-aggregate selections)---
@@ -94,9 +95,11 @@ const profileSQL = (profile, ids, isPrevious = false) => `
         ELSE (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100)
       END AS cv,
       --- percent (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)--
-      MAX(p) AS percent,
+      --- coalesce null percent to 0 ---
+      COALESCE(MAX(p), 0) AS percent,
       --- percent_m (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)---
-      MAX(z) AS percent_m,
+      --- coalesce null percent_m to 0 ---
+      COALESCE(MAX(z), 0) AS percent_m,
       --- variable ---
       REGEXP_REPLACE(
         LOWER(variable),
