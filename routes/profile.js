@@ -47,7 +47,7 @@ async function getProfileData(profileName, geoids, compare, db) {
   const [rawProfileData, rawPreviousProfileData, rawCompareProfileData] = await Promise.all([
     db.query(queryBuilder(profileName, geoids)),
     db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
-    db.query(queryBuilder(profileName, compare)),
+    db.query(queryBuilder(profileName, [compare])),
   ]);
 
   // Instantiate DataProcessors to process query results

@@ -105,7 +105,7 @@ describe('normal variables with complex case logic', () => {
 });
 
 // oscasia
-it('data with both 0 estimates should be percentage point null: oscasia difference_percentage should be calculated', (done) => {
+it('data with both 0 estimates should be percentage point null', (done) => {
   chai.request(server)
     .get('/profile/733/social?compare=4104')
     .end((err, res) => {
@@ -116,13 +116,13 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
       const rowObject = res.body.find(obj => obj.variable === 'oscasia');
       expect(rowObject.previous_sum).to.equal(0);
       expect(rowObject.sum).to.equal(0);
-      expect(rowObject.change_percentage_point).to.equal(0);
+      expect(rowObject.change_percentage_point).to.equal(null);
       done();
     });
 });
 
 // oscasia, single geog
-it('data with both 0 estimates should be percentage point null: oscasia difference_percentage should be calculated', (done) => {
+it('data with both 0 estimates should be percentage point null', (done) => {
   chai.request(server)
     .get('/profile/843/social?compare=4104')
     .end((err, res) => {
@@ -133,8 +133,7 @@ it('data with both 0 estimates should be percentage point null: oscasia differen
       const rowObject = res.body.find(obj => obj.variable === 'oscasia');
       expect(rowObject.previous_sum).to.equal(0);
       expect(rowObject.sum).to.equal(0);
-      // the real API sends a 0, IDK WHY IT's UNDEFINED HERE :(
-      expect(rowObject.change_percentage_point).to.equal(undefined);
+      expect(rowObject.change_percentage_point).to.equal(null);
       done();
     });
 });
