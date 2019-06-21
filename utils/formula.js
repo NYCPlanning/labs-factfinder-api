@@ -1,6 +1,7 @@
 const FormulaParser = require('hot-formula-parser');
 const _ = require('lodash');
 const formulas = require('./formulas');
+const { format } = require('mathjs');
 
 const { find } = _;
 const { Parser } = FormulaParser;
@@ -14,13 +15,18 @@ const { Parser } = FormulaParser;
  */
 function executeWithValues(formulaName, args) {
   const formula = formulas[formulaName];
-  const formulaStr = formula(...args);
 
+  // Format these numbers to use fixed notation instead of
+  // exponential notation, which is JavaScript's default behavior
+  // because Formula Parser does not understand e notation:
+  // See https://github.com/handsontable/formula-parser/issues/72
+  const formattedArgs = args.map(arg => format(arg, { notation: 'fixed' }));
+  const formulaStr = formula(...formattedArgs);
   const parser = new Parser();
-
   const { result, error } = parser.parse(formulaStr);
+
   if (error) {
-    console.log(`${formulaStr}`);
+    console.log(`${formulaStr}`, formattedArgs);
     throw new Error(`${error}: ${formulaName}`);
   }
 
