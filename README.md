@@ -61,6 +61,18 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
       - `selectionid` is a selection id returned by the selection api
       - `profileid` is one of 'decennial', 'demographic', 'social', 'economic', 'housing'
 
+## Data Updates
+Backing data is managed by EDM team. This app sets up foreign data wrappers (FDW) which provide schema-level access to EDM's factfinder tables.
+What is an FDW? It allows locals access to remote database tables. Once the FDW is created, we do a one-time insert into a local table, performing
+whatever munging needs to happen between EDM and the labs app. In our case, it's unioning the years.
+
+Currently, migration files handle updating the data through these FDWs by inserting data into existing tables.
+
+To perform a basic refresh of the data, re-run the relevant migration. What is that? As of writing, it's 1576792591496_copy-data-2017.js.
+Look up pg-migrate instructions on targetting a specific migration.
+
+To update the data with new release data (2018, 2019), generate a new migration for this. This migration should probably clear out the existing data
+and do any munging it needs (for example, unioning the correct years). Then, run the migration.
 
 ## Backend services
 
