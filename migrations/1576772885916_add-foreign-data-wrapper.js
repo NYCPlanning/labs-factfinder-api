@@ -1,4 +1,4 @@
-const SCHEMAS = ['pff_demographic', 'pff_economic', 'pff_housing', 'pff_social'];
+const SCHEMAS = ['pff_demographic', 'pff_economic', 'pff_housing', 'pff_social', 'pff_metadata'];
 const {
   FDW_EDM_HOST,
   FDW_EDM_PORT,

@@ -4,10 +4,10 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "NODE_ENV=development nodemon ./bin/www",
-    "saveoutput": "if [ \"$NODE_ENV\" = \"development\" ]; then curl -f http://localhost:3000/profile/1/demographic?compare=0 | node_modules/.bin/prettyjson > test-output/1-demographic-0.yaml; fi",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "test": "NODE_ENV=test node ./node_modules/mocha/bin/mocha ./test/**/*.js --exit",
-    "migrate": "node-pg-migrate"
+    "migrate": "node-pg-migrate",
+    "refresh": "node ./bin/refresh"
   },
   "pre-commit": [
     "test"
