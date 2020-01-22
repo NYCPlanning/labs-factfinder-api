@@ -11,6 +11,18 @@ const {
   DECENNIAL_PREV_YEAR,
 } = constants;
 
+// names of the pop factfinder schema 
+// on edm's database
+const FOREIGN_SCHEMA_NAMES = [
+  'pff_demographic',
+  'pff_economic',
+  'pff_housing',
+  'pff_social',
+  'pff_decennial',
+  'pff_acs_metadata',
+  'pff_decennial_metadata',
+];
+
 const pgp = require('pg-promise')({
   query(e) {
      (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
@@ -19,21 +31,93 @@ const pgp = require('pg-promise')({
 
 const db = pgp(process.env.DATABASE_URL);
 
-db.query(`
-  TRUNCATE TABLE public.demographic;
-  TRUNCATE TABLE public.housing;
-  TRUNCATE TABLE public.economic;
-  TRUNCATE TABLE public.social;
+async function doRefresh() {
+  // setup local schema that can access foreign data
+  await db.tx(transaction => {
+    transaction.query(FOREIGN_SCHEMA_NAMES.map(SCHEMA_NAME => `
+      DROP SCHEMA IF EXISTS ${SCHEMA_NAME} CASCADE;
+      CREATE SCHEMA IF NOT EXISTS ${SCHEMA_NAME};
 
-  INSERT INTO public.demographic
-  SELECT * FROM pff_demographic."${CUR_YEAR}" UNION ALL SELECT * FROM pff_demographic."${PREV_YEAR}";
+      IMPORT FOREIGN SCHEMA ${SCHEMA_NAME}
+        FROM SERVER edm_data
+        INTO ${SCHEMA_NAME};
+    `).join(''));
+  });
 
-  INSERT INTO public.housing
-  SELECT * FROM pff_housing."${CUR_YEAR}" UNION ALL SELECT * FROM pff_housing."${PREV_YEAR}";
+  // I couple the truncation and insertion steps inside individual transactions to prevent refresh failure.
+  // This is also to avoid choking the database.
+  console.log('acs data dictionary');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.factfinder_metadata;
 
-  INSERT INTO public.economic
-  SELECT * FROM pff_economic."${CUR_YEAR}" UNION ALL SELECT * FROM pff_economic."${PREV_YEAR}";
+    INSERT INTO public.factfinder_metadata
+    SELECT * FROM pff_acs_metadata."${CUR_YEAR}";
+  `));
 
-  INSERT INTO public.social
-  SELECT * FROM pff_social."${CUR_YEAR}" UNION ALL SELECT * FROM pff_social."${PREV_YEAR}";
-`);
+  console.log('decennial data dictionary');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.decennial_dictionary;
+
+    INSERT INTO public.decennial_dictionary
+    SELECT * FROM pff_decennial_metadata."${DECENNIAL_CUR_YEAR}";
+  `));
+
+  console.log('acs demographic');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.demographic;
+
+    INSERT INTO public.demographic
+    SELECT * FROM pff_demographic."${CUR_YEAR}" UNION ALL SELECT * FROM pff_demographic."${PREV_YEAR}";
+  `));
+
+  console.log('acs housing');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.housing;
+
+    INSERT INTO public.housing
+    SELECT * FROM pff_housing."${CUR_YEAR}" UNION ALL SELECT * FROM pff_housing."${PREV_YEAR}";
+  `));
+
+  console.log('acs economic');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.economic;
+
+    INSERT INTO public.economic
+    SELECT * FROM pff_economic."${CUR_YEAR}" UNION ALL SELECT * FROM pff_economic."${PREV_YEAR}";
+  `));
+
+  console.log('acs social');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.social;
+
+    INSERT INTO public.social
+    SELECT * FROM pff_social."${CUR_YEAR}" UNION ALL SELECT * FROM pff_social."${PREV_YEAR}";
+  `));
+
+  console.log('decennial');
+  await db.tx(t => t.none(`
+    TRUNCATE TABLE public.decennial;
+
+    INSERT INTO public.decennial
+    SELECT * FROM pff_decennial."${DECENNIAL_CUR_YEAR}" UNION ALL SELECT * FROM pff_decennial."${DECENNIAL_PREV_YEAR}";
+  `));
+
+  console.log('Success!');
+}
+
+try {
+  console.log(`
+    Refreshing...
+    Using these years:
+      ${CUR_YEAR}
+      ${PREV_YEAR}
+      ${DECENNIAL_CUR_YEAR}
+      ${DECENNIAL_PREV_YEAR}
+    Using these remote schema:
+      ${FOREIGN_SCHEMA_NAMES.join(', ')}
+  `);
+
+  doRefresh(); 
+} catch (e) {
+  console.log('Something went wrong, rolling back:', e);
+}

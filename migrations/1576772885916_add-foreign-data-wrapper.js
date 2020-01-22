@@ -1,4 +1,3 @@
-const SCHEMAS = ['pff_demographic', 'pff_economic', 'pff_housing', 'pff_social', 'pff_metadata'];
 const {
   FDW_EDM_HOST,
   FDW_EDM_PORT,
@@ -31,31 +30,9 @@ exports.up = (pgm) => {
     FDW_EDM_USERNAME,
     FDW_EDM_PASSWORD,
   });
-
-  // For all known Pop Fact Finder schema, create the right schema.
-  // This depends on how the schema are named in the remote database.
-  SCHEMAS.forEach(SCHEMA_NAME => {
-    pgm.sql(`
-      CREATE SCHEMA {SCHEMA_NAME};
-
-      IMPORT FOREIGN SCHEMA {SCHEMA_NAME}
-        FROM SERVER edm_data
-        INTO {SCHEMA_NAME};
-    `, {
-      SCHEMA_NAME,
-    });
-  });
 };
 
 exports.down = (pgm) => {
-  SCHEMAS.forEach(SCHEMA_NAME => {
-    pgm.sql(`
-      DROP SCHEMA {SCHEMA_NAME} CASCADE;
-    `, {
-      SCHEMA_NAME,
-    });
-  });
-
   pgm.sql(`
     DROP USER MAPPING FOR CURRENT_USER
       SERVER edm_data
