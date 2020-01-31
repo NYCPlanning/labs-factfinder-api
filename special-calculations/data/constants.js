@@ -1,11 +1,11 @@
 // constants for use in special calculations
-const INFLATION_FACTOR = 1.1267; // inflates 2010 dollars to 2017 dollars
+const INFLATION_FACTOR = 1.1542; // inflates 2010 dollars to 2017 dollars
 const TRANSFORM_TYPE_INFLATE = 'inflate';
 const TRANSFORM_TYPE_SCALE = 'scale';
 const CV_CONST = 1.645;
 const DIFF_PERCENT_THRESHOLD = -0.05;
 const DESIGN_FACTOR = 1.5;
-const CUR_YEAR = 'Y2013-2017';
+const CUR_YEAR = 'Y2014-2018';
 const PREV_YEAR = 'Y2006-2010';
 
 const DECENNIAL_CUR_YEAR = '2010';
