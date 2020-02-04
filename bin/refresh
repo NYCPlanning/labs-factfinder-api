@@ -10,6 +10,11 @@ const {
   DECENNIAL_CUR_YEAR,
   DECENNIAL_PREV_YEAR,
 } = constants;
+const pgp = require('pg-promise')({
+  query(e) {
+     (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
+  },
+});
 
 // names of the pop factfinder schema 
 // on edm's database
@@ -23,15 +28,13 @@ const FOREIGN_SCHEMA_NAMES = [
   'pff_decennial_metadata',
 ];
 
-const pgp = require('pg-promise')({
-  query(e) {
-     (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
-  },
-});
-
-const db = pgp(process.env.DATABASE_URL);
+function getDatabaseConnection() {
+  return pgp(process.env.DATABASE_URL);
+}
 
 async function doRefresh() {
+  const db = getDatabaseConnection();
+
   // setup local schema that can access foreign data
   await db.tx(transaction => {
     transaction.query(FOREIGN_SCHEMA_NAMES.map(SCHEMA_NAME => `

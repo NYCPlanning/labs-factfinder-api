@@ -123,9 +123,13 @@ function getValueKeys(allKeys) {
  * @param{String[]} keys - The array of keys for values to add from rowToAdd to row
  */
 function addValuesToRow(row, rowToAdd, prefix, keys) {
-  keys.forEach((key) => {
-    row[`${prefix}_${key}`] = rowToAdd[key];
-  });
+  if (row && rowToAdd) { // TODO: if this is false, it is a silent failure
+    keys.forEach((key) => {
+      row[`${prefix}_${key}`] = rowToAdd[key];
+    });
+  } else {
+    throw new Error(`Missing comparison variable for ${row.variable}`)
+  }
 }
 
 /*
