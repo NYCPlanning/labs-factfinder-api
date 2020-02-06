@@ -36,16 +36,3 @@ jobs:
             if [ "${CIRCLE_BRANCH}" != "master" ]; then
               export DATABASE_URL=$STAGING_DATABASE_URL && yarn test
             fi
-
-      # deploy
-      - run:
-          name: Avoid hosts unknown for github
-          command: ssh-keyscan planninglabs.nyc >> ~/.ssh/known_hosts
-      - deploy:
-          name: Deployment
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              git remote add dokku dokku@planninglabs.nyc:factfinder-api && git push dokku master
-            elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
-              git remote add dokku dokku@planninglabs.nyc:factfinder-api-staging && git push dokku develop:master
-            fi
