@@ -48,27 +48,27 @@ const topBottomCodings = {
       lower: 1,
     },
     mdhhinc: {
-      upper: 225000,
-      lower: 11000,
+      upper: 230000,
+      lower: 11500,
     },
     mdfaminc: {
-      upper: 225000,
-      lower: 11000,
+      upper: 230000,
+      lower: 11500,
     },
     mdnfinc: {
-      upper: 225000,
-      lower: 11000,
+      upper: 230000,
+      lower: 11500,
     },
     mdewrk: {
-      upper: 112500,
+      upper: 115000,
       lower: 2800,
     },
     mdemftwrk: {
-      upper: 112500,
+      upper: 115000,
       lower: 2800,
     },
     mdefftwrk: {
-      upper: 112500,
+      upper: 115000,
       lower: 2800,
     },
     mdrms: {
@@ -76,11 +76,11 @@ const topBottomCodings = {
       lower: 0,
     },
     mdvl: {
-      upper: 1275000,
+      upper: 1150000,
       lower: 0,
     },
     mdgr: {
-      upper: 2250,
+      upper: 2300,
       lower: 0,
     },
   },

@@ -128,7 +128,7 @@ function addValuesToRow(row, rowToAdd, prefix, keys) {
       row[`${prefix}_${key}`] = rowToAdd[key];
     });
   } else {
-    throw new Error(`Missing comparison variable for ${row.variable}`)
+    throw new Error(`Missing comparison variable for ${row.variable}`);
   }
 }
 
