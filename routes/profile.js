@@ -25,7 +25,10 @@ router.get('/:id/:profileName', async (req, res) => {
     return res.send(profileObj);
   } catch (e) {
     console.log(e); // eslint-disable-line
-    return res.status(500).send({ error: 'Failed to create profile' });
+
+    return res.status(500).send({
+      errors: [`Failed to create profile: ${e}`],
+    });
   }
 });
 
