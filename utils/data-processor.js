@@ -76,10 +76,7 @@ class DataProcessor {
         this.recalculateIsReliable(row, wasCoded);
       }
     } catch (e) {
-      throw new Error(`
-        Failed to update special vars for ${row.variable}:
-        ${e}
-      `);
+      console.log(`Failed to update special vars for ${row.variable}:`, e); // eslint-disable-line
     }
   }
 
