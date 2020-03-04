@@ -17,21 +17,31 @@ function calculateDifferences(row) {
   // explicitly set differences to null if:
   // - any estimates are missing
   // - either estimate or comparison estimate was coded
-  if (!allExist(row.sum, row.comparison_sum, row.m, row.comparison_m)
+  // - the profile is NOT decennial
+  const isDecennial = (row.profile == 'decennial');
+  const shouldNullify = (!allExist(row.sum, row.comparison_sum, row.m, row.comparison_m)
     || row.codingThreshold
-    || row.comparison_codingThreshold) {
+    || row.comparison_codingThreshold) && !isDecennial;
+
+  if (shouldNullify) {
     nullDifferences(row);
 
-    // special handling for 'decennial' rows, which do not have MOE and are all considered 'significant'
-    if (row.profile === 'decennial') row.significant = true;
     return;
   }
 
   row.difference_sum = executeFormula('delta', [row.sum, row.comparison_sum]);
-  row.difference_m = executeFormula('delta_m', [row.m, row.comparison_m]);
 
-  // TODO rename difference_significant
-  if (row.difference_sum !== 0) row.significant = executeFormula('significant', [row.difference_sum, row.difference_m]);
+  if (isDecennial) {
+    row.significant = true;
+  }
+
+  // special handling for 'decennial' rows, which do not have MOE and are all considered 'significant'
+  if (!isDecennial) {
+    row.difference_m = executeFormula('delta_m', [row.m, row.comparison_m]);
+
+    // TODO rename difference_significant
+    if (row.difference_sum !== 0) row.significant = executeFormula('significant', [row.difference_sum, row.difference_m]);
+  }
 }
 
 /*
