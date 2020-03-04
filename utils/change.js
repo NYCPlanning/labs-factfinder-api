@@ -21,16 +21,26 @@ function calculateChanges(row) {
   // explicitly set changes to null if:
   // - any estimates are missing
   // - either estimate or previous estimate was coded
-  if (!allExist(row.sum, row.previous_sum, row.m, row.previous_m)
-    || row.codingThreshold
-    || row.previous_codingThreshold) {
+  // - the profile is NOT decennial
+  const isDecennial = (row.profile === 'decennial');
+  const shouldNullify = (!allExist(row.sum, row.previous_sum, row.m, row.previous_m)
+      || row.codingThreshold
+      || row.previous_codingThreshold) && !isDecennial;
+
+  if (shouldNullify) {
     nullChanges(row);
+
     return;
   }
-  row.change_sum = executeFormula('delta', [row.sum, row.previous_sum]);
-  row.change_m = executeFormula('delta_m', [row.m, row.previous_m]);
 
-  if (row.change_sum !== 0) row.change_significant = executeFormula('significant', [row.change_sum, row.change_m]);
+  row.change_sum = executeFormula('delta', [row.sum, row.previous_sum]);
+
+  // reliability calculations do not apply to decennial.
+  if (!isDecennial) {
+    row.change_m = executeFormula('delta_m', [row.m, row.previous_m]);
+
+    if (row.change_sum !== 0) row.change_significant = executeFormula('significant', [row.change_sum, row.change_m]);
+  }
 }
 
 /*
