@@ -21,7 +21,7 @@ module.exports = {
   /** *** sum calculations **** */
   sum: (aggSum, universe) => `GET("${aggSum}.sum") / GET("${universe}.sum")`,
   // special mean calculation for 'ratio' type values TODO: get a better name for ratio
-  sum_ratio: (observed, universe) => `GET("${observed}.sum") / (GET("${observed}.sum") + GET("${universe}.sum"))`,
+  sum_ratio: (observed, universe) => `GET("${observed}.sum") / (GET("${observed}.sum") + GET("${universe}.sum")) * 100`,
 
   /** *** margin of error calculations **** */
   m: (aggSum, universe) => `(1/GET("${universe}.sum")) * SQRT((GET("${aggSum}.m")^2) + ((GET("${aggSum}.sum") / GET("${universe}.sum"))^2 * (GET("${universe}.m")^2)))`,
