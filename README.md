@@ -9,12 +9,14 @@ You will need the following things properly installed on your computer.
 
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/) (with NPM)
+- Nodemon
 
 ## Local development
 
 - Clone this repo `https://github.com/NYCPlanning/labs-factfinder-api.git`
 - Install Dependencies `yarn install`
 - Create `.env` file based on `.env-example` with your mongo uri and postgresql connection string
+  - A .env file may be found on 1pass
 - Start the server `npm run devstart`
 
 ## Architecture

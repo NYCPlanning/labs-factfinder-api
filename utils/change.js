@@ -30,7 +30,7 @@ function calculateChanges(row) {
     previous_codingThreshold,
   } = row;
 
-  const isDecennial = row.profile === 'decennial';
+  const isDecennial = row.profile === 'decennial'; // TODO: check for valid decennial inputs
   const hasValidInputs = allExist(sum, previous_sum, m, previous_m);
   const shouldNullify = (!hasValidInputs
     || codingThreshold // TODO: Why is this part of it?
