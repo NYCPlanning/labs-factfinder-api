@@ -26,7 +26,7 @@
     "geojson-validation": "^0.2.1",
     "hot-formula-parser": "^3.0.2",
     "lodash": "^4.17.11",
-    "mathjs": "6.0.2",
+    "mathjs": "7.5.1",
     "mockgoose": "^7.3.5",
     "mongoose": "^5.2.4",
     "mongoose-plugin-autoinc": "^1.1.9",
