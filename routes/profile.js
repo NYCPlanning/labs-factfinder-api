@@ -65,8 +65,20 @@ async function getProfileData(profileName, geoids, compare, db) {
   return profileData
     .map((row) => {
       const rowConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]);
-      doChangeCalculations(row, rowConfig);
-      doDifferenceCalculations(row);
+
+      // wrap in a try catch in case something goes wrong.
+      // TODO: this was added as a stopgap for known issues
+      //    with decennial variables (for example, certain race
+      //    categories were missing). we should more explicitly
+      //    validate those decennial inputs instead of a general
+      //    purpose try/catch.
+      try {
+        doChangeCalculations(row, rowConfig);
+        doDifferenceCalculations(row);
+      } catch (e) {
+        console.log(`Something went wrong calculating ${row.variable}: ${e}`);
+      }
+
       return row;
     });
 }
