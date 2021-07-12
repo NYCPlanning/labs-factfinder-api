@@ -1,3 +1,8 @@
+const {
+  CUR_YEAR,
+  PREV_YEAR,
+} = require('./constants');
+
 // bins used for interpolation of medians and recalculation of median margin of errors
 module.exports = {
   mdhhinc: [
@@ -121,7 +126,7 @@ module.exports = {
     ['fft100pl', [100000, 250000]],
   ],
   mdgr: {
-    'Y2014-2018': [
+    [CUR_YEAR]: [
       ['ru100', [0, 99]],
       ['r100t149', [100, 149]],
       ['r150t199', [150, 199]],
@@ -147,7 +152,7 @@ module.exports = {
       ['r3kt3499', [3000, 3499]],
       ['r3500pl', [3500, 9000]],
     ],
-    'Y2006-2010': [
+    [PREV_YEAR]: [
       ['ru100', [0, 99]],
       ['r100t149', [100, 149]],
       ['r150t199', [150, 199]],
@@ -183,7 +188,7 @@ module.exports = {
     ['rms9pl', [8500, 9000]],
   ],
   mdvl: {
-    'Y2014-2018': [
+    [CUR_YEAR]: [
       ['ovlu10', [0, 9999]],
       ['ovl10t14', [10000, 14999]],
       ['ovl15t19', [15000, 19999]],
@@ -211,7 +216,7 @@ module.exports = {
       ['ov150t199m', [1500000, 1999999]],
       ['ov2milpl', [2000000, 5000000]],
     ],
-    'Y2006-2010': [
+    [PREV_YEAR]: [
       ['ovlu10', [0, 9999]],
       ['ovl10t14', [10000, 14999]],
       ['ovl15t19', [15000, 19999]],

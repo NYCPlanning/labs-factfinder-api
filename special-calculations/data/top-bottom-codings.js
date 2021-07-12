@@ -1,6 +1,11 @@
+const {
+  CUR_YEAR,
+  PREV_YEAR,
+} = require('./constants');
+
 // top and bottom codings used to code median interpolations
 const topBottomCodings = {
-  'Y2014-2018': {
+  [CUR_YEAR]: {
     mdage: {
       upper: 85,
       lower: 1,
@@ -42,7 +47,7 @@ const topBottomCodings = {
       lower: 0,
     },
   },
-  'Y2006-2010': {
+  [PREV_YEAR]: {
     mdage: {
       upper: 85,
       lower: 1,

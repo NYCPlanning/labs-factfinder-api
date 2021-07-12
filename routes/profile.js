@@ -87,12 +87,32 @@ async function getProfileData(profileName, geoids, compare, db) {
  * Joins profile, previousProfile, and compareProfile row objects,
  * prepending key names with appropriate prefixes before combining.
  * (previous and compare, respectively).
+ * 
+ * Note that this join algorithm depends on tables of the exact length. 
+ * So there could be issues later if for some reason they don't match.
+ * 
  * @param{Object[]} profile - Array of profile row objects
  * @param{Object[]} previous - Array of previous profile row objects
  * @param{Object[]} compare - Array of compare profile row objects
  */
 function join(profile, previous, compare) {
   const valueKeys = getValueKeys(Object.keys(profile[0]));
+
+  if (!(
+      profile.length === previous.length 
+    && previous.length === compare.length
+    && compare.length === profile.length
+  )) {
+    console.warn(`
+      The lengths of query outputs differ:
+
+      Profile: ${profile.length}
+      Previous: ${previous.length}
+      Compare: ${compare.length}
+
+      This is Bad and could lead to mismatched comparisons.
+    `)
+  }
 
   profile.sort(sortRowByVariable);
   previous.sort(sortRowByVariable);
@@ -139,6 +159,10 @@ function getValueKeys(allKeys) {
  */
 function addValuesToRow(row, rowToAdd, prefix, keys) {
   if (row && rowToAdd) { // TODO: if this is false, it is a silent failure
+    if (row.variable !== rowToAdd.variable) {
+      console.warn(`Issue during join: attempting to merge with mismatched variables ${row.variable} and ${rowToAdd.variable}.`);
+    }
+
     keys.forEach((key) => {
       row[`${prefix}_${key}`] = rowToAdd[key];
     });
