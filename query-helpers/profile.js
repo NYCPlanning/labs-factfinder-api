@@ -22,12 +22,13 @@ const profileSQL = (profile, ids, isPrevious = false) => `
    * and geoids
    */
   enriched_profile AS (
-    SELECT *
-    FROM ${profile} p
-    INNER JOIN factfinder_metadata ffm
-    ON ffm.variablename = p.variable
-    WHERE p.geoid ${formatGeoidWhereClause(ids)}
-    AND p.dataset = '${isPrevious ? PREV_YEAR : CUR_YEAR}'
+    SELECT *,
+      p.pff_variable as variable,
+      p.labs_geoid as geoid
+    FROM pff_acs."test-2019" p
+    INNER JOIN pff_acs_metadata."Y2014-2018" ffm
+    ON LOWER(ffm.variablename) = p.pff_variable
+    WHERE p.labs_geoid ${formatGeoidWhereClause(ids)}
   ),
 
   /*
