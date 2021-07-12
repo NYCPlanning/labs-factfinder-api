@@ -1,35 +1,48 @@
 #!/bin/bash
+# Setting environmental variables
 if [ -f .env ]; then
     export $(cat .env | sed 's/#.*//g' | xargs)
 fi
 
+# Parse Flags
+for i in "$@"
+do
+case $i in
+    -s=*|--datasource=*) datasource="${i#*=}" ;;
+    -y=*|--year=*) year="${i#*=}" ;;
+    -g=*|--geography=*) geography="${i#*=}";;
+    --download) download=1 ;;
+    --load) load=1 ;;
+    --clean) clean=1 ;;
+    *)
+        echo
+        echo "invalid flag $i"
+        echo "e.g. --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
+        echo "e.g. -s=acs -y=2019 -g=2010_to_2020 --download --load"
+        echo
+        exit
+    ;;
+esac
+done
+
 BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder
-# acs/year=2019/geography=2010_to_2020/acs.csv
-shift;
-datasource=${1:-acs}
-year=${2:-2019}
-geography=${3:-2010_to_2020}
 fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
-mode=${4:staging}
 
-function download {
-
-    # local datasource=${1:-acs}
-    # local year=${2:-2019}
-    # local geography=${3:-2010_to_2020}
-    # local fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
+if [[ $download -eq 1 ]]; then 
     mkdir -p .migration && (
         cd .migration
         if [ ! -f .gitignore ]; then
             echo "*" > .gitignore 
         fi
-        # curl -O $fileurl
+        curl -O $fileurl
     )
-    cat .migration/$datasource.csv | psql $DATABASE_URL_STAGING -v TABLE_NAME=$year -f migrations/acs.sql
-}
+fi
 
-download
-# case $1 in 
-#     download) shift; download $@ ;;
-#     *) echo "$@" ;;
-# esac
+if [[ $load -eq 1 ]]; then 
+    cat .migration/$datasource.csv | 
+        psql $DATABASE_URL_STAGING -v TABLE_NAME=$year -f migrations/$datasource.sql
+fi
+
+if [[ $clean -eq 1 ]]; then 
+    rm .migration/$datasource.csv
+fi
