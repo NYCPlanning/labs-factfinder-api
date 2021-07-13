@@ -26,42 +26,34 @@ SELECT
     labs_geotype as geotype,
     labs_geoid as geoid,
     pff_variable as variable,
-    c, e, m, p, z, 
-    domain
+    'Y'||(:TABLE_NAME-4)::TEXT||'-'||:'TABLE_NAME' as dataset,
+    domain, c, e, m, p, z
 INTO acs.:"TABLE_NAME" FROM tmp;
 
 DROP TABLE IF EXISTS acs_demographic.:"TABLE_NAME";
 SELECT
-    labs_geotype as geotype,
-    labs_geoid as geoid,
-    pff_variable as variable,
-    c, e, m, p, z
-INTO acs_demographic.:"TABLE_NAME" FROM tmp
+    geotype, geoid, variable,
+    dataset, c, e, m, p, z
+INTO acs_demographic.:"TABLE_NAME" FROM acs.:"TABLE_NAME"
 WHERE domain = 'demographic';
 
 DROP TABLE IF EXISTS acs_social.:"TABLE_NAME";
 SELECT
-    labs_geotype as geotype,
-    labs_geoid as geoid,
-    pff_variable as variable,
-    c, e, m, p, z
-INTO acs_social.:"TABLE_NAME" FROM tmp
+    geotype, geoid, variable,
+    dataset, c, e, m, p, z
+INTO acs_social.:"TABLE_NAME" FROM acs.:"TABLE_NAME"
 WHERE domain = 'social';
 
 DROP TABLE IF EXISTS acs_housing.:"TABLE_NAME";
 SELECT
-    labs_geotype as geotype,   
-    labs_geoid as geoid,
-    pff_variable as variable,
-    c, e, m, p, z
-INTO acs_housing.:"TABLE_NAME" FROM tmp 
+    geotype, geoid, variable,
+    dataset, c, e, m, p, z
+INTO acs_housing.:"TABLE_NAME" FROM acs.:"TABLE_NAME" 
 WHERE domain = 'housing';
 
 DROP TABLE IF EXISTS acs_economic.:"TABLE_NAME";
 SELECT
-    labs_geotype as geotype,
-    labs_geoid as geoid,
-    pff_variable as variable,
-    c, e, m, p, z
-INTO acs_economic.:"TABLE_NAME" FROM tmp
+    geotype, geoid, variable,
+    dataset, c, e, m, p, z
+INTO acs_economic.:"TABLE_NAME" FROM acs.:"TABLE_NAME"
 WHERE domain = 'economic';

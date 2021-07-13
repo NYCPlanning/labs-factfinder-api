@@ -4,45 +4,26 @@ if [ -f .env ]; then
     export $(cat .env | sed 's/#.*//g' | xargs)
 fi
 
-# Parse Flags
-for i in "$@"
-do
-case $i in
-    -s=*|--datasource=*) datasource="${i#*=}" ;;
-    -y=*|--year=*) year="${i#*=}" ;;
-    -g=*|--geography=*) geography="${i#*=}";;
-    --download) download=1 ;;
-    --load) load=1 ;;
-    --clean) clean=1 ;;
-    *)
+case $1 in 
+    etl ) 
+        shift; 
+        bash migrations/etl.sh $@
+    ;;
+    combine )
+        shift;
         echo
-        echo "invalid flag $i"
-        echo "e.g. --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
-        echo "e.g. -s=acs -y=2019 -g=2010_to_2020 --download --load"
+        echo "Combining data from $1 and $2"
+        psql $DATABASE_URL \
+            -v YEAR1=$1\
+            -v YEAR2=$2\
+            -f migrations/combine.sql
+    ;;
+    * ) 
         echo
-        exit
+        echo "$1 command not found"
+        echo "e.g. ./migrations/cli.sh combine {{ YEAR1 }} {{ YEAR2 }}" 
+        echo "e.g. ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
+        echo "e.g. ./migrations/cli.sh etl -s={{ acs|decennial }} -y=2019 -g=2010_to_2020 --load --clean"
+        echo
     ;;
 esac
-done
-
-BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder
-fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
-
-if [[ $download -eq 1 ]]; then 
-    mkdir -p .migration && (
-        cd .migration
-        if [ ! -f .gitignore ]; then
-            echo "*" > .gitignore 
-        fi
-        curl -O $fileurl
-    )
-fi
-
-if [[ $load -eq 1 ]]; then 
-    cat .migration/$datasource.csv | 
-        psql $DATABASE_URL_STAGING -v TABLE_NAME=$year -f migrations/$datasource.sql
-fi
-
-if [[ $clean -eq 1 ]]; then 
-    rm .migration/$datasource.csv
-fi
