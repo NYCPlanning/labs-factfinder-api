@@ -16,7 +16,7 @@ case $1 in
         psql $DATABASE_URL \
             -v YEAR1=$1\
             -v YEAR2=$2\
-            -f migrations/combine.sql
+            -f migrations/acs_combine.sql
     ;;
     * ) 
         echo
