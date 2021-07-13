@@ -22,6 +22,8 @@ done
 
 BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder
 fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
+filepath=.migration/$datasource/year=$year/geography=$geography/$datasource.csv
+filedir=$(dirname $filepath)
 
 if [[ $download -eq 1 ]]; then 
     mkdir -p .migration && (
@@ -29,15 +31,17 @@ if [[ $download -eq 1 ]]; then
         if [ ! -f .gitignore ]; then
             echo "*" > .gitignore 
         fi
+    )
+    mkdir -p $filedir && (
+        cd $filedir
         curl -O $fileurl
     )
 fi
 
 if [[ $load -eq 1 ]]; then 
-    cat .migration/$datasource.csv | 
-        psql $DATABASE_URL -v TABLE_NAME=$year -f migrations/$datasource.sql
+    cat $filepath | psql $DATABASE_URL -v TABLE_NAME=$year -f migrations/$datasource.sql
 fi
 
 if [[ $clean -eq 1 ]]; then 
-    rm .migration/$datasource.csv
+    rm $filepath
 fi
