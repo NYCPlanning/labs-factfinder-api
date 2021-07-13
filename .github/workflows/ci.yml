@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  build:
+    name: Building ...
+    runs-on: ubuntu-20.04
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    services:
+      db:
+        image: postgis/postgis:11-3.0-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: ETL
+        run: |
+          ./migrations/cli.sh etl\
+            --datasource=acs\
+            --year=2010\
+            --geography=2010_to_2020\
+            --download --load
+
+          ./migrations/cli.sh etl\
+            --datasource=acs\
+            --year=2019\ 
+            --geography=2010_to_2020\
+            --download --load
+      
+      - name: Combine
+        run: |
+          ./migrations/cli.sh combine 2010 2019
+        
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '8.11.3'
+      
+      - run: yarn install
+
+      - run: yarn test
