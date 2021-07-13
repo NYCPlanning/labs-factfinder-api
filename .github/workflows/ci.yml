@@ -4,8 +4,8 @@ on:
   push:
 
 jobs:
-  build:
-    name: Building ...
+  test:
+    name: Testing ...
     runs-on: ubuntu-20.04
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
@@ -36,7 +36,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '8.11.3'
+          node-version: '10.21.0'
       
       - run: yarn install
 
