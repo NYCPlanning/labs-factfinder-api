@@ -6,6 +6,7 @@ const puma = require('../search-helpers/puma');
 const tract = require('../search-helpers/tract');
 const block = require('../search-helpers/block');
 const cdta = require('../search-helpers/cdta');
+const district = require('../search-helpers/district');
 
 const router = express.Router();
 
@@ -19,11 +20,12 @@ router.get('/', (req, res) => {
     tract(q),
     block(q),
     cdta(q),
+    district(q),
   ])
     .then((values) => {
-      const [addresses, ntas, pumas, tracts, blocks, cdtas] = values;
+      const [addresses, ntas, pumas, tracts, blocks, cdtas, districts] = values;
       const responseArray = [];
-      res.json(responseArray.concat(addresses, ntas, pumas, tracts, blocks, cdtas));
+      res.json(responseArray.concat(addresses, ntas, pumas, tracts, blocks, cdtas, districts));
     }).catch((reason) => {
       console.error(reason); // eslint-disable-line
     });
