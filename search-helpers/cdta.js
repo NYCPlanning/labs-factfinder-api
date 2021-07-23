@@ -1,6 +1,6 @@
 const carto = require('../utils/carto');
 
-const district = (string) => {
+const cdta = (string) => {
   const SQL = `
     SELECT * FROM (
       SELECT
@@ -36,10 +36,10 @@ const district = (string) => {
       return {
         label: `${boroname} ${geolabel} (${fips})`,
         feature,
-        type: 'district',
+        type: 'cdta',
       };
     });
   });
 };
 
-module.exports = district;
+module.exports = cdta;
