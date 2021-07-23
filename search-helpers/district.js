@@ -6,6 +6,7 @@ const district = (string) => {
       SELECT
         the_geom,
         cd_short_title as geolabel,
+        boroname,
         borocd AS geoid,
         '36' ||
           CASE
@@ -20,6 +21,7 @@ const district = (string) => {
     ) x
     WHERE
       geolabel LIKE '%25${string}%25'
+      OR boroname LIKE '%25${string}%25'
     LIMIT 5
   `;
 
