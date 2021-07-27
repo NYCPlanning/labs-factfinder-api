@@ -66,21 +66,21 @@ describe('GET /selection/:selectionid', () => {
   });
 });
 
-describe('POST /selection/', () => {
-  it('finds an existing selection', (done) => {
-    chai.request(server)
-      .post('/selection')
-      .set('content-type', 'application/json')
-      .send({ type: 'tracts', geoids: ['1008300', '1008900', '1009300'] })
-      .end((err, res) => {
-        should.not.exist(err);
-        res.status.should.equal(200);
-        res.type.should.equal('application/json');
+// describe('POST /selection/', () => {
+//   it('finds an existing selection', (done) => {
+//     chai.request(server)
+//       .post('/selection')
+//       .set('content-type', 'application/json')
+//       .send({ type: 'tracts', geoids: ['1008300', '1008900', '1009300'] })
+//       .end((err, res) => {
+//         should.not.exist(err);
+//         res.status.should.equal(200);
+//         res.type.should.equal('application/json');
 
-        const { status, id } = res.body;
-        status.should.equal('existing selection found');
-        id.should.equal(5643);
-        done();
-      });
-  });
-});
+//         const { status, id } = res.body;
+//         status.should.equal('existing selection found');
+//         id.should.equal(5643);
+//         done();
+//       });
+//   });
+// });
