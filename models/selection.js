@@ -7,7 +7,7 @@ const SelectionSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['blocks', 'tracts', 'ntas', 'pumas'],
+    enum: ['blocks', 'tracts', 'ntas', 'cdtas', 'districts', 'boroughs'],
   },
   geoids: {
     type: [{
