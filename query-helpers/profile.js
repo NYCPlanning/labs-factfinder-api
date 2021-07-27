@@ -47,7 +47,6 @@ const profileSQL = (profile, ids, isPrevious = false) => `
       */
       ON LOWER(ffm.variablename) = LOWER(p.variable)
     WHERE p.geoid ${formatGeoidWhereClause(ids)}
-      AND p.domain = '${profile}'
   ),
 
   /*

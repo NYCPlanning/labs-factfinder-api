@@ -20,34 +20,72 @@ const getFeatures = (type, geoids) => {
 
 router.get('/:id', (req, res) => {
   const { id: _id } = req.params;
-  Selection.findOne({ _id })
-    .then((match) => {
-      if (match) {
-        const { type, geoids, _id: id } = match;
 
-        getFeatures(type, geoids)
-          .then((features) => {
-            res.send({
-              status: 'success',
-              id,
-              type,
-              features,
+  if (_id.slice(0,3) === 'SID') {
+    const selectionId = _id.slice(3);
+
+    Selection.findOne({ _id: selectionId })
+      .then((match) => {
+        if (match) {
+          const { type, geoids, _id: id } = match;
+
+          getFeatures(type, geoids)
+            .then((features) => {
+              res.send({
+                status: 'success',
+                id,
+                type,
+                features,
+              });
+            })
+            .catch((err) => {
+              console.log('err', err); // eslint-disable-line
             });
-          })
-          .catch((err) => {
-            console.log('err', err); // eslint-disable-line
+        } else {
+          res.status(404).send({
+            status: 'not found',
           });
-      } else {
-        res.status(404).send({
-          status: 'not found',
+        }
+      })
+      .catch((err) => {
+        res.send({
+          status: `error: ${err}`,
         });
-      }
-    })
-    .catch((err) => {
-      res.send({
-        status: `error: ${err}`,
       });
-    });
+    } else  {
+      const geoidFilter = {
+        geoids: [ _id ]
+      }
+
+      Selection.findOne(geoidFilter)
+        .then((match) => {
+          if (match) {
+            const { type, geoids, _id: id } = match;
+
+            getFeatures(type, geoids)
+              .then((features) => {
+                res.send({
+                  status: 'success',
+                  id,
+                  type,
+                  features,
+                });
+              })
+              .catch((err) => {
+                console.log('err', err); // eslint-disable-line
+              });
+          } else {
+            res.status(404).send({
+              status: 'not found',
+            });
+          }
+        })
+        .catch((err) => {
+          res.send({
+            status: `error: ${err}`,
+          });
+        });
+    }
 });
 
 

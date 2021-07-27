@@ -10,18 +10,27 @@ const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
 
 const router = express.Router();
-router.get('/:id/:profileName', async (req, res) => {
+router.get('/:id/', async (req, res) => {
   const { app } = req;
-  const { id: _id, profileName } = req.params;
+  const { id: _id } = req.params;
   const { compare = '0' } = req.query;
 
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
 
-  if (invalidProfileName(profileName)) res.status(500).send({ error: 'invalid profile' });
-
   try {
-    const selectedGeo = await Selection.findOne({ _id });
-    const profileObj = await getProfileData(profileName, selectedGeo.geoids, compare, app.db);
+    let profileObj = null;
+
+    if (_id.slice(0,3) === 'SID') {
+      const selectionId = _id.slice(3);
+
+      const selectedGeo = await Selection.findOne({ _id: selectionId });
+
+      // TODO: remove "profile" argument, and corresponding parameter in upstream functions
+      profileObj = await getProfileData("demographic", selectedGeo.geoids, compare, app.db);
+   } else {
+    profileObj = await getProfileData("demographic", [ _id ], compare, app.db);
+   }
+
     return res.send(profileObj);
   } catch (e) {
     console.log(e); // eslint-disable-line
@@ -105,11 +114,9 @@ function join(profile, previous, compare) {
   )) {
     console.warn(`
       The lengths of query outputs differ:
-
       Profile: ${profile.length}
       Previous: ${previous.length}
       Compare: ${compare.length}
-
       This is Bad and could lead to mismatched comparisons.
     `)
   }
@@ -191,7 +198,7 @@ function sortRowByVariable(rowA, rowB) {
  * @returns{function}
  */
 function getQueryBuilder(profile) {
-  if (profile === 'decennial') return decennialQuery;
+  // if (profile === 'decennial') return decennialQuery;
   return profileQuery;
 }
 
@@ -206,17 +213,6 @@ function invalidCompare(compare) {
   const puma = compare.match(/[0-9]{4}/);
 
   if (cityOrBoro || nta || puma) return false;
-  return true;
-}
-
-/*
- * Checks that the profile query parameter is a valid profile type
- * @param{string} profileName - The profile type
- * @returns{Boolean}
- */
-function invalidProfileName(profileName) {
-  const validProfileNames = ['decennial', 'demographic', 'social', 'economic', 'housing'];
-  if (validProfileNames.includes(profileName)) return false;
   return true;
 }
 
