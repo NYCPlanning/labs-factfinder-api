@@ -1,4 +1,11 @@
-const { CV_CONST, CUR_YEAR, PREV_YEAR } = require('../special-calculations/data/constants');
+const {
+  CV_CONST,
+  CUR_YEAR,
+  PREV_YEAR,
+  ACS_METADATA_TABLE_NAME,
+  ACS_LATEST_TABLE_FULL_PATH,
+  ACS_EARLIEST_TABLE_FULL_PATH,
+} = require('../special-calculations/data/constants');
 
 /*
  * Returns the appropriate second half of the geoid WHERE clause
@@ -22,12 +29,25 @@ const profileSQL = (profile, ids, isPrevious = false) => `
    * and geoids
    */
   enriched_profile AS (
-    SELECT *
-    FROM ${profile} p
-    INNER JOIN factfinder_metadata ffm
-    ON ffm.variablename = p.variable
+    SELECT *,
+
+    /*
+    * Used for Change over Time calculation. Determines whether the table comparison year
+    * is "previous" or otherwise. Exact value is referenced downstream so make sure it's
+    * correct.
+    */
+    '${isPrevious ? PREV_YEAR : CUR_YEAR}' AS dataset
+
+    FROM ${isPrevious ? ACS_EARLIEST_TABLE_FULL_PATH : ACS_LATEST_TABLE_FULL_PATH} p
+    INNER JOIN ${ACS_METADATA_TABLE_NAME} ffm
+
+      /*
+      * these need to be lowercased to make sure they're consistent.
+      * otherwise, they won't join.
+      */
+      ON LOWER(ffm.variablename) = LOWER(p.variable)
     WHERE p.geoid ${formatGeoidWhereClause(ids)}
-    AND p.dataset = '${isPrevious ? PREV_YEAR : CUR_YEAR}'
+      AND p.domain = '${profile}'
   ),
 
   /*
@@ -41,7 +61,12 @@ const profileSQL = (profile, ids, isPrevious = false) => `
       SQRT(SUM(POWER(m, 2))) AS base_m,
       base
       FROM enriched_profile
-      WHERE base = variable
+
+      /*
+      * these need to be lowercased to make sure they're consistent.
+      * otherwise, they won't join.
+      */
+      WHERE LOWER(base) = LOWER(variable)
       GROUP BY base
   )
 
