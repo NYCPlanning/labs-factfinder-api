@@ -120,11 +120,16 @@ function join(profile, previous, compare) {
 
   for (let i = 0; i < profile.length; i++) { // eslint-disable-line
     const row = profile[i];
-    const previousRow = previous[i];
-    const compareRow = compare[i];
+    const previousRow = previous.find(previous => previous.id === row.id);
+    const compareRow = compare.find(compare => compare.id === row.id);
 
-    addValuesToRow(row, previousRow, 'previous', valueKeys);
-    addValuesToRow(row, compareRow, 'comparison', valueKeys);
+    if (previousRow) {
+      addValuesToRow(row, previousRow, 'previous', valueKeys);
+    }
+
+    if (compareRow) {
+      addValuesToRow(row, compareRow, 'comparison', valueKeys);
+    }
   }
 }
 
