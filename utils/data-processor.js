@@ -10,7 +10,6 @@ const {
   PREV_YEAR,
   CUR_YEAR,
 } = require('../special-calculations/data/constants');
-const { timeThursdays } = require('d3');
 
 /*
  * The DataIngestor class is used to process raw profile data from postgres query.
@@ -64,7 +63,7 @@ class DataProcessor {
   recalculateSpecialVariables(row, config) {
     try {
       const year = this.isPrevious ? PREV_YEAR : CUR_YEAR;
-      
+
       this.recalculateSum(row, year, config);
       // row.codingThreshold will be set if in recalculating the sum the estimate was top- or bottom-coded
       const wasCoded = !!row.codingThreshold;
