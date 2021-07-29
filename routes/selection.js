@@ -18,8 +18,29 @@ const getFeatures = (type, geoids) => {
     .then(FC => FC.features);
 };
 
+function convertBoroughLabelToCode(potentialBoroughLabel) {
+  switch (potentialBoroughLabel) {
+    case 'NYC':
+        return '0';
+    case 'Manhattan':
+        return '1';
+    case 'Bronx':
+        return '2';
+    case 'Brooklyn':
+        return '3';
+    case 'Queens':
+        return '4';
+    case 'StatenIsland':
+        return '5';
+    default:
+      return potentialBoroughLabel;
+  }
+}
+
 router.get('/:id', (req, res) => {
-  const { id: _id } = req.params;
+  let { id: _id } = req.params;
+
+  _id = convertBoroughLabelToCode(_id);
 
   if (_id.slice(0,3) === 'SID') {
     const selectionId = _id.slice(3);
