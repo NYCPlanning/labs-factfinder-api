@@ -4,6 +4,13 @@ if [ -f .env ]; then
     export $(cat .env | sed 's/#.*//g' | xargs)
 fi
 
+function support_geoids {
+    local geography=${1:-2010_to_2020}
+    BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder
+    fileurl=$BASE_URL/support_geoids/geography=$geography/support_geoids.csv
+    curl $fileurl | psql $DATABASE_URL -f migrations/support_geoids.sql
+}
+
 case $1 in 
     etl ) 
         shift; 
@@ -17,6 +24,10 @@ case $1 in
             -v YEAR1=$1\
             -v YEAR2=$2\
             -f migrations/combine.sql
+    ;;
+    support_geoids ) 
+        shift;
+        support_geoids $1
     ;;
     * ) 
         echo
