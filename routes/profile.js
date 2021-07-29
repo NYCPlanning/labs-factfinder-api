@@ -10,10 +10,32 @@ const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
 
 const router = express.Router();
+
+function convertBoroughLabelToCode(potentialBoroughLabel) {
+  switch (potentialBoroughLabel) {
+    case 'NYC':
+        return '0';
+    case 'Manhattan':
+        return '1';
+    case 'Bronx':
+        return '2';
+    case 'Brooklyn':
+        return '3';
+    case 'Queens':
+        return '4';
+    case 'StatenIsland':
+        return '5';
+    default:
+      return potentialBoroughLabel;
+  }
+}
+
 router.get('/:id/', async (req, res) => {
   const { app } = req;
-  const { id: _id } = req.params;
+  let { id: _id } = req.params;
   const { compare = '0' } = req.query;
+
+  _id = convertBoroughLabelToCode(_id);
 
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
 
