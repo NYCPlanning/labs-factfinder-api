@@ -74,37 +74,17 @@ router.get('/:id', (req, res) => {
         });
       });
     } else  {
-      const geoidFilter = {
-        geoids: [ _id ]
-      }
-
-      Selection.findOne(geoidFilter)
-        .then((match) => {
-          if (match) {
-            const { type, geoids, _id: id } = match;
-
-            getFeatures(type, geoids)
-              .then((features) => {
-                res.send({
-                  status: 'success',
-                  id,
-                  type,
-                  features,
-                });
-              })
-              .catch((err) => {
-                console.log('err', err); // eslint-disable-line
-              });
-          } else {
-            res.status(404).send({
-              status: 'not found',
-            });
-          }
+      getFeatures(type, [ _id ])
+        .then((features) => {
+          res.send({
+            status: 'success',
+            id,
+            type,
+            features,
+          });
         })
         .catch((err) => {
-          res.send({
-            status: `error: ${err}`,
-          });
+          console.log('err', err); // eslint-disable-line
         });
     }
 });
