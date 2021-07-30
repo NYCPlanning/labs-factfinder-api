@@ -33,6 +33,7 @@ app.use(compression());
 app.use('/search', require('./routes/search'));
 app.use('/selection', require('./routes/selection'));
 app.use('/profile', require('./routes/profile'));
+app.use('/support-geoids', require('./routes/support-geoids'));
 
 app.use((req, res) => {
   res.status(404).json({
