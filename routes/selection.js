@@ -2,7 +2,6 @@ const express = require('express');
 const sha1 = require('sha1');
 const carto = require('../utils/carto');
 
-const Selection = require('../models/selection');
 const summaryLevels = require('../selection-helpers/summary-levels');
 
 const router = express.Router();
@@ -18,70 +17,78 @@ const getFeatures = (type, geoids) => {
     .then(FC => FC.features);
 };
 
-router.get('/:id', (req, res) => {
-  const { id: _id } = req.params;
-  Selection.findOne({ _id })
-    .then((match) => {
-      if (match) {
-        const { type, geoids, _id: id } = match;
-
-        getFeatures(type, geoids)
-          .then((features) => {
-            res.send({
-              status: 'success',
-              id,
-              type,
-              features,
-            });
-          })
-          .catch((err) => {
-            console.log('err', err); // eslint-disable-line
+router.get('/:id', async (req, res) => {
+  const { app, params } = req;
+  const { id: _id } = params;
+  await app.db.query(
+    'SELECT _id as id, _type as type, geoids, hash FROM selection WHERE _id = ${_id}',
+    { _id },
+  ).then((match) => {
+    if (match.length > 0) {
+      const { type, geoids, id } = match[0];
+      getFeatures(type, geoids)
+        .then((features) => {
+          res.send({
+            status: 'success',
+            id,
+            type,
+            features,
           });
-      } else {
-        res.status(404).send({
-          status: 'not found',
+        })
+        .catch((err) => {
+          console.log('err', err); // eslint-disable-line
         });
-      }
-    })
-    .catch((err) => {
-      res.send({
-        status: `error: ${err}`,
+    } else {
+      res.status(404).send({
+        status: 'not found',
       });
+    }
+  }).catch((err) => {
+    res.send({
+      status: `error: ${err}`,
     });
+  });
 });
 
 
-router.post('/', (req, res) => {
-  const { body } = req;
+router.post('/', async (req, res) => {
+  const { app, body } = req;
   const { type, geoids } = body;
-
   body.geoids.sort();
 
   const hash = sha1(JSON.stringify(body));
 
-  const selection = new Selection({
-    type,
-    geoids,
-    hash,
-  });
-
   // lookup hash in db
-  Selection.findOne({ hash })
-    .then((match) => {
-      if (match) {
-        const { _id: id } = match;
+  await app.db.query('SELECT * FROM selection WHERE hash = ${hash}', { hash })
+    .then(async (match) => {
+      if (match.length > 0) {
+        const { _id: id } = match[0];
         res.send({
           status: 'existing selection found',
           id,
         });
       } else {
-        selection.save()
-          .then(({ _id: id }) => {
-            res.send({
-              status: 'new selection saved',
-              id,
-              hash,
-            });
+        await app.db.tx(t => t.none(
+          'INSERT INTO selection(_type, geoids, hash) VALUES(${type}, ${geoids}, ${hash})',
+          { type, geoids, hash },
+        ))
+          .then(async () => {
+            await app.db.query('SELECT _id as id FROM selection WHERE hash = ${hash}', { hash })
+              .then((match) => {
+                const { id } = match[0];
+                if (match.length > 0) {
+                  return res.send({
+                    status: 'new selection saved',
+                    id,
+                    hash,
+                  });
+                }
+              })
+              .catch(((err) => {
+                res.send({
+                  status: `error: ${err}`,
+                });
+              }));
           })
           .catch(((err) => {
             res.send({
@@ -89,8 +96,7 @@ router.post('/', (req, res) => {
             });
           }));
       }
-    })
-    .catch((err) => {
+    }).catch((err) => {
       res.send({
         status: `error: ${err}`,
       });
