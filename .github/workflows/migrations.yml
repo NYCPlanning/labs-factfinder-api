@@ -1,0 +1,32 @@
+name: Data Migrations
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: ETL
+        run: |
+          ./migrations/cli.sh etl\
+            --datasource=acs\
+            --year=2010\
+            --geography=2010_to_2020\
+            --download --load
+
+          ./migrations/cli.sh etl\
+            --datasource=acs\
+            --year=2019\ 
+            --geography=2010_to_2020\
+            --download --load
+      
+          ./migrations/cli.sh support_geoids 2010_to_2020
+  
+      - name: Combine
+        run: |
+          ./migrations/cli.sh combine 2010 2019
