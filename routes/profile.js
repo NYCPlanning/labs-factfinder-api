@@ -8,6 +8,7 @@ const specialCalculationConfigs = require('../special-calculations');
 const DataProcessor = require('../utils/data-processor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
+const getGeotypeFromIdPrefix = require('../utils/geotype-from-id-prefix');
 
 const router = express.Router();
 
@@ -35,22 +36,32 @@ router.get('/:id/', async (req, res) => {
   let { id: _id } = req.params;
   const { compare = '0' } = req.query;
 
-  _id = convertBoroughLabelToCode(_id);
+  const [ idPrefix, selectionId ] = _id.split('_');
+
+  const geotype = getGeotypeFromIdPrefix(idPrefix);
+
+  if (geotype === null) {
+    res.status(500).send({
+      status: `error: Invalid ID`,
+    });
+  }
+
+  if (geotype === 'boroughs') {
+    selectionId = convertBoroughLabelToCode(selectionId);
+  }
 
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
 
   try {
     let profileObj = null;
 
-    if (_id.slice(0,3) === 'SID') {
-      const selectionId = _id.slice(3);
-
+    if (geotype === 'selection') {
       const selectedGeo = await Selection.findOne({ _id: selectionId });
 
       // TODO: remove "profile" argument, and corresponding parameter in upstream functions
       profileObj = await getProfileData("demographic", selectedGeo.geoids, compare, app.db);
    } else {
-    profileObj = await getProfileData("demographic", [ _id ], compare, app.db);
+    profileObj = await getProfileData("demographic", [ selectionId ], compare, app.db);
    }
 
     return res.send(profileObj);
