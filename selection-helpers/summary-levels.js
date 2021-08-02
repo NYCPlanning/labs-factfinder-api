@@ -27,11 +27,11 @@ const summaryLevels = {
   cdtas: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      the_geom,
       cdtaname as geolabel,
       cdta2020,
       cdtatype,
       boroname,
+      borocode::text,
       cdta2020 AS geoid
     FROM nycdta2020
 `,
@@ -42,6 +42,7 @@ const summaryLevels = {
       the_geom,
       cd_short_title as geolabel,
       boroname,
+      borocode::text,
       borocd AS geoid
     FROM cd_boundaries_v0_dh
   `,
