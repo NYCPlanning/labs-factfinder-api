@@ -5,12 +5,12 @@ const tract = (string) => {
     SELECT * FROM (
       SELECT
         the_geom,
-        ct2010,
+        ct2020,
         ctlabel as geolabel,
-        boroct2010,
+        boroct2020,
         ntacode,
         boroname,
-        boroct2010 AS geoid,
+        boroct2020 AS geoid,
         '36' ||
           CASE
             WHEN borocode = '1' THEN '061'
@@ -19,12 +19,12 @@ const tract = (string) => {
             WHEN borocode = '4' THEN '081'
             WHEN borocode = '5' THEN '085'
           END
-        || ct2010 as fips,
+        || ct2020 as fips,
         boroname || ' ' || ctlabel As boronamect
-      FROM nyc_census_tracts
+      FROM nyct2020
     ) x
     WHERE
-      boroct2010 LIKE '%25${string}%25'
+      boroct2020 LIKE '%25${string}%25'
       OR fips LIKE '%25${string}%25'
       OR LOWER(boronamect) LIKE LOWER('%25${string}%25')
 
