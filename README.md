@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop)
 
-# factfinder-api
-An express.js api that provides search and selection data for [NYC Population Factfinder](https://github.com/NYCPlanning/labs-nyc-factfinder).  
+# Factfinder API
+An express.js api that provides search and selection data for [NYC Population Factfinder](https://github.com/NYCPlanning/labs-nyc-factfinder).
 
 ## Requirements
 
@@ -21,7 +21,16 @@ You will need the following things properly installed on your computer.
 
 ## Architecture
 
-The api has three endpoints.  
+### Database/Table Definitions
+
+There are three core set of tables that support the Factfinder API:
+
+1. Profile tables - The set of tables that hold ACS and Census data by geography and variable.
+2. Selection table - Holds user-defined selection of geographies. See the section Selection geotype Factfinder IDs
+3. Support Geoids table - Holds a mapping of geoid to human-readable label for the geography.
+
+
+### API Endpoints.
 
 `/search` returns search results for addresses, neighborhoods, etc.  Uses geosearch, and carto tables to return autocomplete suggestions.
 
@@ -43,25 +52,88 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
   - `tract` - tracts that match the input query
   - `block` - census blocks that match the input query
 
-
 - `/selection`
   - `POST /selection`
     - Request payload should be an object with the following properties:
       - `geoids` - an array of geoids
       - `type` - one of 'blocks', 'tracts', 'ntas', 'pumas'
-    - Checks if this combination of geoids already exists in the database.  If so, returns the `id` of the selection.  If not, it adds it to the database and returns the `id`
-  - `GET /selection/:id`
-    - Returns an object with the following properties:
+    - Checks if this combination of geoids already exists in the database.  If so, returns the [Factfinder ID*](#factfinder-id) (specifically a [Selection ID*](#factfinder-id-selection-id)) of the selection.  If not, it adds it to the database and returns the Factfinder ID*
+  - `GET /selection/:factfinder_id`
+    - **Request:**
+      - `:factfinder_id` See the [Factfinder ID*](#factfinder-id) section below for details.
+    - **Response:** an object with the following properties:
       - `status` - 'success' if found, 'not found' if not found
-      - `id` - the `id` of the selection
+      - `id` - the [Factfinder ID*](#factfinder-id) of the selection
       - `type` - geoid type of the selection, one of 'blocks', 'tracts', 'ntas', 'pumas'
       - `features` - a geojson FeatureCollection containing a Feature for each selected geometry
 
   - `/profile`
-    - `GET /profile/:selectionid/:profileid`
-      - Returns the specified data profile for the specified geographic area.
-      - `selectionid` is a selection id returned by the selection api
-      - `profileid` is one of 'decennial', 'demographic', 'social', 'economic', 'housing'
+    - `GET /profile/:factfinder_id`
+      - **Request:**
+          - `:factfinder_id` See the [Factfinder ID*](#factfinder-id) section below for details.
+      - **Response:** An array of objects each representing the data for a different profile variable, for the user's selected geometry. Example:
+
+      ```
+        [
+          {
+            "id": "QUlBTk5I",
+            "sum": 0,
+            "m": 0,
+            "cv": null,
+            "percent": 0,
+            "variable": "aiannh",
+            "variablename": "AIANNH",
+            "base": "Pop_2",
+            "category": "mutually_exclusive_race_hispanic_origin",
+            "profile": "demographic",
+            "previous_sum": 0,
+            "previous_m": 0,
+            ...
+            "difference_sum": -15017,
+            "percent_significant": false
+          },
+          {
+            "id": "QXNuMVJj",
+            "sum": 472,
+            "m": 157.429349233235,
+            "cv": 20.2757906899742,
+            "variable": "asn1rc",
+            ....
+          },
+          ...
+        ]
+      ```
+
+<a name="factfinder-id"></a>
+### *Factfinder ID
+  - A Factfinder ID takes this format:
+
+  ```
+    <geotype abbreviation>_<geoid>
+  ```
+
+  The geotype abbreviation allows the API to infer the `geotype` value associated with the geoid.
+
+  For example, given the Factfinder ID `CDTA_BK05`, the API can determine that the geoid `BK05` is the geoid for a Community Districta Tabulation Area (CDTA) geographical area.
+
+  See the table below for valid `<geotype abbreviation>` values and the internal `geotype` values that they translate to.
+
+| Abbrev      | Geotype (Programmatic)    | Geotype (Profile table) | Source (which profile tables) |
+| ----------- | ------------------------- | ----------------------- | ----------------------------- |
+| SID         | selection*                 | N/A                    | ACS, Census                   |
+| NTA         | ntas                      | NTA2020                 | ACS, Census                   |
+| TRACT       | tracts                    | CT2020                  | ACS, Census                   |
+| CDTA        | cdtas                     | CDTA2020                | ACS                           |
+| DIST        |                           | ???                     |      Census                   |
+| BLOCK       | blocks                    | CB2020                  |      Census                   |
+| BORO        | boroughs                  | Boro2020                | ACS, Census                   |
+
+Each row within the profile tables have a unique geoid, geotype pair of values.
+
+<a name="factfinder-id-selection-id"></a>
+#### Selection geotype Factfinder IDs
+
+Factfinder IDs of type `selection` are IDs for a custom, user-defined geographical area held by the Selection table in the Factfinder stack. Each Selection ID points to one row in the Selection table. Each row holds an array of geoids for geographies of other geotypes (ntas, tracts, cdtas, etc)
 
 ## Data Updates
 Backing data is managed by EDM team. This app sets up foreign data wrappers (FDW) which provide schema-level access to EDM's factfinder tables.
