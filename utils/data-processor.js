@@ -49,6 +49,7 @@ class DataProcessor {
         if (rowConfig.specialType !== 'removePercentsOnly') {
           this.recalculateSpecialVariables(row, rowConfig);
         }
+      }
     });
 
     return this.data;
