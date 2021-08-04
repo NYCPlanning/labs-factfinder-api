@@ -39,7 +39,8 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
 }
 
 router.get('/:id', (req, res) => {
-  let { id: _id } = req.params;
+  const { app, params } = req;
+  let { id: _id } = params;
 
   const [ idPrefix, selectionId ] = _id.split('_');
 
@@ -56,10 +57,12 @@ router.get('/:id', (req, res) => {
   }
 
   if (geotype === 'selection') {
-    Selection.findOne({ _id: selectionId })
-      .then((match) => {
-        if (match) {
-          const { type, geoids } = match;
+    app.db.query(
+      `SELECT _id as id, _type as type, geoids, hash FROM selection WHERE _id = ${selectionId}`,
+      { _id },
+    ).then((match) => {
+        if (match.length > 0) {
+          const { type, geoids, id } = match[0];
 
           getFeatures(type, geoids)
             .then((features) => {
