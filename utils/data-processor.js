@@ -88,21 +88,17 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    */
   recalculateSum(row, year, config) {
-    let sum;
-
     if (this.isAggregate) {
       if (config.specialType === 'median') {
         const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
-        sum = trimmedEstimate;
+        row.sum = trimmedEstimate;
         row.codingThreshold = codingThreshold;
       } else {
         const formulaName = getFormulaName(config.options, 'sum');
-        sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
-
-    sum = this.applyTransform(sum, config.options.transform, !!row.codingThreshold);
-    row.sum = sum;
+    row.sum = this.applyTransform(row.sum, config.options.transform, !!row.codingThreshold);
   }
 
   /*
@@ -115,23 +111,19 @@ class DataProcessor {
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
   recalculateM(row, year, config, wasCoded) {
-    let m;
-
     // MOE should not be calculated for top- or bottom-coded values
     if (this.isAggregate) {
       if (wasCoded) {
-        m = null;
+        row.m = null;
       } else if (config.specialType === 'median') {
-        m = calculateMedianError(this.data, row.variable, year, config.options);
+        row.m = calculateMedianError(this.data, row.variable, year, config.options);
       } else {
         const formulaName = getFormulaName(config.options, 'm');
-        m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+        row.m = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
 
-    m = this.applyTransform(m, config.options.transform);
-
-    row.m = m;
+    row.m = this.applyTransform(row.m, config.options.transform);
   }
 
   /*
