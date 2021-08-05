@@ -39,7 +39,6 @@ const summaryLevels = {
   districts: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      the_geom,
       cd_short_title as geolabel,
       boroname,
       borocode::text,
@@ -50,7 +49,6 @@ const summaryLevels = {
   boroughs: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      the_geom,
       boroname as geolabel,
       boroname,
       borocode AS geoid

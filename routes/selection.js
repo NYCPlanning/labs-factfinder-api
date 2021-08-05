@@ -41,7 +41,7 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
 router.get('/:id', (req, res) => {
   let { id: _id } = req.params;
 
-  const [ idPrefix, selectionId ] = _id.split('_');
+  let [ idPrefix, selectionId ] = _id.split('_');
 
   const geotype = getGeotypeFromIdPrefix(idPrefix);
 

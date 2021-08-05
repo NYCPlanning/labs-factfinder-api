@@ -36,7 +36,7 @@ router.get('/:id/', async (req, res) => {
   let { id: _id } = req.params;
   const { compare = '0' } = req.query;
 
-  const [ idPrefix, selectionId ] = _id.split('_');
+  let [ idPrefix, selectionId ] = _id.split('_');
 
   const geotype = getGeotypeFromIdPrefix(idPrefix);
 
