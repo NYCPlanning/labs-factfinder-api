@@ -30,9 +30,9 @@ const neighborhood = (string) => {
 
   return carto.SQL(SQL, 'geojson').then((FeatureCollection) => { // eslint-disable-line
     return FeatureCollection.features.map((feature) => {
-      const { ntacode, ntaname } = feature.properties;
+      const { nta2020, ntaname } = feature.properties;
       return {
-        label: `${ntacode} - ${format(ntaname)}`,
+        label: `${nta2020} - ${format(ntaname)}`,
         feature,
         type: 'nta',
       };

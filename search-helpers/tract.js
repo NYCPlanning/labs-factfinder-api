@@ -8,7 +8,7 @@ const tract = (string) => {
         ct2020,
         ctlabel as geolabel,
         boroct2020,
-        ntacode,
+        nta2020,
         boroname,
         boroct2020 AS geoid,
         '36' ||
