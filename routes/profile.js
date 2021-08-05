@@ -8,20 +8,62 @@ const specialCalculationConfigs = require('../special-calculations');
 const DataProcessor = require('../utils/data-processor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
+const getGeotypeFromIdPrefix = require('../utils/geotype-from-id-prefix');
 
 const router = express.Router();
-router.get('/:id/:profileName', async (req, res) => {
+
+function convertBoroughLabelToCode(potentialBoroughLabel) {
+  switch (potentialBoroughLabel) {
+    case 'NYC':
+        return '0';
+    case 'Manhattan':
+        return '1';
+    case 'Bronx':
+        return '2';
+    case 'Brooklyn':
+        return '3';
+    case 'Queens':
+        return '4';
+    case 'StatenIsland':
+        return '5';
+    default:
+      return potentialBoroughLabel;
+  }
+}
+
+router.get('/:id/', async (req, res) => {
   const { app } = req;
-  const { id: _id, profileName } = req.params;
+  let { id: _id } = req.params;
   const { compare = '0' } = req.query;
+
+  let [ idPrefix, selectionId ] = _id.split('_');
+
+  const geotype = getGeotypeFromIdPrefix(idPrefix);
+
+  if (geotype === null) {
+    res.status(500).send({
+      status: `error: Invalid ID`,
+    });
+  }
+
+  if (geotype === 'boroughs') {
+    selectionId = convertBoroughLabelToCode(selectionId);
+  }
 
   if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
 
-  if (invalidProfileName(profileName)) res.status(500).send({ error: 'invalid profile' });
-
   try {
-    const selectedGeo = await Selection.findOne({ _id });
-    const profileObj = await getProfileData(profileName, selectedGeo.geoids, compare, app.db);
+    let profileObj = null;
+
+    if (geotype === 'selection') {
+      const selectedGeo = await Selection.findOne({ _id: selectionId });
+
+      // TODO: remove "profile" argument, and corresponding parameter in upstream functions
+      profileObj = await getProfileData("demographic", selectedGeo.geoids, compare, app.db);
+   } else {
+    profileObj = await getProfileData("demographic", [ selectionId ], compare, app.db);
+   }
+
     return res.send(profileObj);
   } catch (e) {
     console.log(e); // eslint-disable-line
@@ -105,11 +147,9 @@ function join(profile, previous, compare) {
   )) {
     console.warn(`
       The lengths of query outputs differ:
-
       Profile: ${profile.length}
       Previous: ${previous.length}
       Compare: ${compare.length}
-
       This is Bad and could lead to mismatched comparisons.
     `)
   }
@@ -120,11 +160,16 @@ function join(profile, previous, compare) {
 
   for (let i = 0; i < profile.length; i++) { // eslint-disable-line
     const row = profile[i];
-    const previousRow = previous[i];
-    const compareRow = compare[i];
+    const previousRow = previous.find(previous => previous.id === row.id);
+    const compareRow = compare.find(compare => compare.id === row.id);
 
-    addValuesToRow(row, previousRow, 'previous', valueKeys);
-    addValuesToRow(row, compareRow, 'comparison', valueKeys);
+    if (previousRow) {
+      addValuesToRow(row, previousRow, 'previous', valueKeys);
+    }
+
+    if (compareRow) {
+      addValuesToRow(row, compareRow, 'comparison', valueKeys);
+    }
   }
 }
 
@@ -186,7 +231,7 @@ function sortRowByVariable(rowA, rowB) {
  * @returns{function}
  */
 function getQueryBuilder(profile) {
-  if (profile === 'decennial') return decennialQuery;
+  // if (profile === 'decennial') return decennialQuery;
   return profileQuery;
 }
 
@@ -201,17 +246,6 @@ function invalidCompare(compare) {
   const puma = compare.match(/[0-9]{4}/);
 
   if (cityOrBoro || nta || puma) return false;
-  return true;
-}
-
-/*
- * Checks that the profile query parameter is a valid profile type
- * @param{string} profileName - The profile type
- * @returns{Boolean}
- */
-function invalidProfileName(profileName) {
-  const validProfileNames = ['decennial', 'demographic', 'social', 'economic', 'housing'];
-  if (validProfileNames.includes(profileName)) return false;
   return true;
 }
 
