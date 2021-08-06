@@ -2,26 +2,25 @@ const summaryLevels = {
   blocks: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      ct2010,
-      borocode || ct2010 AS boroct2010,
-      cb2010,
+      ct2020,
+      borocode || ct2020 AS boroct2020,
+      cb2020,
       borocode,
-      bctcb2010,
-      bctcb2010 AS geoid,
-      (ct2010::float / 100)::text || '-' || cb2010 as geolabel
-    FROM nyc_census_blocks
+      bctcb2020,
+      geoid AS geoid,
+      bctcb2020 as geolabel
+    FROM nycb2020_fixed
   `,
 
   tracts: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      ct2010,
+      ct2020,
       ctlabel as geolabel,
-      borocode,
-      boroct2010,
-      ntacode,
-      boroct2010 AS geoid
-    FROM nyc_census_tracts
+      boroct2020,
+      nta2020,
+      boroct2020 AS geoid
+    FROM nyct2020
   `,
 
   cdtas: (webmercator = true) => `
@@ -34,43 +33,48 @@ const summaryLevels = {
       borocode::text,
       cdta2020 AS geoid
     FROM nycdta2020
-`,
+  `,
 
   districts: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      cd_short_title as geolabel,
-      boroname,
-      borocode::text,
+      borocd as geolabel,
       borocd AS geoid
-    FROM cd_boundaries_v0_dh
+    FROM nycd2020
   `,
 
   boroughs: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       boroname as geolabel,
-      boroname,
       borocode AS geoid
-    FROM dcp_borough_boundary
+    FROM nybb2020
+  `,
+
+  cities: (webmercator = true) => `
+    SELECT
+      ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
+      city as geolabel,
+      city AS geoid
+    FROM nycity2020
   `,
 
   ntas: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       ntaname,
-      ntacode,
-      ntaname || ' (' || ntacode || ')' as geolabel,
-      borocode::text,
-      ntacode AS geoid
-    FROM nta_boundaries
+      nta2020,
+      nta2020 as geolabel,
+      nta2020 AS geoid
+    FROM nynta2020
+    WHERE ntaname NOT ILIKE 'park-cemetery-etc%25'
+      AND ntaname != 'Airport'
   `,
 
   pumas: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      borocode::text,
-      neighborhoods || ' - ' || puma || ' (approx. ' || puma_roughcd_equiv || ')' as geolabel,
+      puma AS geolabel,
       puma AS geoid
     FROM nyc_puma
   `,
