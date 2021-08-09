@@ -32,8 +32,10 @@ const social = require('./social');
  */
 module.exports = {
   decennial,
-  demographic,
-  economic,
-  housing,
-  social,
+  acs: [
+    ...demographic,
+    ...economic,
+    ...housing,
+    ...social,
+  ],
 };

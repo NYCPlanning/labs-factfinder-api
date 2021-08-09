@@ -59,9 +59,9 @@ router.get('/:id/', async (req, res) => {
       const selectedGeo = await Selection.findOne({ _id: selectionId });
 
       // TODO: remove "profile" argument, and corresponding parameter in upstream functions
-      profileObj = await getProfileData("demographic", selectedGeo.geoids, compare, app.db);
+      profileObj = await getProfileData("acs", selectedGeo.geoids, compare, app.db);
    } else {
-    profileObj = await getProfileData("demographic", [ selectionId ], compare, app.db);
+    profileObj = await getProfileData("acs", [ selectionId ], compare, app.db);
    }
 
     return res.send(profileObj);
