@@ -1,5 +1,5 @@
 // constants for use in special calculations
-const INFLATION_FACTOR = 1.1542; // inflates 2010 dollars to 2017 dollars
+const INFLATION_FACTOR = 1.1751; // inflates 2010 dollars to 2020 dollars
 const TRANSFORM_TYPE_INFLATE = 'inflate';
 const TRANSFORM_TYPE_SCALE = 'scale';
 const CV_CONST = 1.645;
