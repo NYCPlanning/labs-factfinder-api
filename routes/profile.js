@@ -89,19 +89,21 @@ async function getProfileData(profileName, geoids, compare, db) {
   const queryBuilder = getQueryBuilder(profileName);
 
   // get data from postgres
-  const [rawProfileData, rawPreviousProfileData, rawCompareProfileData] = await Promise.all([
+  const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
     db.query(queryBuilder(profileName, geoids)),
-    db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
     db.query(queryBuilder(profileName, [compare])),
+    db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
+    db.query(queryBuilder(profileName, [compare], /* is previous */ true)),
   ]);
 
   // Instantiate DataProcessors to process query results
   const profileData = new DataProcessor(rawProfileData, profileName, isAggregate).process();
-  const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
   const compareProfileData = new DataProcessor(rawCompareProfileData, profileName, /* isAggregate */ false).process();
+  const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
+  const previousCompareProfileData = new DataProcessor(rawPreviousCompareProfileData, profileName, isAggregate, /* isPrevious */ true).process();
 
   // add previousProfileData and compareProfileData row objects into profileData row objects
-  join(profileData, previousProfileData, compareProfileData);
+  join(profileData, compareProfileData, previousProfileData, previousCompareProfileData);
 
   // profileData now contains the current selection data, in addition to previous & compare data
   return profileData
@@ -129,21 +131,19 @@ async function getProfileData(profileName, geoids, compare, db) {
  * Joins profile, previousProfile, and compareProfile row objects,
  * prepending key names with appropriate prefixes before combining.
  * (previous and compare, respectively).
- * 
- * Note that this join algorithm depends on tables of the exact length. 
+ *
+ * Note that this join algorithm depends on tables of the exact length.
  * So there could be issues later if for some reason they don't match.
- * 
+ *
  * @param{Object[]} profile - Array of profile row objects
  * @param{Object[]} previous - Array of previous profile row objects
  * @param{Object[]} compare - Array of compare profile row objects
  */
-function join(profile, previous, compare) {
-  const valueKeys = getValueKeys(Object.keys(profile[0]));
-
+function join(profile, compare, previous, previousCompare) {
   if (!(
-      profile.length === previous.length 
-    && previous.length === compare.length
-    && compare.length === profile.length
+      profile.length === compare.length
+    && compare.length === previous.length
+    && previous.length === previousCompare.length
   )) {
     console.warn(`
       The lengths of query outputs differ:
@@ -155,20 +155,26 @@ function join(profile, previous, compare) {
   }
 
   profile.sort(sortRowByVariable);
-  previous.sort(sortRowByVariable);
   compare.sort(sortRowByVariable);
+  previous.sort(sortRowByVariable);
+  previousCompare.sort(sortRowByVariable)
 
   for (let i = 0; i < profile.length; i++) { // eslint-disable-line
     const row = profile[i];
     const previousRow = previous.find(previous => previous.id === row.id);
     const compareRow = compare.find(compare => compare.id === row.id);
+    const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
 
     if (previousRow) {
-      addValuesToRow(row, previousRow, 'previous', valueKeys);
+      addValuesToRow(row, previousRow, 'previous');
     }
 
     if (compareRow) {
-      addValuesToRow(row, compareRow, 'comparison', valueKeys);
+      addValuesToRow(row, compareRow, 'comparison');
+    }
+
+    if (previousCompareRow) {
+      addValuesToRow(row, previousCompareRow, 'previous_comparison');
     }
   }
 }
@@ -183,7 +189,16 @@ function join(profile, previous, compare) {
  * @param{String[]} allKeys - Array containing all of keys in the row object
  */
 function getValueKeys(allKeys) {
-  const valueKeys = allKeys.filter(v => !['id', 'variable', 'variablename', 'base', 'category', 'profile', 'base_sum', 'base_m'].includes(v));
+  const valueKeys = allKeys.filter(key => ![
+    'id',
+    'variable',
+    'variablename',
+    'base',
+    'category',
+    'profile',
+    'base_sum',
+    'base_m',
+  ].includes(key));
 
   // this is not great, maybe codingThreshold property should be added to all rows?
   if (!valueKeys.includes('codingThreshold')) {
@@ -202,13 +217,15 @@ function getValueKeys(allKeys) {
  * @param{String} prefix - The prefix to prepend to a key when adding the value to the target object
  * @param{String[]} keys - The array of keys for values to add from rowToAdd to row
  */
-function addValuesToRow(row, rowToAdd, prefix, keys) {
+function addValuesToRow(row, rowToAdd, prefix) {
+  const valueKeys = getValueKeys(Object.keys(row));
+
   if (row && rowToAdd) { // TODO: if this is false, it is a silent failure
     if (row.variable !== rowToAdd.variable) {
       console.warn(`Issue during join: attempting to merge with mismatched variables ${row.variable} and ${rowToAdd.variable}.`);
     }
 
-    keys.forEach((key) => {
+    valueKeys.forEach((key) => {
       row[`${prefix}_${key}`] = rowToAdd[key];
     });
   } else {
