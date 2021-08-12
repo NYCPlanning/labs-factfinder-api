@@ -89,40 +89,21 @@ async function getProfileData(profileName, geoids, compare, db) {
   const queryBuilder = getQueryBuilder(profileName);
 
   // get data from postgres
-  const [rawProfileData, rawPreviousProfileData, rawCompareProfileData] = await Promise.all([
+  const [rawProfileData, rawPreviousProfileData, rawCompareData, rawPreviousCompareData] = await Promise.all([
     db.query(queryBuilder(profileName, geoids)),
     db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
     db.query(queryBuilder(profileName, [compare])),
+    db.query(queryBuilder(profileName, [compare], /* is previous */ true)),
   ]);
 
   // Instantiate DataProcessors to process query results
   const profileData = new DataProcessor(rawProfileData, profileName, isAggregate).process();
   const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
-  const compareProfileData = new DataProcessor(rawCompareProfileData, profileName, /* isAggregate */ false).process();
-
-  // add previousProfileData and compareProfileData row objects into profileData row objects
-  join(profileData, previousProfileData, compareProfileData);
-
-  // profileData now contains the current selection data, in addition to previous & compare data
-  return profileData
-    .map((row) => {
-      const rowConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]);
-
-      // wrap in a try catch in case something goes wrong.
-      // TODO: this was added as a stopgap for known issues
-      //    with decennial variables (for example, certain race
-      //    categories were missing). we should more explicitly
-      //    validate those decennial inputs instead of a general
-      //    purpose try/catch.
-      try {
-        doChangeCalculations(row, rowConfig);
-        doDifferenceCalculations(row);
-      } catch (e) {
-        console.log(`Something went wrong calculating ${row.variable}: ${e}`);
-      }
-
-      return row;
-    });
+  const compareData = new DataProcessor(rawCompareData, profileName, /* isAggregate */ false).process();
+  const previousCompareData = new DataProcessor(rawPreviousCompareData, profileName, /* isAggregate */ false, /* isPrevious */ true).process();
+  // add previousProfileData and CompareData row objects into profileData row objects
+  const joinedData = join(profileName, profileData, previousProfileData, compareData, previousCompareData);
+  return joinedData;
 }
 
 /*
@@ -133,87 +114,78 @@ async function getProfileData(profileName, geoids, compare, db) {
  * Note that this join algorithm depends on tables of the exact length. 
  * So there could be issues later if for some reason they don't match.
  * 
+ * @param {string} profileName - decennial / acs (demographic/economic/social/housing)_
  * @param{Object[]} profile - Array of profile row objects
  * @param{Object[]} previous - Array of previous profile row objects
  * @param{Object[]} compare - Array of compare profile row objects
  */
-function join(profile, previous, compare) {
-  const valueKeys = getValueKeys(Object.keys(profile[0]));
+function join(profileName, current, previous, compare, previousCompare) {
+  const output = [];
 
   if (!(
-      profile.length === previous.length 
+    current.length === previous.length
     && previous.length === compare.length
-    && compare.length === profile.length
+    && compare.length === current.length
+    && previousCompare.length === current.length
+
   )) {
     console.warn(`
       The lengths of query outputs differ:
-      Profile: ${profile.length}
+      Current: ${current.length}
       Previous: ${previous.length}
       Compare: ${compare.length}
+      Previous Compare: ${previousCompare.length}
       This is Bad and could lead to mismatched comparisons.
     `)
   }
 
-  profile.sort(sortRowByVariable);
+  current.sort(sortRowByVariable);
   previous.sort(sortRowByVariable);
   compare.sort(sortRowByVariable);
+  previousCompare.sort(sortRowByVariable);
 
-  for (let i = 0; i < profile.length; i++) { // eslint-disable-line
-    const row = profile[i];
+  for (let i = 0; i < current.length; i++) { // eslint-disable-line
+    const row = current[i];
+    const { id, variable, variablename, base, category, profile } = row;
+    const rowConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]);
     const previousRow = previous.find(previous => previous.id === row.id);
     const compareRow = compare.find(compare => compare.id === row.id);
+    const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
+    const difference = doDifferenceCalculations(row, compareRow);
+    const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow);
+    const changeOverTime = doChangeCalculations(row, previousRow, rowConfig);
 
-    if (previousRow) {
-      addValuesToRow(row, previousRow, 'previous', valueKeys);
-    }
-
-    if (compareRow) {
-      addValuesToRow(row, compareRow, 'comparison', valueKeys);
-    }
-  }
-}
-
-/*
- * Returns the keys for actual values in a row object,
- * filtering out all metadata, as these fields do not need to.
- * Additionally adds special variable field 'codingThreshold' (not present in normal variable rows),
- * which is hacky and I don't love it but I'm OVER IT, and will think of a better solution
- * some other time sorry future coder readers.
- * be preserved from the previous and compare row objects.
- * @param{String[]} allKeys - Array containing all of keys in the row object
- */
-function getValueKeys(allKeys) {
-  const valueKeys = allKeys.filter(v => !['id', 'variable', 'variablename', 'base', 'category', 'profile', 'base_sum', 'base_m'].includes(v));
-
-  // this is not great, maybe codingThreshold property should be added to all rows?
-  if (!valueKeys.includes('codingThreshold')) {
-    valueKeys.push('codingThreshold');
-  }
-
-  return valueKeys;
-}
-
-/*
- * Adds all values for a given set of keys from one row
- * to another row, prepending the keys with the given profix
- * in the final object
- * @param{Object} row - The target row to add values to
- * @param{Object} rowToAdd - The source row to add values from
- * @param{String} prefix - The prefix to prepend to a key when adding the value to the target object
- * @param{String[]} keys - The array of keys for values to add from rowToAdd to row
- */
-function addValuesToRow(row, rowToAdd, prefix, keys) {
-  if (row && rowToAdd) { // TODO: if this is false, it is a silent failure
-    if (row.variable !== rowToAdd.variable) {
-      console.warn(`Issue during join: attempting to merge with mismatched variables ${row.variable} and ${rowToAdd.variable}.`);
-    }
-
-    keys.forEach((key) => {
-      row[`${prefix}_${key}`] = rowToAdd[key];
+    output.push({
+      id,
+      variable,
+      variablename,
+      base,
+      category,
+      profile,
+      current: removeMetadata(row),
+      previous: removeMetadata(previousRow),
+      compare: removeMetadata(compareRow),
+      preivousCompare: removeMetadata(previousCompareRow),
+      difference,
+      previousDifference,
+      changeOverTime,
     });
-  } else {
-    throw new Error(`Missing "${prefix}" variable for ${row.variable}`);
   }
+  return output;
+}
+
+/*
+This function will take a row object and remove
+repeated metadata from the row object.
+*/
+function removeMetadata(row) {
+  delete row.id;
+  delete row.variable;
+  delete row.variablename;
+  delete row.base;
+  delete row.category;
+  delete row.profile;
+  return row;
 }
 
 /*
