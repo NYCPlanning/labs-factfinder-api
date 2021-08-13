@@ -89,20 +89,22 @@ async function getProfileData(profileName, geoids, compare, db) {
   const queryBuilder = getQueryBuilder(profileName);
 
   // get data from postgres
-  const [rawProfileData, rawPreviousProfileData, rawCompareData, rawPreviousCompareData] = await Promise.all([
+  const [rawProfileData, rawCompareData, rawPreviousProfileData, rawPreviousCompareData] = await Promise.all([
     db.query(queryBuilder(profileName, geoids)),
-    db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
     db.query(queryBuilder(profileName, [compare])),
+    db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
     db.query(queryBuilder(profileName, [compare], /* is previous */ true)),
   ]);
 
   // Instantiate DataProcessors to process query results
   const profileData = new DataProcessor(rawProfileData, profileName, isAggregate).process();
+  const compareData = new DataProcessor(rawCompareData, profileName, /* isAggregate */ false).process();  
   const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
-  const compareData = new DataProcessor(rawCompareData, profileName, /* isAggregate */ false).process();
   const previousCompareData = new DataProcessor(rawPreviousCompareData, profileName, /* isAggregate */ false, /* isPrevious */ true).process();
+
   // add previousProfileData and CompareData row objects into profileData row objects
   const joinedData = join(profileName, profileData, previousProfileData, compareData, previousCompareData);
+
   return joinedData;
 }
 
@@ -110,24 +112,20 @@ async function getProfileData(profileName, geoids, compare, db) {
  * Joins profile, previousProfile, and compareProfile row objects,
  * prepending key names with appropriate prefixes before combining.
  * (previous and compare, respectively).
- * 
- * Note that this join algorithm depends on tables of the exact length. 
+ *
+ * Note that this join algorithm depends on tables of the exact length.
  * So there could be issues later if for some reason they don't match.
- * 
- * @param {string} profileName - decennial / acs (demographic/economic/social/housing)_
  * @param{Object[]} profile - Array of profile row objects
  * @param{Object[]} previous - Array of previous profile row objects
  * @param{Object[]} compare - Array of compare profile row objects
  */
-function join(profileName, current, previous, compare, previousCompare) {
+function join(profileName, current, compare, previous, previousCompare) {
   const output = [];
 
   if (!(
-    current.length === previous.length
-    && previous.length === compare.length
-    && compare.length === current.length
-    && previousCompare.length === current.length
-
+      current.length === compare.length
+    && compare.length === previous.length
+    && previous.length === previousCompare.length
   )) {
     console.warn(`
       The lengths of query outputs differ:
@@ -140,8 +138,8 @@ function join(profileName, current, previous, compare, previousCompare) {
   }
 
   current.sort(sortRowByVariable);
-  previous.sort(sortRowByVariable);
   compare.sort(sortRowByVariable);
+  previous.sort(sortRowByVariable);
   previousCompare.sort(sortRowByVariable);
 
   for (let i = 0; i < current.length; i++) { // eslint-disable-line
@@ -151,6 +149,7 @@ function join(profileName, current, previous, compare, previousCompare) {
     const previousRow = previous.find(previous => previous.id === row.id);
     const compareRow = compare.find(compare => compare.id === row.id);
     const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
+
     const difference = doDifferenceCalculations(row, compareRow);
     const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow);
     const changeOverTime = doChangeCalculations(row, previousRow, rowConfig);
@@ -179,12 +178,19 @@ This function will take a row object and remove
 repeated metadata from the row object.
 */
 function removeMetadata(row) {
-  delete row.id;
-  delete row.variable;
-  delete row.variablename;
-  delete row.base;
-  delete row.category;
-  delete row.profile;
+  const propertiesToRemove = [
+    'id',
+    'variable',
+    'variablename',
+    'base',
+    'category',
+    'profile',
+  ]
+
+  for(let i = 0; i < propertiesToRemove.length; i++) {
+    delete row[propertiesToRemove[i]];
+  }
+
   return row;
 }
 
