@@ -27,6 +27,13 @@ function calculateChanges(row, previousRow) {
   // - any estimates are missing
   // - either estimate or previous estimate was coded
   const change = {};
+
+  if(!row || !previousRow) {
+    nullChanges(change);
+
+    return change; 
+  }
+
   const { sum, m, codingThreshold } = row;
   const { sum: previous_sum, m: previous_m, codingThreshold: previous_codingThreshold } = previousRow;
 
@@ -38,7 +45,9 @@ function calculateChanges(row, previousRow) {
   ) && !isDecennial;
 
   if (shouldNullify) {
-    nullChanges(row);
+    nullChanges(change);
+
+    return change; 
   } else {
     change.sum = executeFormula('delta', [sum, previous_sum]);
 
@@ -62,6 +71,13 @@ function calculateChangePercents(row, previousRow, rowConfig) {
   // - either estimate or previous estimate was coded
   // - row config.noChangePercents is true
   const change = {};
+
+  if(!row || !previousRow) {
+    nullChangePercents(change);
+
+    return change; 
+  }
+
   const { sum, m, codingThreshold } = row;
   const { sum: previous_sum, m: previous_m, codingThreshold: previous_codingThreshold } = previousRow;
 
@@ -74,7 +90,9 @@ function calculateChangePercents(row, previousRow, rowConfig) {
   ) && !isDecennial;
 
   if (shouldNullify) {
-    nullChangePercents(row);
+    nullChangePercents(change);
+
+    return change; 
   } else {
     // previous_sum is used as divisor in change_pct formula and due to shortcoming of the formula parsing library,
     // divide-by-0 errors cannot be preemptively caught and avoided with IF statements, so it must happen here
@@ -102,6 +120,13 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig) {
   // - both estimate and previous estimate are 0
   // - the given row is a special variables (indicated by existence of row config)
   const change = {};
+
+  if(!row || !previousRow) {
+    nullChangePercentagePoints(change);
+
+    return change; 
+  }
+
   const {
     percent,
     percent_m,
@@ -129,6 +154,8 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig) {
 
   if (shouldNullify) {
     nullChangePercentagePoints(row);
+
+    return change;
   } else {
     change.percentage_point = executeFormula('delta', [percent, previous_percent]);
 

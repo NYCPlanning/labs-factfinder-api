@@ -103,7 +103,7 @@ async function getProfileData(profileName, geoids, compare, db) {
   const previousCompareData = new DataProcessor(rawPreviousCompareData, profileName, /* isAggregate */ false, /* isPrevious */ true).process();
 
   // add previousProfileData and CompareData row objects into profileData row objects
-  const joinedData = join(profileName, profileData, previousProfileData, compareData, previousCompareData);
+  const joinedData = join(profileName, profileData, compareData, previousProfileData, previousCompareData);
 
   return joinedData;
 }
@@ -146,8 +146,8 @@ function join(profileName, current, compare, previous, previousCompare) {
     const row = current[i];
     const { id, variable, variablename, base, category, profile } = row;
     const rowConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]);
-    const previousRow = previous.find(previous => previous.id === row.id);
     const compareRow = compare.find(compare => compare.id === row.id);
+    const previousRow = previous.find(previous => previous.id === row.id);
     const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
 
     const difference = doDifferenceCalculations(row, compareRow);
@@ -187,11 +187,13 @@ function removeMetadata(row) {
     'profile',
   ]
 
-  for(let i = 0; i < propertiesToRemove.length; i++) {
-    delete row[propertiesToRemove[i]];
-  }
+  if (row) {
+    for(let i = 0; i < propertiesToRemove.length; i++) {
+      delete row[propertiesToRemove[i]];
+    }
 
-  return row;
+    return row;
+  }
 }
 
 /*

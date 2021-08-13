@@ -23,6 +23,13 @@ function calculateDifferences(row, comparisonRow) {
   // - any estimates are missing
   // - either estimate or comparison estimate was coded
   const difference = {};
+
+  if(!row || !comparisonRow) {
+    nullDifferences(difference);
+
+    return difference; 
+  }
+
   const { sum, m } = row;
   const { sum: comparison_sum, m: comparison_m } = comparisonRow;
   const isDecennial = row.profile === 'decennial';
@@ -33,7 +40,9 @@ function calculateDifferences(row, comparisonRow) {
   ) && !isDecennial;
 
   if (shouldNullify) {
-    nullDifferences(row);
+    nullDifferences(difference);
+
+    return difference;
   } else {
     difference.sum = executeFormula('delta', [sum, comparison_sum]);
     // special handling for 'decennial' rows, which do not have MOE and are all considered 'significant'
@@ -46,6 +55,7 @@ function calculateDifferences(row, comparisonRow) {
       if (difference.sum !== 0) difference.significant = executeFormula('significant', [difference.sum, m]);
     }
   }
+
   return difference;
 }
 
@@ -59,6 +69,13 @@ function calculateDifferencePercents(row, comparisonRow) {
   // - either estimate or comparison estimate was coded
   // - both estimate and previous estimate are 0
   const difference = {};
+
+  if(!row || !comparisonRow) {
+    nullDifferences(difference);
+
+    return difference; 
+  }
+
   const { percent, percent_m } = row;
   const { percent: comparison_percent, percent_m: comparison_percent_m } = comparisonRow;
 
@@ -67,7 +84,9 @@ function calculateDifferencePercents(row, comparisonRow) {
   const shouldNullify = !hasValidInputs && !isDecennial;
 
   if (shouldNullify) {
-    nullDifferencePercents(row);
+    nullDifferencePercents(difference);
+
+    return difference;
   } else {
     difference.percent = executeFormula('delta_with_threshold', [percent * 100, comparison_percent * 100]);
 
