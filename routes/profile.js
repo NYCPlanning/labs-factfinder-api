@@ -100,7 +100,7 @@ async function getProfileData(profileName, geoids, compare, db) {
   const profileData = new DataProcessor(rawProfileData, profileName, isAggregate).process();
   const compareProfileData = new DataProcessor(rawCompareProfileData, profileName, /* isAggregate */ false).process();
   const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
-  const previousCompareProfileData = new DataProcessor(rawPreviousCompareProfileData, profileName, isAggregate, /* isPrevious */ true).process();
+  const previousCompareProfileData = new DataProcessor(rawPreviousCompareProfileData, profileName, false, /* isPrevious */ true).process();
 
   // add previousProfileData and compareProfileData row objects into profileData row objects
   join(profileData, compareProfileData, previousProfileData, previousCompareProfileData);
