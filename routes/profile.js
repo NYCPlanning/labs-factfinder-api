@@ -31,6 +31,22 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
   }
 }
 
+/*
+  Adding Prefix to object keys. Frontend requires these prefixes.
+*/
+function prefixObj(row, prefix) {
+  // row may sometimes be undefined if current year and pervious year
+  // table differ in length
+  if (row && prefix) {
+    Object.keys(row).forEach((key) => {
+      row[`${prefix}${key}`] = row[key];
+      delete row[key];
+    });
+
+    return row;
+  }
+}
+
 router.get('/:id/', async (req, res) => {
   const { app } = req;
   let { id: _id } = req.params;
@@ -98,7 +114,7 @@ async function getProfileData(profileName, geoids, compare, db) {
 
   // Instantiate DataProcessors to process query results
   const profileData = new DataProcessor(rawProfileData, profileName, isAggregate).process();
-  const compareData = new DataProcessor(rawCompareData, profileName, /* isAggregate */ false).process();  
+  const compareData = new DataProcessor(rawCompareData, profileName, /* isAggregate */ false).process();
   const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
   const previousCompareData = new DataProcessor(rawPreviousCompareData, profileName, /* isAggregate */ false, /* isPrevious */ true).process();
 
@@ -161,15 +177,16 @@ function join(profileName, current, compare, previous, previousCompare) {
       base,
       category,
       profile,
-      current: removeMetadata(row),
-      previous: removeMetadata(previousRow),
-      compare: removeMetadata(compareRow),
-      preivousCompare: removeMetadata(previousCompareRow),
-      difference,
-      previousDifference,
-      changeOverTime,
+      ...removeMetadata(row),
+      ...prefixObj(removeMetadata(previousRow), 'previous_'),
+      ...prefixObj(removeMetadata(compareRow), 'comparison_'),
+      ...prefixObj(removeMetadata(previousCompareRow), 'previous_comparison_'),
+      ...prefixObj(difference, 'difference_'),
+      ...prefixObj(previousDifference, 'previous_difference_'),
+      ...prefixObj(changeOverTime, 'change_'),
     });
   }
+
   return output;
 }
 
@@ -207,7 +224,7 @@ function sortRowByVariable(rowA, rowB) {
 
 /*
  * Returns the appropriate query builder for the given profile type
- * @param{string} profile - The profile type
+ * @param{string} profile - The profile type (TODO: this parameter's domain should be [`decennial`, `acs`]
  * @returns{function}
  */
 function getQueryBuilder(profile) {
