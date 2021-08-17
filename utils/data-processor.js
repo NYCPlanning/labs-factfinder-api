@@ -46,7 +46,7 @@ class DataProcessor {
       if (rowConfig) {
         removePercents(row);
         // Only recalculate values for aggregate datasets, and only for special variables that require it
-        if (this.isAggregate && rowConfig.specialType !== 'removePercentsOnly') {
+        if (rowConfig.specialType !== 'removePercentsOnly') {
           this.recalculateSpecialVariables(row, rowConfig);
         }
       }
@@ -88,19 +88,17 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    */
   recalculateSum(row, year, config) {
-    let sum;
-
-    if (config.specialType === 'median') {
-      const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
-      sum = trimmedEstimate;
-      row.codingThreshold = codingThreshold;
-    } else {
-      const formulaName = getFormulaName(config.options, 'sum');
-      sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+    if (this.isAggregate) {
+      if (config.specialType === 'median') {
+        const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
+        row.sum = trimmedEstimate;
+        row.codingThreshold = codingThreshold;
+      } else {
+        const formulaName = getFormulaName(config.options, 'sum');
+        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
     }
-
-    sum = this.applyTransform(sum, config.options.transform, !!row.codingThreshold);
-    row.sum = sum;
+    row.sum = this.applyTransform(row.sum, config.options.transform, !!row.codingThreshold);
   }
 
   /*
@@ -113,21 +111,19 @@ class DataProcessor {
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
   recalculateM(row, year, config, wasCoded) {
-    let m;
-
     // MOE should not be calculated for top- or bottom-coded values
-    if (wasCoded) {
-      m = null;
-    } else if (config.specialType === 'median') {
-      m = calculateMedianError(this.data, row.variable, year, config.options);
-    } else {
-      const formulaName = getFormulaName(config.options, 'm');
-      m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+    if (this.isAggregate) {
+      if (wasCoded) {
+        row.m = null;
+      } else if (config.specialType === 'median') {
+        row.m = calculateMedianError(this.data, row.variable, year, config.options);
+      } else {
+        const formulaName = getFormulaName(config.options, 'm');
+        row.m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
     }
 
-    m = this.applyTransform(m, config.options.transform);
-
-    row.m = m;
+    row.m = this.applyTransform(row.m, config.options.transform);
   }
 
   /*
