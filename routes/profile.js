@@ -72,10 +72,19 @@ router.get('/:id/', async (req, res) => {
     let profileObj = null;
 
     if (geotype === 'selection') {
-      const selectedGeo = await Selection.findOne({ _id: selectionId });
+      try {
+        const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${selectionId}', { selectionId })
 
-      // TODO: remove "profile" argument, and corresponding parameter in upstream functions
-      profileObj = await getProfileData("demographic", selectedGeo.geoids, compare, app.db);
+        if (selection && selection.length > 0) {
+          // TODO: remove "profile" argument, and corresponding parameter in upstream functions
+          // TODO: What happens if there is more than one selected geography result?
+          profileObj = await getProfileData("demographic", selection[0].geoids, compare, app.db);
+        }
+      } catch(e) {
+        return res.status(500).send({
+          errors: [`Failed to find selection for hash ${selectionId}. ${e}`],
+        });
+      }
    } else {
     profileObj = await getProfileData("demographic", [ selectionId ], compare, app.db);
    }

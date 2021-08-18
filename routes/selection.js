@@ -37,7 +37,8 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
   }
 }
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
+  const { app } = req;
   let { id: _id } = req.params;
 
   let [ idPrefix, selectionId ] = _id.split('_');
@@ -55,48 +56,51 @@ router.get('/:id', (req, res) => {
   }
 
   if (geotype === 'selection') {
-    Selection.findOne({ _id: selectionId })
-      .then((match) => {
-        if (match) {
-          const { type, geoids } = match;
+    try {
+      const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${selectionId}', { selectionId });
 
-          getFeatures(type, geoids)
-            .then((features) => {
-              res.send({
-                status: 'success',
-                id: _id,
-                type,
-                features,
-              });
-            })
-            .catch((err) => {
-              console.log('err', err); // eslint-disable-line
+      if (selection && selection.length > 0) {
+        const {
+          _type: type,
+          geoids
+        } = selection[0];
+
+        getFeatures(type, geoids)
+          .then((features) => {
+            res.send({
+              status: 'success',
+              id: selectionId,
+              type,
+              features,
             });
-        } else {
-          res.status(404).send({
-            status: 'not found',
+          })
+          .catch((err) => {
+            console.log('err', err); // eslint-disable-line
           });
-        }
+      } else {
+        res.status(404).send({
+          status: 'not found',
+        });
+      }
+    } catch (e) {
+      res.status(500).send({
+        status:  [`Failed to find selection for hash ${selectionId}. ${e}`],
+      });
+    }
+  } else {
+    getFeatures(geotype, [ selectionId ])
+      .then((features) => {
+        res.send({
+          status: 'success',
+          id: _id,
+          type: geotype,
+          features,
+        });
       })
       .catch((err) => {
-        res.status(500).send({
-          status: `error: ${err}`,
-        });
+        console.log('err', err); // eslint-disable-line
       });
-    } else {
-      getFeatures(geotype, [ selectionId ])
-        .then((features) => {
-          res.send({
-            status: 'success',
-            id: _id,
-            type: geotype,
-            features,
-          });
-        })
-        .catch((err) => {
-          console.log('err', err); // eslint-disable-line
-        });
-    }
+  }
 });
 
 
