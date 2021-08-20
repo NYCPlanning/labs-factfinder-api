@@ -1,6 +1,6 @@
 const {
   DECENNIAL_LATEST_TABLE_FULL_PATH,
-  DECENNIAL_EARLIEST_TABLE_FULL_PATH
+  DECENNIAL_EARLIEST_TABLE_FULL_PATH,
 } = require('../special-calculations/data/constants');
 
 /*
@@ -13,6 +13,7 @@ function formatGeoidWhereClause(ids) {
   return `= '${ids}'`;
 }
 
+/* NOTE: 'profile' is a noop param, to make invocation from route cleaner */
 const decennialProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
@@ -75,8 +76,8 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
         LOWER(category),
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
-      --- profile ---
-      'decennial' AS profile
+      --- survey ---
+      'decennial' AS survey
     FROM enriched_profile
     GROUP BY variable, variablename, base, category
   ) decennial

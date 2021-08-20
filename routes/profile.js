@@ -13,17 +13,17 @@ const router = express.Router();
 function convertBoroughLabelToCode(potentialBoroughLabel) {
   switch (potentialBoroughLabel) {
     case 'NYC':
-        return '0';
+      return '0';
     case 'Manhattan':
-        return '1';
+      return '1';
     case 'Bronx':
-        return '2';
+      return '2';
     case 'Brooklyn':
-        return '3';
+      return '3';
     case 'Queens':
-        return '4';
+      return '4';
     case 'StatenIsland':
-        return '5';
+      return '5';
     default:
       return potentialBoroughLabel;
   }
@@ -54,7 +54,7 @@ router.get('/:profile/:geotype/:geoid/', async (req, res) => {
 
   if (geotype === null) {
     res.status(500).send({
-      status: `error: Invalid ID`,
+      status: 'error: Invalid ID',
     });
   }
 
@@ -99,7 +99,7 @@ router.get('/:profile/:geotype/:geoid/', async (req, res) => {
  * Queries postgres for current, previous, and compare data for a given
  * profile type, set of geoids and compare geoid. Joins the data, and adds
  * 'change' and 'difference' calculation values.
- * @param {string} profileName - The profile type
+ * @param {('acs'|'decennial')} survey - The type of survey to return results for. Must be 'acs' or 'decennial
  * @param {Array} geoids - The list of geoids for the given selected geography
  * @param {string} compareTo - Integer string representing the geoid of the comparison geography
  * @returns {Object}
@@ -155,7 +155,7 @@ function join(profileName, current, compare, previous, previousCompare) {
       Compare: ${compare.length}
       Previous Compare: ${previousCompare.length}
       This is Bad and could lead to mismatched comparisons.
-    `)
+    `);
   }
 
   current.sort(sortRowByVariable);
@@ -167,9 +167,9 @@ function join(profileName, current, compare, previous, previousCompare) {
     const row = current[i];
     const { id, variable, variablename, base, category, profile } = row;
     const rowConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]);
-    const compareRow = compare.find(compare => compare.id === row.id);
-    const previousRow = previous.find(previous => previous.id === row.id);
-    const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
+    const compareRow = compare.find(c => c.id === row.id);
+    const previousRow = previous.find(p => p.id === row.id);
+    const previousCompareRow = previousCompare.find(p => p.id === row.id);
 
     const difference = doDifferenceCalculations(row, compareRow);
     const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow);
@@ -232,10 +232,16 @@ function sortRowByVariable(rowA, rowB) {
  * @param{string} profile - The profile type (TODO: this parameter's domain should be [`decennial`, `acs`]
  * @returns{function}
  */
+<<<<<<< HEAD
 function getQueryBuilder(profile) {
   if (profile === 'decennial') return decennialQuery;
 
   return acsQuery;
+=======
+function getQueryBuilder(survey) {
+  if (survey === 'decennial') return decennialQuery;
+  return profileQuery;
+>>>>>>> b9dd89d (Adds new survey endpoint for census and acs data)
 }
 
 /*
@@ -254,12 +260,21 @@ function invalidCompare(compareTo) {
 
 /*
  * Checks that the profile query parameter is a valid profile type
+<<<<<<< HEAD
  * @param{string} profile - The profile type (either 'acs' or 'decennial')
  * @returns{Boolean}
  */
 function isInvalidProfile(profile) {
   const validProfileNames = ['decennial', 'acs'];
   if (validProfileNames.includes(profile)) return false;
+=======
+ * @param{string} survey - The profile type
+ * @returns{Boolean}
+ */
+function isInvalidSurvey(survey) {
+  const validProfileNames = ['decennial', 'acs'];
+  if (validProfileNames.includes(survey)) return false;
+>>>>>>> b9dd89d (Adds new survey endpoint for census and acs data)
   return true;
 }
 
