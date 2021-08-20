@@ -19,7 +19,8 @@ const summaryLevels = {
       ctlabel as geolabel,
       boroct2020,
       nta2020,
-      boroct2020 AS geoid
+      boroct2020 AS geoid,
+      borocode::text
     FROM nyct2020
   `,
 
@@ -39,7 +40,8 @@ const summaryLevels = {
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       borocd as geolabel,
-      borocd AS geoid
+      borocd AS geoid,
+      substring(borocd, 0, 1) as borocode
     FROM nycd2020
   `,
 
@@ -65,18 +67,11 @@ const summaryLevels = {
       ntaname,
       nta2020,
       nta2020 as geolabel,
-      nta2020 AS geoid
+      nta2020 AS geoid,
+      borocode::text
     FROM nynta2020
     WHERE ntaname NOT ILIKE 'park-cemetery-etc%25'
       AND ntaname != 'Airport'
-  `,
-
-  pumas: (webmercator = true) => `
-    SELECT
-      ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      puma AS geolabel,
-      puma AS geoid
-    FROM nyc_puma
   `,
 };
 
