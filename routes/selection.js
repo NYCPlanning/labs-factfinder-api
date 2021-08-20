@@ -106,54 +106,68 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { app, body } = req;
-  const { type, geoids } = body;
+
   body.geoids.sort();
+
+  const {
+    _type,
+    geoids
+  } = body;
 
   const hash = sha1(JSON.stringify(body));
 
+  let selection = null;
+
   // lookup hash in db
-  await app.db.query('SELECT * FROM selection WHERE hash = ${hash}', { hash })
-    .then(async (match) => {
-      if (match.length > 0) {
-        const { _id: id } = match[0];
-        res.send({
-          status: 'existing selection found',
-          id: `SID_${_id}`,
-        });
-      } else {
-        await app.db.tx(t => t.none(
-          'INSERT INTO selection(_type, geoids, hash) VALUES(${type}, ${geoids}, ${hash})',
-          { type, geoids, hash },
-        ))
-          .then(async () => {
-            await app.db.query('SELECT _id as id FROM selection WHERE hash = ${hash}', { hash })
-              .then((match) => {
-                const { id } = match[0];
-                if (match.length > 0) {
-                  return res.send({
-                    status: 'new selection saved',
-                    id,
-                    hash,
-                  });
-                }
-              })
-              .catch(((err) => {
-                res.send({
-                  status: `error: ${err}`,
-                });
-              }));
-          })
-          .catch(((err) => {
-            res.status(500).send({
-              status: `error: ${err}`,
-            });
-          }));
-      }
-    }).catch((err) => {
+  try {
+    selection = await app.db.query('SELECT * FROM selection WHERE hash = ${hash}', { hash });
+
+    if (selection && selection.length > 0) {
+      const { hash } = selection[0];
+
       res.send({
-        status: `error: ${err}`,
+        status: 'existing selection found',
+        id: `SID_${hash}`,
       });
+    } else {
+      try {
+        await app.db.tx(t => t.none(
+          'INSERT INTO selection(_type, geoids, hash) VALUES(${_type}, ${geoids}, ${hash})',
+          { _type, geoids, hash },
+        ));
+
+        try {
+          selection = await app.db.query('SELECT * FROM selection WHERE hash = ${hash}', { hash })
+
+          if (selection && selection.length > 0) {
+            const { hash } = selection[0];
+
+            res.send({
+              status: 'New Selection saved',
+              id: `SID_${hash}`,
+              hash,
+            });
+          } else {
+            res.status(500).send({
+              status:  [`Failed to find newly inserted selection for new hash ${hash}. ${e}`],
+            });
+          }
+        } catch (e) {
+          res.status(500).send({
+            status:  [`Error finding newly inserted selection for new hash ${hash}: ${e}`],
+          });
+        }
+      } catch (e) { // on INSERT new Selection error
+        res.status(500).send({
+          status:  [`Error creating new selection for geoids ${geoids}: ${e}`],
+        });
+      }
+    }
+  } catch (e) {
+    res.status(500).send({
+      status:  [`Error checking for existing selection from geoids ${geoids}. ${e}`],
     });
+  }
 });
 
 module.exports = router;
