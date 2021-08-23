@@ -1,7 +1,6 @@
 const express = require('express');
 const { find } = require('lodash');
 
-const Selection = require('../models/selection');
 const profileQuery = require('../query-helpers/profile');
 const decennialQuery = require('../query-helpers/decennial');
 const specialCalculationConfigs = require('../special-calculations');
