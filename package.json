@@ -6,7 +6,7 @@
     "devstart": "NODE_ENV=development nodemon ./bin/www",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "test": "NODE_ENV=test node ./node_modules/mocha/bin/mocha ./test/**/*.js --exit",
-    "migrate": "node ./bin/migrate",
+    "migrate": "node-pg-migrate",
     "refresh": "node ./bin/refresh"
   },
   "pre-commit": [

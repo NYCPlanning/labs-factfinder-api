@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS :SCHEMA_NAME;
-DROP TABLE IF EXISTS :SCHEMA_NAME.:"TABLE_NAME";
+CREATE SCHEMA IF NOT EXISTS acs;
+DROP TABLE IF EXISTS acs.:"TABLE_NAME";
 
 CREATE TEMP TABLE tmp (
     census_geoid text,
@@ -17,11 +17,11 @@ CREATE TEMP TABLE tmp (
 
 \COPY tmp FROM PSTDIN WITH DELIMITER ',' CSV HEADER;
 
-DROP TABLE IF EXISTS :SCHEMA_NAME.:"TABLE_NAME";
+DROP TABLE IF EXISTS acs.:"TABLE_NAME";
 SELECT
     labs_geotype as geotype,
     labs_geoid as geoid,
     pff_variable as variable,
     'Y'||(:TABLE_NAME-4)::TEXT||'-'||:'TABLE_NAME' as dataset,
     domain, c, e, m, p, z
-INTO :SCHEMA_NAME.:"TABLE_NAME" FROM tmp;
+INTO acs.:"TABLE_NAME" FROM tmp;

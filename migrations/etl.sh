@@ -3,8 +3,7 @@
 for i in "$@"
 do
 case $i in
-    -d=*|--datasource=*) datasource="${i#*=}" ;;
-    -s=*|--schema=*) schema="${i#*=}" ;;
+    -s=*|--datasource=*) datasource="${i#*=}" ;;
     -y=*|--year=*) year="${i#*=}" ;;
     -g=*|--geography=*) geography="${i#*=}";;
     --download) download=1 ;;
@@ -13,8 +12,8 @@ case $i in
     *)
         echo
         echo "invalid flag $i"
-        echo "e.g. --datasource=acs --schema=acs --year=2019 --geography=2010_to_2020 --download --load"
-        echo "e.g. -d=acs -s=acs_staging -y=2019 -g=2010_to_2020 --download --load"
+        echo "e.g. --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
+        echo "e.g. -s=acs -y=2019 -g=2010_to_2020 --download --load"
         echo
         exit
     ;;
@@ -40,7 +39,7 @@ if [[ $download -eq 1 ]]; then
 fi
 
 if [[ $load -eq 1 ]]; then 
-    cat $filepath | psql $DATABASE_URL -v SCHEMA_NAME=$schema -v TABLE_NAME=$year -f migrations/$datasource.sql
+    cat $filepath | psql $DATABASE_URL -v TABLE_NAME=$year -f migrations/$datasource.sql
 fi
 
 if [[ $clean -eq 1 ]]; then 
