@@ -16,15 +16,6 @@ case $1 in
         shift; 
         bash migrations/etl.sh $@
     ;;
-    combine )
-        shift;
-        echo
-        echo "Combining data from $1 and $2"
-        psql $DATABASE_URL \
-            -v YEAR1=$1\
-            -v YEAR2=$2\
-            -f migrations/combine.sql
-    ;;
     support_geoids ) 
         shift;
         support_geoids $1
@@ -32,9 +23,8 @@ case $1 in
     * ) 
         echo
         echo "$1 command not found"
-        echo "e.g. ./migrations/cli.sh combine {{ YEAR1 }} {{ YEAR2 }}" 
         echo "e.g. ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
-        echo "e.g. ./migrations/cli.sh etl -s={{ acs|decennial }} -y=2019 -g=2010_to_2020 --load --clean"
+        echo "e.g. ./migrations/cli.sh etl -s={{ acs|decennial }} -y=2010 -g=2010_to_2020 --load --clean"
         echo
     ;;
 esac
