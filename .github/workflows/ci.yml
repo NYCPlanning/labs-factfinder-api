@@ -28,11 +28,8 @@ jobs:
         run: |
           ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load --clean
           ./migrations/cli.sh etl --datasource=acs --year=2010 --geography=2010_to_2020 --download --load --clean
-          ./migrations/cli.sh support_geoids 2010_to_2020
-
-      - name: Combine
-        run: |
-          ./migrations/cli.sh combine 2010 2019
+          ./migrations/cli.sh etl --datasource=decennial --year=2010 --geography=2010_to_2020 --download --load --clean
+          ./migrations/cli.sh etl --datasource=decennial --year=2020 --geography=2010_to_2020 --download --load --clean
         
       - name: Setup Node
         uses: actions/setup-node@v2
