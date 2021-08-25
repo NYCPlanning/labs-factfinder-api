@@ -232,16 +232,10 @@ function sortRowByVariable(rowA, rowB) {
  * @param{string} profile - The profile type (TODO: this parameter's domain should be [`decennial`, `acs`]
  * @returns{function}
  */
-<<<<<<< HEAD
 function getQueryBuilder(profile) {
   if (profile === 'decennial') return decennialQuery;
 
   return acsQuery;
-=======
-function getQueryBuilder(survey) {
-  if (survey === 'decennial') return decennialQuery;
-  return profileQuery;
->>>>>>> b9dd89d (Adds new survey endpoint for census and acs data)
 }
 
 /*
@@ -260,21 +254,12 @@ function invalidCompare(compareTo) {
 
 /*
  * Checks that the profile query parameter is a valid profile type
-<<<<<<< HEAD
- * @param{string} profile - The profile type (either 'acs' or 'decennial')
- * @returns{Boolean}
- */
-function isInvalidProfile(profile) {
-  const validProfileNames = ['decennial', 'acs'];
-  if (validProfileNames.includes(profile)) return false;
-=======
  * @param{string} survey - The profile type
  * @returns{Boolean}
  */
 function isInvalidSurvey(survey) {
   const validProfileNames = ['decennial', 'acs'];
   if (validProfileNames.includes(survey)) return false;
->>>>>>> b9dd89d (Adds new survey endpoint for census and acs data)
   return true;
 }
 

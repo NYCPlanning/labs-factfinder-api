@@ -162,9 +162,9 @@ function join(profile, compare, previous, previousCompare) {
 
   for (let i = 0; i < profile.length; i++) { // eslint-disable-line
     const row = profile[i];
-    const previousRow = previous.find(previous => previous.id === row.id);
-    const compareRow = compare.find(compare => compare.id === row.id);
-    const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
+    const previousRow = previous.find(p => p.id === row.id);
+    const compareRow = compare.find(c => c.id === row.id);
+    const previousCompareRow = previousCompare.find(p => p.id === row.id);
 
     if (previousRow) {
       addValuesToRow(row, previousRow, 'previous');

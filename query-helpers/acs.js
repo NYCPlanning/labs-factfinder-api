@@ -138,10 +138,13 @@ const acsProfileSQL = (ids, isPrevious = false) => `
         LOWER(category),
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
+<<<<<<< HEAD
 <<<<<<< HEAD:query-helpers/acs.js
       --- profile ---
       'acs' AS profile
 =======
+=======
+>>>>>>> 4f6686d (renaming query helper and cleaning up code)
       --- domain ---
       REGEXP_REPLACE(
         LOWER(domain),
@@ -149,7 +152,10 @@ const acsProfileSQL = (ids, isPrevious = false) => `
       ) AS domain,
       --- survey ---
       'acs' AS survey
+<<<<<<< HEAD
 >>>>>>> b9dd89d (Adds new survey endpoint for census and acs data):query-helpers/profile.js
+=======
+>>>>>>> 4f6686d (renaming query helper and cleaning up code)
     FROM enriched_profile
     GROUP BY variable, variablename, base, category, domain
     ORDER BY variable, base, category
