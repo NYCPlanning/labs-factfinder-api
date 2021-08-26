@@ -5,7 +5,7 @@ const district = (string) => {
     SELECT * FROM (
       SELECT
         the_geom,
-        borocd AS geolabel,
+        CAST(borocd AS varchar) AS geolabel,
         borocd AS geoid
       FROM nycd2020
     ) x
