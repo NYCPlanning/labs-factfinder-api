@@ -18,7 +18,7 @@ const neighborhood = (string) => {
       nta2020,
       nta2020 as geolabel,
       nta2020 as geoid
-    FROM nynta2020
+    FROM pff_2020_ntas_21c
     WHERE
       (
         LOWER(ntaname) LIKE LOWER('%25${string}%25')
