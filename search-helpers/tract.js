@@ -21,7 +21,7 @@ const tract = (string) => {
           END
         || ct2020 as fips,
         boroname || ' ' || ctlabel As boronamect
-      FROM nyct2020
+      FROM pff_2020_census_tracts_21c
     ) x
     WHERE
       boroct2020 LIKE '%25${string}%25'
