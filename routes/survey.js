@@ -97,11 +97,11 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
  * 'change' and 'difference' calculation values.
  * @param {('acs'|'decennial')} survey - The type of survey to return results for. Must be 'acs' or 'decennial
  * @param {Array} geoids - The list of geoids for the given selected geography
- * @param {string} compare - Integer string representing the geoid of the comparison geography
+ * @param {string} compareTo - Integer string representing the geoid of the comparison geography
  * @returns {Object}
  */
-// async function getProfileData(profileName, geoids, compare, db) {
-async function getSurveyData(survey, geoids, compare, db) {
+// async function getProfileData(profileName, geoids, compareTo, db) {
+async function getSurveyData(survey, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
   const queryBuilder = getQueryBuilder(survey);
@@ -110,9 +110,9 @@ async function getSurveyData(survey, geoids, compare, db) {
   // get data from postgres
   const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
     db.query(queryBuilder(geoids)),
-    db.query(queryBuilder([compare])),
+    db.query(queryBuilder([compareTo])),
     db.query(queryBuilder(geoids, /* is previous */ true)),
-    db.query(queryBuilder([compare], /* is previous */ true)),
+    db.query(queryBuilder([compareTo], /* is previous */ true)),
   ]);
 
   // Instantiate DataProcessors to process query results
@@ -240,10 +240,10 @@ function getQueryBuilder(survey) {
  * @param{string} comp - Integer string representing the geoid of the comparison geography
  * @returns{Boolean}
  */
-function invalidCompare(compare) {
-  const cityOrBoro = compare.match(/[0-5]{1}/);
-  const nta = compare.match(/[A-Z]{2}[0-9]{2}/);
-  const puma = compare.match(/[0-9]{4}/);
+function invalidCompare(compareTo) {
+  const cityOrBoro = compareTo.match(/[0-5]{1}/);
+  const nta = compareTo.match(/[A-Z]{2}[0-9]{2}/);
+  const puma = compareTo.match(/[0-9]{4}/);
 
   if (cityOrBoro || nta || puma) return false;
   return true;
