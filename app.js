@@ -32,7 +32,6 @@ app.use(compression());
 // routes
 app.use('/search', require('./routes/search'));
 app.use('/selection', require('./routes/selection'));
-app.use('/profile', require('./routes/profile'));
 app.use('/geo-options', require('./routes/geo-options'));
 app.use('/survey', require('./routes/survey'));
 
