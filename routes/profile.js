@@ -49,7 +49,7 @@ function prefixObj(row, prefix) {
 router.get('/:id/', async (req, res) => {
   const { app } = req;
   let { id: _id } = req.params;
-  const { compare = '0' } = req.query;
+  const { compareTo = '0' } = req.query;
 
   let [ idPrefix, selectionId ] = _id.split('_');
 
@@ -65,7 +65,7 @@ router.get('/:id/', async (req, res) => {
     selectionId = convertBoroughLabelToCode(selectionId);
   }
 
-  if (invalidCompare(compare)) res.status(500).send({ error: 'invalid compare param' });
+  if (invalidCompare(compareTo)) res.status(500).send({ error: 'invalid compareTo param' });
 
   try {
     let profileObj = null;
@@ -77,7 +77,7 @@ router.get('/:id/', async (req, res) => {
         if (selection && selection.length > 0) {
           // TODO: remove "profile" argument, and corresponding parameter in upstream functions
           // TODO: What happens if there is more than one selected geography result?
-          profileObj = await getProfileData("demographic", selection[0].geoids, compare, app.db);
+          profileObj = await getProfileData("demographic", selection[0].geoids, compareTo, app.db);
         }
       } catch(e) {
         return res.status(500).send({
@@ -85,7 +85,7 @@ router.get('/:id/', async (req, res) => {
         });
       }
    } else {
-    profileObj = await getProfileData("demographic", [ selectionId ], compare, app.db);
+    profileObj = await getProfileData("demographic", [ selectionId ], compareTo, app.db);
    }
 
     return res.send(profileObj);
@@ -104,10 +104,10 @@ router.get('/:id/', async (req, res) => {
  * 'change' and 'difference' calculation values.
  * @param {string} profileName - The profile type
  * @param {Array} geoids - The list of geoids for the given selected geography
- * @param {string} compare - Integer string representing the geoid of the comparison geography
+ * @param {string} compareTo - Integer string representing the geoid of the comparison geography
  * @returns {Object}
  */
-async function getProfileData(profileName, geoids, compare, db) {
+async function getProfileData(profileName, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
   const queryBuilder = getQueryBuilder(profileName);
@@ -115,9 +115,9 @@ async function getProfileData(profileName, geoids, compare, db) {
   // get data from postgres
   const [rawProfileData, rawCompareData, rawPreviousProfileData, rawPreviousCompareData] = await Promise.all([
     db.query(queryBuilder(profileName, geoids)),
-    db.query(queryBuilder(profileName, [compare])),
+    db.query(queryBuilder(profileName, [compareTo])),
     db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
-    db.query(queryBuilder(profileName, [compare], /* is previous */ true)),
+    db.query(queryBuilder(profileName, [compareTo], /* is previous */ true)),
   ]);
 
   // Instantiate DataProcessors to process query results
@@ -245,10 +245,10 @@ function getQueryBuilder(profile) {
  * @param{string} comp - Integer string representing the geoid of the comparison geography
  * @returns{Boolean}
  */
-function invalidCompare(compare) {
-  const cityOrBoro = compare.match(/[0-5]{1}/);
-  const nta = compare.match(/[A-Z]{2}[0-9]{2}/);
-  const puma = compare.match(/[0-9]{4}/);
+function invalidCompare(compareTo) {
+  const cityOrBoro = compareTo.match(/[0-5]{1}/);
+  const nta = compareTo.match(/[A-Z]{2}[0-9]{2}/);
+  const puma = compareTo.match(/[0-9]{4}/);
 
   if (cityOrBoro || nta || puma) return false;
   return true;
