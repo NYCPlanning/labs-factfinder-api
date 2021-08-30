@@ -29,6 +29,22 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
   }
 }
 
+/*
+  Adding Prefix to object keys. Frontend requires these prefixes.
+*/
+function prefixObj(row, prefix) {
+  // row may sometimes be undefined if current year and pervious year
+  // table differ in length
+  if (row && prefix) {
+    Object.keys(row).forEach((key) => {
+      row[`${prefix}${key}`] = row[key];
+      delete row[key];
+    });
+
+    return row;
+  }
+}
+
 router.get('/:survey/:geotype/:geoid/', async (req, res) => {
   const { app } = req;
 
@@ -89,6 +105,8 @@ async function getSurveyData(survey, geoids, compare, db) {
   const isAggregate = geoids.length > 1;
 
   const queryBuilder = getQueryBuilder(survey);
+  console.log(queryBuilder(geoids))
+  
   // get data from postgres
   const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
     db.query(queryBuilder(geoids)),
@@ -103,29 +121,10 @@ async function getSurveyData(survey, geoids, compare, db) {
   const previousSurveyData = new DataProcessor(rawPreviousProfileData, survey, isAggregate, /* isPrevious */ true).process();
   const previousCompareSurveyData = new DataProcessor(rawPreviousCompareProfileData, survey, false, /* isPrevious */ true).process();
 
-  // add previousProfileData and compareProfileData row objects into profileData row objects
-  join(surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
+  // add previousProfileData and CompareData row objects into profileData row objects
+  const joinedData = join(survey, surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
 
-  // profileData now contains the current selection data, in addition to previous & compare data
-  return surveyData
-    .map((row) => {
-      const rowConfig = find(specialCalculationConfigs[survey], ['variable', row.variable]);
-      const isDecennial = survey === 'decennial';
-      // wrap in a try catch in case something goes wrong.
-      // TODO: this was added as a stopgap for known issues
-      //    with decennial variables (for example, certain race
-      //    categories were missing). we should more explicitly
-      //    validate those decennial inputs instead of a general
-      //    purpose try/catch.
-      try {
-        doChangeCalculations(row, rowConfig, isDecennial);
-        doDifferenceCalculations(row, isDecennial);
-      } catch (e) {
-        console.log(`Something went wrong calculating ${row.variable}: ${e}`);
-      }
-
-      return row;
-    });
+  return joinedData;
 }
 
 /*
@@ -135,103 +134,85 @@ async function getSurveyData(survey, geoids, compare, db) {
  *
  * Note that this join algorithm depends on tables of the exact length.
  * So there could be issues later if for some reason they don't match.
- *
  * @param{Object[]} profile - Array of profile row objects
  * @param{Object[]} previous - Array of previous profile row objects
  * @param{Object[]} compare - Array of compare profile row objects
  */
-function join(profile, compare, previous, previousCompare) {
+function join(survey, current, compare, previous, previousCompare) {
+  const output = [];
+
   if (!(
-    profile.length === compare.length
+      current.length === compare.length
     && compare.length === previous.length
     && previous.length === previousCompare.length
   )) {
     console.warn(`
       The lengths of query outputs differ:
-      Profile: ${profile.length}
+      Current: ${current.length}
       Previous: ${previous.length}
       Compare: ${compare.length}
+      Previous Compare: ${previousCompare.length}
       This is Bad and could lead to mismatched comparisons.
     `);
   }
 
-  profile.sort(sortRowByVariable);
+  current.sort(sortRowByVariable);
   compare.sort(sortRowByVariable);
   previous.sort(sortRowByVariable);
   previousCompare.sort(sortRowByVariable);
 
-  for (let i = 0; i < profile.length; i++) { // eslint-disable-line
-    const row = profile[i];
-    const previousRow = previous.find(p => p.id === row.id);
+  for (let i = 0; i < current.length; i++) { // eslint-disable-line
+    const row = current[i];
+    const { id, variable, variablename, base, category, profile } = row;
+    const rowConfig = find(specialCalculationConfigs[survey], ['variable', row.variable]);
     const compareRow = compare.find(c => c.id === row.id);
+    const previousRow = previous.find(p => p.id === row.id);
     const previousCompareRow = previousCompare.find(p => p.id === row.id);
 
-    if (previousRow) {
-      addValuesToRow(row, previousRow, 'previous');
-    }
+    const difference = doDifferenceCalculations(row, compareRow);
+    const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow);
+    const changeOverTime = doChangeCalculations(row, previousRow, rowConfig);
 
-    if (compareRow) {
-      addValuesToRow(row, compareRow, 'comparison');
-    }
-
-    if (previousCompareRow) {
-      addValuesToRow(row, previousCompareRow, 'previous_comparison');
-    }
+    output.push({
+      id,
+      variable,
+      variablename,
+      base,
+      category,
+      profile,
+      ...removeMetadata(row),
+      ...prefixObj(removeMetadata(previousRow), 'previous_'),
+      ...prefixObj(removeMetadata(compareRow), 'comparison_'),
+      ...prefixObj(removeMetadata(previousCompareRow), 'previous_comparison_'),
+      ...prefixObj(difference, 'difference_'),
+      ...prefixObj(previousDifference, 'previous_difference_'),
+      ...prefixObj(changeOverTime, 'change_'),
+    });
   }
+
+  return output;
 }
 
 /*
- * Returns the keys for actual values in a row object,
- * filtering out all metadata, as these fields do not need to.
- * Additionally adds special variable field 'codingThreshold' (not present in normal variable rows),
- * which is hacky and I don't love it but I'm OVER IT, and will think of a better solution
- * some other time sorry future coder readers.
- * be preserved from the previous and compare row objects.
- * @param{String[]} allKeys - Array containing all of keys in the row object
- */
-function getValueKeys(allKeys) {
-  const valueKeys = allKeys.filter(key => ![
+This function will take a row object and remove
+repeated metadata from the row object.
+*/
+function removeMetadata(row) {
+  const propertiesToRemove = [
     'id',
     'variable',
     'variablename',
     'base',
     'category',
     'profile',
-    'base_sum',
-    'base_m',
-    'survey',
-  ].includes(key));
+  ]
 
-  // this is not great, maybe codingThreshold property should be added to all rows?
-  if (!valueKeys.includes('codingThreshold')) {
-    valueKeys.push('codingThreshold');
-  }
-
-  return valueKeys;
-}
-
-/*
- * Adds all values for a given set of keys from one row
- * to another row, prepending the keys with the given profix
- * in the final object
- * @param{Object} row - The target row to add values to
- * @param{Object} rowToAdd - The source row to add values from
- * @param{String} prefix - The prefix to prepend to a key when adding the value to the target object
- * @param{String[]} keys - The array of keys for values to add from rowToAdd to row
- */
-function addValuesToRow(row, rowToAdd, prefix) {
-  const valueKeys = getValueKeys(Object.keys(row));
-
-  if (row && rowToAdd) { // TODO: if this is false, it is a silent failure
-    if (row.variable !== rowToAdd.variable) {
-      console.warn(`Issue during join: attempting to merge with mismatched variables ${row.variable} and ${rowToAdd.variable}.`);
+  if (row) {
+    for(let i = 0; i < propertiesToRemove.length; i++) {
+      delete row[propertiesToRemove[i]];
     }
 
-    valueKeys.forEach((key) => {
-      row[`${prefix}_${key}`] = rowToAdd[key];
-    });
-  } else {
-    throw new Error(`Missing "${prefix}" variable for ${row.variable}`);
+    return row;
   }
 }
 
@@ -246,7 +227,7 @@ function sortRowByVariable(rowA, rowB) {
 
 /*
  * Returns the appropriate query builder for the given profile type
- * @param {('acs'|'decennial')} survey - The type of survey to return results for. Must be 'acs' or 'decennial
+ * @param{string} profile - The profile type (TODO: this parameter's domain should be [`decennial`, `acs`]
  * @returns{function}
  */
 function getQueryBuilder(survey) {
@@ -269,13 +250,13 @@ function invalidCompare(compare) {
 }
 
 /*
- * Checks that the profile query parameter is a valid profile type
+ * Checks that the survey query parameter is a valid profile type
  * @param{string} survey - The profile type
  * @returns{Boolean}
  */
 function isInvalidSurvey(survey) {
-  const validProfileNames = ['decennial', 'acs'];
-  if (validProfileNames.includes(survey)) return false;
+  const validSurveyNames = ['decennial', 'acs'];
+  if (validSurveyNames.includes(survey)) return false;
   return true;
 }
 
