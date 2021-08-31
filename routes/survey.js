@@ -71,7 +71,13 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
         const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
         if (selection && selection.length > 0) {
+<<<<<<< HEAD
           surveyObj = await getSurveyData(survey, selection[0].geoids, compareTo, app.db);
+=======
+          // TODO: remove "profile" argument, and corresponding parameter in upstream functions
+          // TODO: What happens if there is more than one selected geography result?
+          profileObj = await getSurveyData(survey, selection[0].geoids, compareTo, app.db);
+>>>>>>> 2a3cdc9 (Adding changes to survey from profile)
         }
       } catch (e) {
         return res.status(500).send({
@@ -79,7 +85,11 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
         });
       }
     } else {
+<<<<<<< HEAD
       surveyObj = await getSurveyData(survey, [geoid], compareTo, app.db);
+=======
+      profileObj = await getSurveyData(survey, [ selectionId ], compareTo, app.db);
+>>>>>>> 2a3cdc9 (Adding changes to survey from profile)
     }
     return res.send(surveyObj);
   } catch (e) {
