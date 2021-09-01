@@ -46,14 +46,12 @@ function prefixObj(row, prefix) {
   }
 }
 
-router.get('/:id/', async (req, res) => {
+router.get('/:geotype/:geoid/', async (req, res) => {
   const { app } = req;
-  let { id: _id } = req.params;
+
+  let { geotype, geoid } = req.params;
+
   const { compareTo = '0' } = req.query;
-
-  let [ idPrefix, selectionId ] = _id.split('_');
-
-  const geotype = getGeotypeFromIdPrefix(idPrefix);
 
   if (geotype === null) {
     res.status(500).send({
@@ -62,7 +60,7 @@ router.get('/:id/', async (req, res) => {
   }
 
   if (geotype === 'boroughs') {
-    selectionId = convertBoroughLabelToCode(selectionId);
+    geoid = convertBoroughLabelToCode(geoid);
   }
 
   if (invalidCompare(compareTo)) res.status(500).send({ error: 'invalid compareTo param' });
@@ -72,7 +70,7 @@ router.get('/:id/', async (req, res) => {
 
     if (geotype === 'selection') {
       try {
-        const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${selectionId}', { selectionId })
+        const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid })
 
         if (selection && selection.length > 0) {
           // TODO: remove "profile" argument, and corresponding parameter in upstream functions
@@ -81,11 +79,11 @@ router.get('/:id/', async (req, res) => {
         }
       } catch(e) {
         return res.status(500).send({
-          errors: [`Failed to find selection for hash ${selectionId}. ${e}`],
+          errors: [`Failed to find selection for hash ${geoid}. ${e}`],
         });
       }
    } else {
-    profileObj = await getProfileData("demographic", [ selectionId ], compareTo, app.db);
+    profileObj = await getProfileData("demographic", [ geoid ], compareTo, app.db);
    }
 
     return res.send(profileObj);
