@@ -1,4 +1,7 @@
-const { DECENNIAL_CUR_YEAR, DECENNIAL_PREV_YEAR } = require('../special-calculations/data/constants');
+const {
+  DECENNIAL_LATEST_TABLE_FULL_PATH,
+  DECENNIAL_EARLIEST_TABLE_FULL_PATH
+} = require('../special-calculations/data/constants');
 
 /*
  * Returns the appropriate second half of the geoid WHERE clause
@@ -20,11 +23,10 @@ const decennialProfileSQL = (profile, ids, isPrevious = false) => `
    */
   enriched_profile AS (
     SELECT *
-    FROM decennial d
+    FROM ${isPrevious ? DECENNIAL_EARLIEST_TABLE_FULL_PATH : DECENNIAL_LATEST_TABLE_FULL_PATH} d
     INNER JOIN decennial_dictionary dd
-    ON dd.variablename = d.variable
+    ON LOWER(dd.variablename) = LOWER(d.variable)
     WHERE d.geoid ${formatGeoidWhereClause(ids)}
-    AND d.year = '${isPrevious ? DECENNIAL_PREV_YEAR : DECENNIAL_CUR_YEAR}'
   ),
 
   /*
