@@ -233,7 +233,8 @@ function sortRowByVariable(rowA, rowB) {
  * @returns{function}
  */
 function getQueryBuilder(profile) {
-  // if (profile === 'decennial') return decennialQuery;
+  if (profile === 'decennial') return decennialQuery;
+
   return acsQuery;
 }
 
