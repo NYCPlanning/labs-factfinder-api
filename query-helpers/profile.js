@@ -139,10 +139,7 @@ const profileSQL = (profile, ids, isPrevious = false) => `
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
       --- profile ---
-      REGEXP_REPLACE(
-        LOWER(profile),
-        '[^A-Za-z0-9]', '_', 'g'
-      ) AS profile
+      'acs' AS profile
     FROM enriched_profile
     GROUP BY variable, variablename, base, category, profile
     ORDER BY variable, base, category
