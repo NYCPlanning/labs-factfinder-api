@@ -1,7 +1,7 @@
 const express = require('express');
 const { find } = require('lodash');
 
-const profileQuery = require('../query-helpers/profile');
+const acsQuery = require('../query-helpers/acs');
 const decennialQuery = require('../query-helpers/decennial');
 const specialCalculationConfigs = require('../special-calculations');
 const DataProcessor = require('../utils/data-processor');
@@ -234,7 +234,7 @@ function sortRowByVariable(rowA, rowB) {
  */
 function getQueryBuilder(profile) {
   // if (profile === 'decennial') return decennialQuery;
-  return profileQuery;
+  return acsQuery;
 }
 
 /*
