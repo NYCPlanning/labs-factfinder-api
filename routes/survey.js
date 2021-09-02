@@ -161,7 +161,8 @@ function join(survey, current, compare, previous, previousCompare) {
 
   for (let i = 0; i < current.length; i++) { // eslint-disable-line
     const row = current[i];
-    const { id, variable, variablename, base, category, profile } = row;
+
+    const { id, variable, variablename, base, category, survey } = row;
     const rowConfig = find(specialCalculationConfigs[survey], ['variable', row.variable]);
     const compareRow = compare.find(c => c.id === row.id);
     const previousRow = previous.find(p => p.id === row.id);
@@ -177,7 +178,7 @@ function join(survey, current, compare, previous, previousCompare) {
       variablename,
       base,
       category,
-      profile,
+      survey,
       ...removeMetadata(row),
       ...prefixObj(removeMetadata(previousRow), 'previous_'),
       ...prefixObj(removeMetadata(compareRow), 'comparison_'),

@@ -13,7 +13,7 @@ function formatGeoidWhereClause(ids) {
   return `= '${ids}'`;
 }
 
-/* NOTE: 'profile' is a noop param, to make invocation from route cleaner */
+/* NOTE: 'survey' is a noop param, to make invocation from route cleaner */
 const decennialProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
