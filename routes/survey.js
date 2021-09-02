@@ -86,14 +86,14 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
     console.log(e); // eslint-disable-line
 
     return res.status(500).send({
-      errors: [`Failed to create profile: ${e}`],
+      errors: [`Failed to create survey: ${e}`],
     });
   }
 });
 
 /*
  * Queries postgres for current, previous, and compare data for a given
- * profile type, set of geoids and compare geoid. Joins the data, and adds
+ * survey type, set of geoids and compare geoid. Joins the data, and adds
  * 'change' and 'difference' calculation values.
  * @param {('acs'|'decennial')} survey - The type of survey to return results for. Must be 'acs' or 'decennial
  * @param {Array} geoids - The list of geoids for the given selected geography
@@ -119,22 +119,22 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   const previousSurveyData = new DataProcessor(rawPreviousProfileData, survey, isAggregate, /* isPrevious */ true).process();
   const previousCompareSurveyData = new DataProcessor(rawPreviousCompareProfileData, survey, false, /* isPrevious */ true).process();
 
-  // add previousProfileData and CompareData row objects into profileData row objects
+  // add previous surveyData and compareData row objects into surveyData row objects
   const joinedData = join(survey, surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
 
   return joinedData;
 }
 
 /*
- * Joins profile, previousProfile, and compareProfile row objects,
+ * Joins survey, previousSurvey, and compareSurvey row objects,
  * prepending key names with appropriate prefixes before combining.
  * (previous and compare, respectively).
  *
  * Note that this join algorithm depends on tables of the exact length.
  * So there could be issues later if for some reason they don't match.
- * @param{Object[]} profile - Array of profile row objects
- * @param{Object[]} previous - Array of previous profile row objects
- * @param{Object[]} compare - Array of compare profile row objects
+ * @param{Object[]} survey - Array of survey row objects
+ * @param{Object[]} previous - Array of previous survey row objects
+ * @param{Object[]} compare - Array of compare survey row objects
  */
 function join(survey, current, compare, previous, previousCompare) {
   const output = [];
@@ -202,7 +202,7 @@ function removeMetadata(row) {
     'variablename',
     'base',
     'category',
-    'profile',
+    'survey',
   ]
 
   if (row) {
@@ -215,7 +215,7 @@ function removeMetadata(row) {
 }
 
 /*
- * Comparison function for sorting profile row object
+ * Comparison function for sorting survey row object
  */
 function sortRowByVariable(rowA, rowB) {
   if (rowA.variable > rowB.variable) return 1;
@@ -224,8 +224,8 @@ function sortRowByVariable(rowA, rowB) {
 }
 
 /*
- * Returns the appropriate query builder for the given profile type
- * @param{string} profile - The profile type (TODO: this parameter's domain should be [`decennial`, `acs`]
+ * Returns the appropriate query builder for the given survey type
+ * @param{string} survey - The survey type (TODO: this parameter's domain should be [`decennial`, `acs`]
  * @returns{function}
  */
 function getQueryBuilder(survey) {
@@ -248,8 +248,8 @@ function invalidCompare(compareTo) {
 }
 
 /*
- * Checks that the survey query parameter is a valid profile type
- * @param{string} survey - The profile type
+ * Checks that the survey query parameter is a valid survey type
+ * @param{string} survey - The survey type
  * @returns{Boolean}
  */
 function isInvalidSurvey(survey) {
