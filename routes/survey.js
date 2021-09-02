@@ -105,7 +105,7 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
   const queryBuilder = getQueryBuilder(survey);
-  
+
   // get data from postgres
   const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
     db.query(queryBuilder(geoids)),
