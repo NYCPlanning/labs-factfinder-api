@@ -100,7 +100,6 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
  * @param {string} compareTo - Integer string representing the geoid of the comparison geography
  * @returns {Object}
  */
-// async function getProfileData(profileName, geoids, compareTo, db) {
 async function getSurveyData(survey, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
