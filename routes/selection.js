@@ -1,7 +1,6 @@
 const express = require('express');
 const sha1 = require('sha1');
 const carto = require('../utils/carto');
-const getGeotypeFromIdPrefix = require('../utils/geotype-from-id-prefix');
 
 const summaryLevels = require('../selection-helpers/summary-levels');
 
@@ -37,13 +36,9 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
   }
 }
 
-router.get('/:id', async (req, res) => {
+router.get('/:geotype/:geoid', async (req, res) => {
   const { app } = req;
-  let { id: _id } = req.params;
-
-  let [ idPrefix, selectionId ] = _id.split('_');
-
-  const geotype = getGeotypeFromIdPrefix(idPrefix);
+  let { geotype, geoid } = req.params;
 
   if (geotype === null) {
     res.send({
@@ -52,25 +47,25 @@ router.get('/:id', async (req, res) => {
   }
 
   if (geotype === 'boroughs') {
-    selectionId = convertBoroughLabelToCode(selectionId);
+    geoid = convertBoroughLabelToCode(geoid);
   }
 
   if (geotype === 'selection') {
     try {
-      const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${selectionId}', { selectionId });
+      const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
       if (selection && selection.length > 0) {
         const {
-          _type: type,
-          geoids
+          geotype: selectionGeotype,
+          geoids: selectionGeoids
         } = selection[0];
 
-        getFeatures(type, geoids)
+        getFeatures(selectionGeotype, selectionGeoids)
           .then((features) => {
             res.send({
               status: 'success',
-              id: selectionId,
-              type,
+              id: geoid,
+              type: selectionGeotype,
               features,
             });
           })
@@ -88,11 +83,11 @@ router.get('/:id', async (req, res) => {
       });
     }
   } else {
-    getFeatures(geotype, [ selectionId ])
+    getFeatures(geotype, [ geoid ])
       .then((features) => {
         res.send({
           status: 'success',
-          id: _id,
+          id: geoid,
           type: geotype,
           features,
         });
@@ -110,7 +105,7 @@ router.post('/', async (req, res) => {
   body.geoids.sort();
 
   const {
-    _type,
+    geotype,
     geoids
   } = body;
 
@@ -127,13 +122,13 @@ router.post('/', async (req, res) => {
 
       res.send({
         status: 'existing selection found',
-        id: `SID_${hash}`,
+        id: hash,
       });
     } else {
       try {
         await app.db.tx(t => t.none(
-          'INSERT INTO selection(_type, geoids, hash) VALUES(${_type}, ${geoids}, ${hash})',
-          { _type, geoids, hash },
+          'INSERT INTO selection(geotype, geoids, hash) VALUES(${geotype}, ${geoids}, ${hash})',
+          { geotype, geoids, hash },
         ));
 
         try {
@@ -144,7 +139,7 @@ router.post('/', async (req, res) => {
 
             res.send({
               status: 'New Selection saved',
-              id: `SID_${hash}`,
+              id: hash,
               hash,
             });
           } else {
