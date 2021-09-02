@@ -21,7 +21,7 @@ function isAggregate(ids) {
   return ids.length > 1;
 }
 
-const acsProfileSQL = (profile, ids, isPrevious = false) => `
+const acsProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_profile: profile data joined with meta data

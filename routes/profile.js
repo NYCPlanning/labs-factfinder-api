@@ -111,10 +111,10 @@ async function getProfileData(profileName, geoids, compareTo, db) {
 
   // get data from postgres
   const [rawProfileData, rawCompareData, rawPreviousProfileData, rawPreviousCompareData] = await Promise.all([
-    db.query(queryBuilder(profileName, geoids)),
-    db.query(queryBuilder(profileName, [compareTo])),
-    db.query(queryBuilder(profileName, geoids, /* is previous */ true)),
-    db.query(queryBuilder(profileName, [compareTo], /* is previous */ true)),
+    db.query(queryBuilder(geoids)),
+    db.query(queryBuilder([compareTo])),
+    db.query(queryBuilder(geoids, /* is previous */ true)),
+    db.query(queryBuilder([compareTo], /* is previous */ true)),
   ]);
 
   // Instantiate DataProcessors to process query results
