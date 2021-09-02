@@ -7,7 +7,6 @@ const specialCalculationConfigs = require('../special-calculations');
 const DataProcessor = require('../utils/data-processor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
-const getGeotypeFromIdPrefix = require('../utils/geotype-from-id-prefix');
 
 const router = express.Router();
 

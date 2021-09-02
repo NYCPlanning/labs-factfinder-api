@@ -56,7 +56,7 @@ router.get('/:geotype/:geoid', async (req, res) => {
 
       if (selection && selection.length > 0) {
         const {
-          _type: selectionGeotype,
+          geotype: selectionGeotype,
           geoids: selectionGeoids
         } = selection[0];
 
@@ -105,7 +105,7 @@ router.post('/', async (req, res) => {
   body.geoids.sort();
 
   const {
-    _type,
+    geotype,
     geoids
   } = body;
 
@@ -127,8 +127,8 @@ router.post('/', async (req, res) => {
     } else {
       try {
         await app.db.tx(t => t.none(
-          'INSERT INTO selection(_type, geoids, hash) VALUES(${_type}, ${geoids}, ${hash})',
-          { _type, geoids, hash },
+          'INSERT INTO selection(geotype, geoids, hash) VALUES(${geotype}, ${geoids}, ${hash})',
+          { geotype, geoids, hash },
         ));
 
         try {
