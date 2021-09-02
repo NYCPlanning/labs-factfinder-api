@@ -45,10 +45,10 @@ function prefixObj(row, prefix) {
   }
 }
 
-router.get('/:geotype/:geoid/', async (req, res) => {
+router.get('/:profile/:geotype/:geoid/', async (req, res) => {
   const { app } = req;
 
-  let { geotype, geoid } = req.params;
+  let { profile, geotype, geoid } = req.params;
 
   const { compareTo = '0' } = req.query;
 
@@ -64,6 +64,8 @@ router.get('/:geotype/:geoid/', async (req, res) => {
 
   if (invalidCompare(compareTo)) res.status(500).send({ error: 'invalid compareTo param' });
 
+  if (isInvalidProfile(profile)) res.status(400).send({ error: 'Invalid profile name. Profile must be acs or decennial' });
+
   try {
     let profileObj = null;
 
@@ -72,9 +74,7 @@ router.get('/:geotype/:geoid/', async (req, res) => {
         const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid })
 
         if (selection && selection.length > 0) {
-          // TODO: remove "profile" argument, and corresponding parameter in upstream functions
-          // TODO: What happens if there is more than one selected geography result?
-          profileObj = await getProfileData("demographic", selection[0].geoids, compareTo, app.db);
+          profileObj = await getProfileData(profile, selection[0].geoids, compareTo, app.db);
         }
       } catch(e) {
         return res.status(500).send({
@@ -82,7 +82,7 @@ router.get('/:geotype/:geoid/', async (req, res) => {
         });
       }
    } else {
-    profileObj = await getProfileData("demographic", [ geoid ], compareTo, app.db);
+    profileObj = await getProfileData(profile, [ geoid ], compareTo, app.db);
    }
 
     return res.send(profileObj);
@@ -249,6 +249,17 @@ function invalidCompare(compareTo) {
   const puma = compareTo.match(/[0-9]{4}/);
 
   if (cityOrBoro || nta || puma) return false;
+  return true;
+}
+
+/*
+ * Checks that the profile query parameter is a valid profile type
+ * @param{string} profile - The profile type (either 'acs' or 'decennial')
+ * @returns{Boolean}
+ */
+function isInvalidProfile(profile) {
+  const validProfileNames = ['decennial', 'acs'];
+  if (validProfileNames.includes(profile)) return false;
   return true;
 }
 
