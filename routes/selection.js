@@ -79,7 +79,7 @@ router.get('/:geotype/:geoid', async (req, res) => {
       }
     } catch (e) {
       res.status(500).send({
-        status:  [`Failed to find selection for hash ${selectionId}. ${e}`],
+        status:  [`Failed to find selection for hash ${geoid}. ${e}`],
       });
     }
   } else {
