@@ -120,7 +120,7 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   const previousCompareSurveyData = new DataProcessor(rawPreviousCompareProfileData, survey, false, /* isPrevious */ true).process();
 
   // add previous surveyData and compareData row objects into surveyData row objects
-  const joinedData = join(survey, surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
+  const joinedData = join(surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
 
   return joinedData;
 }
@@ -136,9 +136,8 @@ async function getSurveyData(survey, geoids, compareTo, db) {
  * @param{Object[]} previous - Array of previous survey row objects
  * @param{Object[]} compare - Array of compare survey row objects
  */
-function join(survey, current, compare, previous, previousCompare) {
+function join(current, compare, previous, previousCompare) {
   const output = [];
-  const isDecennial = survey === 'decennial';
   if (!(
       current.length === compare.length
     && compare.length === previous.length
@@ -162,7 +161,15 @@ function join(survey, current, compare, previous, previousCompare) {
   for (let i = 0; i < current.length; i++) { // eslint-disable-line
     const row = current[i];
 
-    const { id, variable, variablename, base, category, survey } = row;
+    const {
+      id,
+      variable,
+      variablename,
+      base,
+      category,
+      survey,
+    } = row;
+    const isDecennial = survey === 'decennial';
     const rowConfig = find(specialCalculationConfigs[survey], ['variable', row.variable]);
     const compareRow = compare.find(c => c.id === row.id);
     const previousRow = previous.find(p => p.id === row.id);
