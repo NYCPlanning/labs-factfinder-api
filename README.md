@@ -120,11 +120,9 @@ A `geoid` in the context of endpoint parameters (see above section) can either b
 <a name="geotype"></a>
 ### Geotypes
 
-The API has its own programmatic abstraction for the `geotype` variable, different from that in the Profile table. This helps abstract away from the specific years (2010, 2020) that the Profile data is associated to (after all there is _potential_ that a decade from now, the data years will change), and provides cleaner, simpler human-readable API URLs. The programmatic geotype domain is a simple list of
-possible geographies. The API does the work under the hood to map each option to the actual value in the Profile tables.
-For example, `ntas` --> `NTA2020`
+The Frontend and this API has its own programmatic abstraction for the `geotype` variable, different from that in the Postgres database. Primarily, `geotype` in this application can also take on the value of "selection", alongside other geotypes like "ntas", "boroughs", etc. The "selection" value helps indicate to the API whether to look in the Selection Postgres Database table for aggregate geographies.
 
-  See the table below for a mapping of programmatic `geotype` values to Profile table values.
+See the table below for possible programmatic Geotype values, and a mapping of programmatic `geotype` values to Profile table values.
 
   **The programmatic column values are the acceptable arguments into the endpoints above.**
 
