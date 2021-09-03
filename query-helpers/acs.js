@@ -21,7 +21,7 @@ function isAggregate(ids) {
   return ids.length > 1;
 }
 
-const profileSQL = (profile, ids, isPrevious = false) => `
+const acsProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_profile: profile data joined with meta data
@@ -139,10 +139,7 @@ const profileSQL = (profile, ids, isPrevious = false) => `
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
       --- profile ---
-      REGEXP_REPLACE(
-        LOWER(profile),
-        '[^A-Za-z0-9]', '_', 'g'
-      ) AS profile
+      'acs' AS profile
     FROM enriched_profile
     GROUP BY variable, variablename, base, category, profile
     ORDER BY variable, base, category
@@ -151,4 +148,4 @@ const profileSQL = (profile, ids, isPrevious = false) => `
   ON variables.base = base.base
 `;
 
-module.exports = profileSQL;
+module.exports = acsProfileSQL;
