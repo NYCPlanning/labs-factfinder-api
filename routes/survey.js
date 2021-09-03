@@ -71,13 +71,7 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
         const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
         if (selection && selection.length > 0) {
-<<<<<<< HEAD
           surveyObj = await getSurveyData(survey, selection[0].geoids, compareTo, app.db);
-=======
-          // TODO: remove "profile" argument, and corresponding parameter in upstream functions
-          // TODO: What happens if there is more than one selected geography result?
-          profileObj = await getSurveyData(survey, selection[0].geoids, compareTo, app.db);
->>>>>>> 2a3cdc9 (Adding changes to survey from profile)
         }
       } catch (e) {
         return res.status(500).send({
@@ -85,11 +79,7 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
         });
       }
     } else {
-<<<<<<< HEAD
       surveyObj = await getSurveyData(survey, [geoid], compareTo, app.db);
-=======
-      profileObj = await getSurveyData(survey, [ selectionId ], compareTo, app.db);
->>>>>>> 2a3cdc9 (Adding changes to survey from profile)
     }
     return res.send(surveyObj);
   } catch (e) {
@@ -115,7 +105,6 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
   const queryBuilder = getQueryBuilder(survey);
-  console.log(queryBuilder(geoids))
   
   // get data from postgres
   const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
@@ -150,7 +139,7 @@ async function getSurveyData(survey, geoids, compareTo, db) {
  */
 function join(survey, current, compare, previous, previousCompare) {
   const output = [];
-
+  const isDecennial = survey === 'decennial';
   if (!(
       current.length === compare.length
     && compare.length === previous.length
@@ -179,9 +168,9 @@ function join(survey, current, compare, previous, previousCompare) {
     const previousRow = previous.find(p => p.id === row.id);
     const previousCompareRow = previousCompare.find(p => p.id === row.id);
 
-    const difference = doDifferenceCalculations(row, compareRow);
-    const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow);
-    const changeOverTime = doChangeCalculations(row, previousRow, rowConfig);
+    const difference = doDifferenceCalculations(row, compareRow, isDecennial);
+    const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow, isDecennial);
+    const changeOverTime = doChangeCalculations(row, previousRow, rowConfig, isDecennial);
 
     output.push({
       id,
