@@ -105,13 +105,8 @@ router.post('/', async (req, res) => {
   body.geoids.sort();
 
   const {
-<<<<<<< HEAD
     geotype,
     geoids
-=======
-    _type,
-    geoids,
->>>>>>> b9dd89d (Adds new survey endpoint for census and acs data)
   } = body;
 
   const hash = sha1(JSON.stringify(body));
