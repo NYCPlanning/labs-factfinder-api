@@ -24,7 +24,7 @@ function isAggregate(ids) {
 const acsProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
-   * enriched_profile: profile data joined with meta data
+   * enriched_profile: survey data joined with meta data
    * from factfinder_metadata, filtered for given year
    * and geoids
    */
@@ -76,7 +76,7 @@ const acsProfileSQL = (ids, isPrevious = false) => `
    * is_reliable is calculated for all data selections.
    * Note: m is coalesced to 0 if the value does not exist in the data
    * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
-   * Columns: id, sum, m, cv, variable, variablename, base, category, profile, percent, percent_m, is_reliable
+   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, is_reliable
    */
   SELECT variables.*,
     --- percent (do not recalculate for non-aggregate selections)---
@@ -138,10 +138,15 @@ const acsProfileSQL = (ids, isPrevious = false) => `
         LOWER(category),
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
-      --- profile ---
-      'acs' AS profile
+      --- domain ---
+      REGEXP_REPLACE(
+        LOWER(domain),
+        '[^A-Za-z0-9]', '_', 'g'
+      ) AS domain,
+      --- survey ---
+      'acs' AS survey
     FROM enriched_profile
-    GROUP BY variable, variablename, base, category, profile
+    GROUP BY variable, variablename, base, category, domain
     ORDER BY variable, base, category
   ) AS variables
   LEFT JOIN base

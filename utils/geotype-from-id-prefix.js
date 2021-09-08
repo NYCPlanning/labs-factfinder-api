@@ -1,19 +1,19 @@
 function getGeotypeFromIdPrefix(idPrefix) {
   switch (idPrefix) {
     case 'SID':
-        return 'selection';
+      return 'selection';
     case 'NTA':
-        return 'ntas';
+      return 'ntas';
     case 'TRACT':
-        return 'tracts';
+      return 'tracts';
     case 'CDTA':
-        return 'cdtas';
+      return 'cdtas';
     case 'DIST':
-        return 'districts';
+      return 'districts';
     case 'BLOCK':
-        return 'blocks';
+      return 'blocks';
     case 'BORO':
-        return 'boroughs';
+      return 'boroughs';
     default:
       return null;
   }

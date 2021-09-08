@@ -13,17 +13,17 @@ const router = express.Router();
 function convertBoroughLabelToCode(potentialBoroughLabel) {
   switch (potentialBoroughLabel) {
     case 'NYC':
-        return '0';
+      return '0';
     case 'Manhattan':
-        return '1';
+      return '1';
     case 'Bronx':
-        return '2';
+      return '2';
     case 'Brooklyn':
-        return '3';
+      return '3';
     case 'Queens':
-        return '4';
+      return '4';
     case 'StatenIsland':
-        return '5';
+      return '5';
     default:
       return potentialBoroughLabel;
   }
@@ -45,72 +45,68 @@ function prefixObj(row, prefix) {
   }
 }
 
-router.get('/:profile/:geotype/:geoid/', async (req, res) => {
+router.get('/:survey/:geotype/:geoid/', async (req, res) => {
   const { app } = req;
 
-  let { profile, geotype, geoid } = req.params;
-
+  const { survey, geotype, geoid: _geoid } = req.params;
   const { compareTo = '0' } = req.query;
 
   if (geotype === null) {
     res.status(500).send({
-      status: `error: Invalid ID`,
+      status: 'error: Invalid ID',
     });
   }
 
-  if (geotype === 'boroughs') {
-    geoid = convertBoroughLabelToCode(geoid);
-  }
+  const geoid = (geotype === 'boroughs') ? convertBoroughLabelToCode(_geoid) : _geoid;
 
   if (invalidCompare(compareTo)) res.status(500).send({ error: 'invalid compareTo param' });
 
-  if (isInvalidProfile(profile)) res.status(400).send({ error: 'Invalid profile name. Profile must be acs or decennial' });
+  if (isInvalidSurvey(survey)) res.status(400).send({ error: 'Invalid survey name. Survey must be acs or decennial' });
 
   try {
-    let profileObj = null;
+    let surveyObj = null;
 
     if (geotype === 'selection') {
       try {
-        const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid })
+        const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
         if (selection && selection.length > 0) {
-          profileObj = await getProfileData(profile, selection[0].geoids, compareTo, app.db);
+          surveyObj = await getSurveyData(survey, selection[0].geoids, compareTo, app.db);
         }
-      } catch(e) {
+      } catch (e) {
         return res.status(500).send({
           errors: [`Failed to find selection for hash ${geoid}. ${e}`],
         });
       }
-   } else {
-    profileObj = await getProfileData(profile, [ geoid ], compareTo, app.db);
-   }
-
-    return res.send(profileObj);
+    } else {
+      surveyObj = await getSurveyData(survey, [geoid], compareTo, app.db);
+    }
+    return res.send(surveyObj);
   } catch (e) {
     console.log(e); // eslint-disable-line
 
     return res.status(500).send({
-      errors: [`Failed to create profile: ${e}`],
+      errors: [`Failed to create survey: ${e}`],
     });
   }
 });
 
 /*
  * Queries postgres for current, previous, and compare data for a given
- * profile type, set of geoids and compare geoid. Joins the data, and adds
+ * survey type, set of geoids and compare geoid. Joins the data, and adds
  * 'change' and 'difference' calculation values.
- * @param {string} profileName - The profile type
+ * @param {('acs'|'decennial')} survey - The type of survey to return results for. Must be 'acs' or 'decennial
  * @param {Array} geoids - The list of geoids for the given selected geography
  * @param {string} compareTo - Integer string representing the geoid of the comparison geography
  * @returns {Object}
  */
-async function getProfileData(profileName, geoids, compareTo, db) {
+async function getSurveyData(survey, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
-  const queryBuilder = getQueryBuilder(profileName);
+  const queryBuilder = getQueryBuilder(survey);
 
   // get data from postgres
-  const [rawProfileData, rawCompareData, rawPreviousProfileData, rawPreviousCompareData] = await Promise.all([
+  const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
     db.query(queryBuilder(geoids)),
     db.query(queryBuilder([compareTo])),
     db.query(queryBuilder(geoids, /* is previous */ true)),
@@ -118,31 +114,30 @@ async function getProfileData(profileName, geoids, compareTo, db) {
   ]);
 
   // Instantiate DataProcessors to process query results
-  const profileData = new DataProcessor(rawProfileData, profileName, isAggregate).process();
-  const compareData = new DataProcessor(rawCompareData, profileName, /* isAggregate */ false).process();
-  const previousProfileData = new DataProcessor(rawPreviousProfileData, profileName, isAggregate, /* isPrevious */ true).process();
-  const previousCompareData = new DataProcessor(rawPreviousCompareData, profileName, /* isAggregate */ false, /* isPrevious */ true).process();
+  const surveyData = new DataProcessor(rawProfileData, survey, isAggregate).process();
+  const compareSurveyData = new DataProcessor(rawCompareProfileData, survey, /* isAggregate */ false).process();
+  const previousSurveyData = new DataProcessor(rawPreviousProfileData, survey, isAggregate, /* isPrevious */ true).process();
+  const previousCompareSurveyData = new DataProcessor(rawPreviousCompareProfileData, survey, false, /* isPrevious */ true).process();
 
-  // add previousProfileData and CompareData row objects into profileData row objects
-  const joinedData = join(profileName, profileData, compareData, previousProfileData, previousCompareData);
+  // add previous surveyData and compareData row objects into surveyData row objects
+  const joinedData = join(surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
 
   return joinedData;
 }
 
 /*
- * Joins profile, previousProfile, and compareProfile row objects,
+ * Joins survey, previousSurvey, and compareSurvey row objects,
  * prepending key names with appropriate prefixes before combining.
  * (previous and compare, respectively).
  *
  * Note that this join algorithm depends on tables of the exact length.
  * So there could be issues later if for some reason they don't match.
- * @param{Object[]} profile - Array of profile row objects
- * @param{Object[]} previous - Array of previous profile row objects
- * @param{Object[]} compare - Array of compare profile row objects
+ * @param{Object[]} survey - Array of survey row objects
+ * @param{Object[]} previous - Array of previous survey row objects
+ * @param{Object[]} compare - Array of compare survey row objects
  */
-function join(profileName, current, compare, previous, previousCompare) {
+function join(current, compare, previous, previousCompare) {
   const output = [];
-
   if (!(
       current.length === compare.length
     && compare.length === previous.length
@@ -155,7 +150,7 @@ function join(profileName, current, compare, previous, previousCompare) {
       Compare: ${compare.length}
       Previous Compare: ${previousCompare.length}
       This is Bad and could lead to mismatched comparisons.
-    `)
+    `);
   }
 
   current.sort(sortRowByVariable);
@@ -165,15 +160,24 @@ function join(profileName, current, compare, previous, previousCompare) {
 
   for (let i = 0; i < current.length; i++) { // eslint-disable-line
     const row = current[i];
-    const { id, variable, variablename, base, category, profile } = row;
-    const rowConfig = find(specialCalculationConfigs[profileName], ['variable', row.variable]);
-    const compareRow = compare.find(compare => compare.id === row.id);
-    const previousRow = previous.find(previous => previous.id === row.id);
-    const previousCompareRow = previousCompare.find(previousCompare => previousCompare.id === row.id);
 
-    const difference = doDifferenceCalculations(row, compareRow);
-    const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow);
-    const changeOverTime = doChangeCalculations(row, previousRow, rowConfig);
+    const {
+      id,
+      variable,
+      variablename,
+      base,
+      category,
+      survey,
+    } = row;
+    const isDecennial = survey === 'decennial';
+    const rowConfig = find(specialCalculationConfigs[survey], ['variable', row.variable]);
+    const compareRow = compare.find(c => c.id === row.id);
+    const previousRow = previous.find(p => p.id === row.id);
+    const previousCompareRow = previousCompare.find(p => p.id === row.id);
+
+    const difference = doDifferenceCalculations(row, compareRow, isDecennial);
+    const previousDifference = doDifferenceCalculations(previousRow, previousCompareRow, isDecennial);
+    const changeOverTime = doChangeCalculations(row, previousRow, rowConfig, isDecennial);
 
     output.push({
       id,
@@ -181,7 +185,7 @@ function join(profileName, current, compare, previous, previousCompare) {
       variablename,
       base,
       category,
-      profile,
+      survey,
       ...removeMetadata(row),
       ...prefixObj(removeMetadata(previousRow), 'previous_'),
       ...prefixObj(removeMetadata(compareRow), 'comparison_'),
@@ -206,7 +210,7 @@ function removeMetadata(row) {
     'variablename',
     'base',
     'category',
-    'profile',
+    'survey',
   ]
 
   if (row) {
@@ -219,7 +223,7 @@ function removeMetadata(row) {
 }
 
 /*
- * Comparison function for sorting profile row object
+ * Comparison function for sorting survey row object
  */
 function sortRowByVariable(rowA, rowB) {
   if (rowA.variable > rowB.variable) return 1;
@@ -228,13 +232,12 @@ function sortRowByVariable(rowA, rowB) {
 }
 
 /*
- * Returns the appropriate query builder for the given profile type
- * @param{string} profile - The profile type (TODO: this parameter's domain should be [`decennial`, `acs`]
+ * Returns the appropriate query builder for the given survey type
+ * @param{string} survey - The survey type (TODO: this parameter's domain should be [`decennial`, `acs`]
  * @returns{function}
  */
-function getQueryBuilder(profile) {
-  if (profile === 'decennial') return decennialQuery;
-
+function getQueryBuilder(survey) {
+  if (survey === 'decennial') return decennialQuery;
   return acsQuery;
 }
 
@@ -253,13 +256,13 @@ function invalidCompare(compareTo) {
 }
 
 /*
- * Checks that the profile query parameter is a valid profile type
- * @param{string} profile - The profile type (either 'acs' or 'decennial')
+ * Checks that the survey query parameter is a valid survey type
+ * @param{string} survey - The survey type
  * @returns{Boolean}
  */
-function isInvalidProfile(profile) {
-  const validProfileNames = ['decennial', 'acs'];
-  if (validProfileNames.includes(profile)) return false;
+function isInvalidSurvey(survey) {
+  const validSurveyNames = ['decennial', 'acs'];
+  if (validSurveyNames.includes(survey)) return false;
   return true;
 }
 
