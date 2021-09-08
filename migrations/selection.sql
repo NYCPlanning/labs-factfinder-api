@@ -3,7 +3,7 @@
 -- Name: selection; Type: TABLE; Schema: public; Owner: doadmin
 --
 
-CREATE TABLE public.selection (
+CREATE TABLE IF NOT EXISTS public.selection (
     _id integer NOT NULL,
     geotype character varying(20),
     geoids character varying(20)[],
