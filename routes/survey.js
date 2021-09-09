@@ -33,7 +33,7 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
   const { survey, geotype, geoid: _geoid } = req.params;
   const { compareTo = '0' } = req.query;
 
-  geoid = deserializeGeoid(res, geotype, geoid);
+  const geoid = deserializeGeoid(res, geotype, _geoid);
 
   if (invalidCompare(compareTo)) res.status(500).send({ error: 'invalid compareTo param' });
 

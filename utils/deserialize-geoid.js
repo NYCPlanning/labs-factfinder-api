@@ -45,6 +45,8 @@ function deserializeGeoid(res, geotype, geoid) {
         });
     }
   }
+
+  return geoid;
 }
 
 module.exports = deserializeGeoid;
