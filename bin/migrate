@@ -5,8 +5,8 @@ const {
   GEOGRAPHY_YEAR,
   ACS_LATEST_TABLE_NAME,
   ACS_EARLIEST_TABLE_NAME,
-  DECENNIAL_CUR_YEAR,
-  DECENNIAL_PREV_YEAR,
+  DECENNIAL_LATEST_TABLE_NAME,
+  DECENNIAL_EARLIEST_TABLE_NAME,
 } = constants;
 
 const etl = (command) => {
@@ -24,5 +24,5 @@ const etl = (command) => {
 
 etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_LATEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
 etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_EARLIEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
-etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_CUR_YEAR} --geography=${GEOGRAPHY_YEAR} --download --load`);
-etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_PREV_YEAR} --geography=${GEOGRAPHY_YEAR} --download --load`);
+etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
+etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_EARLIEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
