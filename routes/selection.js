@@ -19,8 +19,6 @@ const getFeatures = (type, geoids) => {
 
 function convertBoroughLabelToCode(potentialBoroughLabel) {
   switch (potentialBoroughLabel) {
-    case 'NYC':
-      return '0';
     case 'Manhattan':
       return '1';
     case 'Bronx':
@@ -41,13 +39,30 @@ router.get('/:geotype/:geoid', async (req, res) => {
   let { geotype, geoid } = req.params;
 
   if (geotype === null) {
-    res.send({
-      status: 'error: Invalid ID',
+    res.status(500).send({
+      status: `error: Invalid ID`,
     });
   }
 
   if (geotype === 'boroughs') {
     geoid = convertBoroughLabelToCode(geoid);
+  }
+
+  if (geotype === 'cities') {
+    switch (geoid) {
+      case 'NYC':
+        geoid = '0';
+      case 'New%20York%20City':
+        geoid = '0';
+      case 'New York City':
+        geoid = '0';
+      case '0':
+        break;
+      default:
+        res.status(500).send({
+          status: `error: Invalid ID`,
+        });
+    }
   }
 
   if (geotype === 'selection') {
