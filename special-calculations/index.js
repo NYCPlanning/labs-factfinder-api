@@ -3,7 +3,6 @@ const demographic = require('./demographic');
 const economic = require('./economic');
 const housing = require('./housing');
 const social = require('./social');
-
 /*
  * Special calculation configuration for variables requiring special handling. Configuration objects are like:
  * {
@@ -32,8 +31,10 @@ const social = require('./social');
  */
 module.exports = {
   decennial,
-  demographic,
-  economic,
-  housing,
-  social,
+  acs: [
+    ...demographic,
+    ...economic,
+    ...housing,
+    ...social,
+  ],
 };

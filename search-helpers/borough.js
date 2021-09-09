@@ -8,7 +8,7 @@ const borough = (string) => {
         boroname as geolabel,
         boroname,
         borocode AS geoid,
-      FROM nybb2020
+      FROM pff_2020_boroughs_21c
     ) x
     WHERE
       boroname LIKE '%25${string}%25'
