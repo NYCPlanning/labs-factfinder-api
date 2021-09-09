@@ -41,7 +41,7 @@ const summaryLevels = {
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       borocd as geolabel,
       borocd AS geoid,
-      substring(borocd, 0, 1) as borocode
+      substring(CAST(borocd AS text), 0, 1) as borocode
     FROM pff_2020_community_districts_21c
   `,
 
