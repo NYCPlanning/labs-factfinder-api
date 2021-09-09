@@ -25,7 +25,7 @@ You will need the following things properly installed on your computer.
 
 There are three core set of tables that support the Factfinder API:
 
-1. Profile tables - The set of tables that hold ACS and Census data by geography and variable.
+1. Survey tables - The set of tables that hold ACS and Census data by geography and variable.
 2. Selection table - Holds user-defined selection of geographies. See the section Selection geotype Factfinder IDs
 3. Support Geoids table - Holds a mapping of geoid to human-readable label for the geography.
 
@@ -36,12 +36,12 @@ There are three core set of tables that support the Factfinder API:
 
 `/selection` sets and gets collections of census geometries.  Uses mongodb to store an array of geoids that the user selected.
 
-`/profile` returns decennial/acs data for a given profile type and geographic selection.  Queries postgresql using pg-promise.
+`/survey` returns decennial/acs data for a given survey type and geographic selection.  Queries postgresql using pg-promise.
 
 ### Caching
 The dokku plugin `nginx-cache` via [https://github.com/koalalorenzo/dokku-nginx-cache](https://github.com/koalalorenzo/dokku-nginx-cache) is enabled for this app, but nginx won't cache if expressjs is not returning a cache-control header.
 
-The `profile` routes contain simple middleware that adds `Cache-control` headers to responses with `max-age=2592000` (30 days).
+The `survey` routes contain simple middleware that adds `Cache-control` headers to responses with `max-age=2592000` (30 days).
 
 ### Routes
 
@@ -71,16 +71,17 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
       - `type` - geoid type of the selection, one of 'blocks', 'tracts', 'ntas', 'pumas'
       - `features` - a geojson FeatureCollection containing a Feature for each selected geometry
 
-  - `/profile`
-    - `GET /profile/:geotype/:geoid?compareTo={:compareTo}`
-    Retrieves profile data for the given geoid, geotype, and compareTo combination.
+  - `/survey`
+    - `GET /survey/:survey/:geotype/:geoid?compareTo={:compareTo}`
+    Retrieves survey data for the given geoid, geotype, and compareTo combination.
       - **Request:**
+        - `:survey` - (Required) Either `acs` or `decennial`.
         - `:geotype` - (Required) See [geotype section](#geotype) for possible values
         - `:geoid`  - (Required) See [geoids](#geoid)
         - `?compareTo` - (Essential) The geoid of the geography to compare against.
         Although this is a queryParam, this is actually crucial for this endpoint. Not an ideal architecture, probably. If not passed, it will default to NYC. But better to pass in an intended geoid.
-        The endpoint will retrieve profile data for the comparison geography specified by this parameter.
-      - **Response:** An array of objects each representing the data for a different profile variable, for the user's selected geometry. Each object contains the variable data for current year, previous year and change over time. For each year, it further slices data by selection (geoid), the comparison, and the difference between selection and comparison. "Slicing" is done prefixes. Example:
+        The endpoint will retrieve survey data for the comparison geography specified by this parameter.
+      - **Response:** An array of objects each representing the data for a different survey variable, for the user's selected geometry. Each object contains the variable data for current year, previous year and change over time. For each year, it further slices data by selection (geoid), the comparison, and the difference between selection and comparison. "Slicing" is done prefixes. Example:
 
       ```
         [
@@ -94,7 +95,7 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
             "variablename": "AIANNH",
             "base": "Pop_2",
             "category": "mutually_exclusive_race_hispanic_origin",
-            "profile": "demographic",
+            "survey": "acs",
             "previous_sum": 0,
             "previous_m": 0,
             ...
@@ -115,18 +116,18 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
 
 <a name="geoid"></a>
 ### *Geoids
-A `geoid` in the context of endpoint parameters (see above section) can either be a [Selection table id](#selection) (i.e. of geotype `selection`), or an id that maps to the `geoid` column in the Profile tables (e.g. of geotype `ntas`, `boroughs`, `cdtas`, etc).
+A `geoid` in the context of endpoint parameters (see above section) can either be a [Selection table id](#selection) (i.e. of geotype `selection`), or an id that maps to the `geoid` column in the Survey tables (e.g. of geotype `ntas`, `boroughs`, `cdtas`, etc).
 
 <a name="geotype"></a>
 ### Geotypes
 
 The Frontend and this API has its own programmatic abstraction for the `geotype` variable, different from that in the Postgres database. Primarily, `geotype` in this application can also take on the value of "selection", alongside other geotypes like "ntas", "boroughs", etc. The "selection" value helps indicate to the API whether to look in the Selection Postgres Database table for aggregate geographies.
 
-See the table below for possible programmatic Geotype values, and a mapping of programmatic `geotype` values to Profile table values.
+See the table below for possible programmatic Geotype values, and a mapping of programmatic `geotype` values to Survey table values.
 
   **The programmatic column values are the acceptable arguments into the endpoints above.**
 
-| Geotype (Programmatic)    | Geotype (Profile table) | Source (which profile tables) |
+| Geotype (Programmatic)    | Geotype (Survey table) | Source (which survey tables) |
 | ------------------------- | ----------------------- | ----------------------------- |
 | selection*                 | N/A                    | ACS, Census                   |
 | ntas                      | NTA2020                 | ACS, Census                   |
@@ -137,7 +138,7 @@ See the table below for possible programmatic Geotype values, and a mapping of p
 | boroughs                  | Boro2020                | ACS, Census                   |
 | city                      | City2020                | ACS, Census                   |
 
-Each row within the profile tables have a unique geoid, geotype pair of values.
+Each row within the survey tables have a unique geoid, geotype pair of values.
 
 <a name="selection"></a>
 #### Selections, Selection geotype and Selection hash Ids
