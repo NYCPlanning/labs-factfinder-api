@@ -1,14 +1,14 @@
 function convertBoroughLabelToCode(potentialBoroughLabel) {
   switch (potentialBoroughLabel) {
-    case 'Manhattan':
+    case 'manhattan':
         return '1';
-    case 'Bronx':
+    case 'bronx':
         return '2';
-    case 'Brooklyn':
+    case 'brooklyn':
         return '3';
-    case 'Queens':
+    case 'queens':
         return '4';
-    case 'StatenIsland':
+    case 'statenisland':
         return '5';
     default:
       return potentialBoroughLabel;
@@ -17,6 +17,8 @@ function convertBoroughLabelToCode(potentialBoroughLabel) {
 
 
 function deserializeGeoid(res, geotype, geoid) {
+  let lowercaseGeoid = geoid.toLowerCase();
+
   if (geotype === null) {
     res.status(500).send({
       status: `error: Invalid ID`,
@@ -24,16 +26,16 @@ function deserializeGeoid(res, geotype, geoid) {
   }
 
   if (geotype === 'boroughs') {
-    return convertBoroughLabelToCode(geoid);
+    return convertBoroughLabelToCode(lowercaseGeoid);
   }
 
   if (geotype === 'cities') {
-    switch (geoid) {
-      case 'NYC':
+    switch (lowercaseGeoid) {
+      case 'nyc':
         return '0';
-      case 'New%20York%20City':
+      case 'new%20york%20city':
         return '0';
-      case 'New York City':
+      case 'new york city':
         return '0';
       case '0':
         break;
