@@ -3,6 +3,7 @@ const sha1 = require('sha1');
 const carto = require('../utils/carto');
 
 const summaryLevels = require('../selection-helpers/summary-levels');
+const deserializeGeoid = require('../utils/deserialize-geoid');
 
 const router = express.Router();
 
@@ -17,53 +18,11 @@ const getFeatures = (type, geoids) => {
     .then(FC => FC.features);
 };
 
-function convertBoroughLabelToCode(potentialBoroughLabel) {
-  switch (potentialBoroughLabel) {
-    case 'Manhattan':
-      return '1';
-    case 'Bronx':
-      return '2';
-    case 'Brooklyn':
-      return '3';
-    case 'Queens':
-      return '4';
-    case 'StatenIsland':
-      return '5';
-    default:
-      return potentialBoroughLabel;
-  }
-}
-
 router.get('/:geotype/:geoid', async (req, res) => {
   const { app } = req;
   let { geotype, geoid } = req.params;
 
-  if (geotype === null) {
-    res.status(500).send({
-      status: `error: Invalid ID`,
-    });
-  }
-
-  if (geotype === 'boroughs') {
-    geoid = convertBoroughLabelToCode(geoid);
-  }
-
-  if (geotype === 'cities') {
-    switch (geoid) {
-      case 'NYC':
-        geoid = '0';
-      case 'New%20York%20City':
-        geoid = '0';
-      case 'New York City':
-        geoid = '0';
-      case '0':
-        break;
-      default:
-        res.status(500).send({
-          status: `error: Invalid ID`,
-        });
-    }
-  }
+  geoid = deserializeGeoid(res, geotype, geoid);
 
   if (geotype === 'selection') {
     try {

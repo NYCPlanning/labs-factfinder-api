@@ -4,28 +4,12 @@ const { find } = require('lodash');
 const acsQuery = require('../query-helpers/acs');
 const decennialQuery = require('../query-helpers/decennial');
 const specialCalculationConfigs = require('../special-calculations');
+const deserializeGeoid = require('../utils/deserialize-geoid');
 const DataProcessor = require('../utils/data-processor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
 
 const router = express.Router();
-
-function convertBoroughLabelToCode(potentialBoroughLabel) {
-  switch (potentialBoroughLabel) {
-    case 'Manhattan':
-      return '1';
-    case 'Bronx':
-      return '2';
-    case 'Brooklyn':
-      return '3';
-    case 'Queens':
-      return '4';
-    case 'StatenIsland':
-      return '5';
-    default:
-      return potentialBoroughLabel;
-  }
-}
 
 /*
   Adding Prefix to object keys. Frontend requires these prefixes.
@@ -49,30 +33,7 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
   const { survey, geotype, geoid: _geoid } = req.params;
   const { compareTo = '0' } = req.query;
 
-  if (geotype === null) {
-    res.status(500).send({
-      status: 'error: Invalid ID',
-    });
-  }
-
-  const geoid = (geotype === 'boroughs') ? convertBoroughLabelToCode(_geoid) : _geoid;
-
-  if (geotype === 'cities') {
-    switch (geoid) {
-      case 'NYC':
-        geoid = '0';
-      case 'New%20York%20City':
-        geoid = '0';
-      case 'New York City':
-        geoid = '0';
-      case '0':
-        break;
-      default:
-        res.status(500).send({
-          status: `error: Invalid ID`,
-        });
-    }
-  }
+  geoid = deserializeGeoid(res, geotype, geoid);
 
   if (invalidCompare(compareTo)) res.status(500).send({ error: 'invalid compareTo param' });
 
