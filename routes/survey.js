@@ -106,7 +106,7 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   const queryBuilder = getQueryBuilder(survey);
 
   // get data from postgres
-  const [rawProfileData, rawCompareProfileData, rawPreviousProfileData, rawPreviousCompareProfileData] = await Promise.all([
+  const [rawSurveyData, rawCompareSurveyData, rawPreviousSurveyData, rawPreviousCompareSurveyData] = await Promise.all([
     db.query(queryBuilder(geoids)),
     db.query(queryBuilder([compareTo])),
     db.query(queryBuilder(geoids, /* is previous */ true)),
@@ -114,10 +114,10 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   ]);
 
   // Instantiate DataProcessors to process query results
-  const surveyData = new DataProcessor(rawProfileData, survey, isAggregate).process();
-  const compareSurveyData = new DataProcessor(rawCompareProfileData, survey, /* isAggregate */ false).process();
-  const previousSurveyData = new DataProcessor(rawPreviousProfileData, survey, isAggregate, /* isPrevious */ true).process();
-  const previousCompareSurveyData = new DataProcessor(rawPreviousCompareProfileData, survey, false, /* isPrevious */ true).process();
+  const surveyData = new DataProcessor(rawSurveyData, survey, isAggregate).process();
+  const compareSurveyData = new DataProcessor(rawCompareSurveyData, survey, /* isAggregate */ false).process();
+  const previousSurveyData = new DataProcessor(rawPreviousSurveyData, survey, isAggregate, /* isPrevious */ true).process();
+  const previousCompareSurveyData = new DataProcessor(rawPreviousCompareSurveyData, survey, false, /* isPrevious */ true).process();
 
   // add previous surveyData and compareData row objects into surveyData row objects
   const joinedData = join(surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);

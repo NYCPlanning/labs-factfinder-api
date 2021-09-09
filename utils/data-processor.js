@@ -23,13 +23,13 @@ class DataProcessor {
    * Creates a DataProcessor
    * @constructor
    * @params{Array} data - Raw data from SQL query, an array of objects representing rows;
-   * @params{string} profileName - The profile type; expected to be one of 'demographic', 'housing', 'economic', 'social', 'decennial'
+   * @params{string} surveyName - The survey type; expected to be one of 'acs' or 'decennial'
    * @params{Boolean} isAggregate - True if the given data selection is comprised of multiple geoids; else false
    * @params{Boolean} isPrevious - True if the given data selection is for the older dataset year
    */
-  constructor(data, profileName, isAggregate = false, isPrevious = false) {
+  constructor(data, surveyName, isAggregate = false, isPrevious = false) {
     this.data = data;
-    this.profileName = profileName;
+    this.surveyName = surveyName;
     this.isAggregate = isAggregate;
     this.isPrevious = isPrevious;
   }
@@ -39,10 +39,10 @@ class DataProcessor {
    * @returns{Object[]}
    */
   process() {
-    const profileConfig = specialCalculationConfigs[this.profileName];
+    const surveyConfig = specialCalculationConfigs[this.surveyName];
 
     this.data.forEach((row) => {
-      const rowConfig = find(profileConfig, ['variable', row.variable]);
+      const rowConfig = find(surveyConfig, ['variable', row.variable]);
       if (rowConfig) {
         removePercents(row);
         // Only recalculate values for aggregate datasets, and only for special variables that require it
@@ -69,8 +69,8 @@ class DataProcessor {
       // row.codingThreshold will be set if in recalculating the sum the estimate was top- or bottom-coded
       const wasCoded = !!row.codingThreshold;
 
-      // decennial profiles do not have MOE values or CV values
-      if (this.profileName !== 'decennial') {
+      // decennial survey results do not have MOE values or CV values
+      if (this.surveyName !== 'decennial') {
         this.recalculateM(row, year, config, wasCoded);
         this.recalculateCV(row, config, wasCoded);
         this.recalculateIsReliable(row, wasCoded);
