@@ -26,7 +26,7 @@ case $1 in
     ;;
     selection )
         shift;
-        selection $1
+        selection
     ;;
     * ) 
         echo
