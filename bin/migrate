@@ -26,3 +26,5 @@ etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_LATEST_TABLE_NAME} --
 etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_EARLIEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
 etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
 etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_EARLIEST_TABLE_NAME} --geography=${GEOGRAPHY_YEAR} --download --load`);
+etl(`./migrations/cli.sh support_geoids ${GEOGRAPHY_YEAR}`);
+etl('./migrations/cli.sh selection');
