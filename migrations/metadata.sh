@@ -20,8 +20,8 @@ if [ ! -z "$datasource" ] && [ ! -z "$year_curr" ] && [ ! -z "$year_prev" ]; the
     base_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/dev/factfinder/data"
     url_curr="$base_url/$datasource/$year_curr/metadata.json"
     url_prev="$base_url/$datasource/$year_prev/metadata.json"
-    CONTENT_CURR="$(curl -s $url_curr)"
-    CONTENT_PREV="$(curl -s $url_prev)"
+    CONTENT_CURR="$(curl -s $url_curr | jq -r 'del(.[].census_variable)')"
+    CONTENT_PREV="$(curl -s $url_prev | jq -r 'del(.[].census_variable)')"
     if [ $datasource == "acs" ]; then
         echo "$datasource"
         psql $DATABASE_URL \
