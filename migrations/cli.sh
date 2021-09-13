@@ -22,7 +22,6 @@ case $1 in
     ;;
     metadata) 
         shift;
-        echo $@
         bash migrations/metadata.sh $@
     ;;
     * )
