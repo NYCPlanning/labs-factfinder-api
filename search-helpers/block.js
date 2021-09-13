@@ -5,13 +5,14 @@ const block = (string) => {
     SELECT * FROM (
       SELECT
         the_geom,
-        ct2010,
-        borocode || ct2010 AS boroct2010,
-        cb2010,
+        ct2020,
+        borocode || ct2020 AS boroct2020,
+        cb2020,
         boroname,
-        bctcb2010,
-        bctcb2010 AS geoid,
-        (ct2010::float / 100)::text as ctlabel,
+        borocode,
+        bctcb2020,
+        geoid AS geoid,
+        bctcb2020 as geolabel,
         '36' ||
           CASE
             WHEN borocode = '1' THEN '061'
@@ -20,11 +21,11 @@ const block = (string) => {
             WHEN borocode = '4' THEN '081'
             WHEN borocode = '5' THEN '085'
           END
-        || ct2010 || cb2010 as fips
-      FROM nyc_census_blocks
+        || ct2020 || cb2020 as fips
+      FROM pff_2020_census_blocks_21c
     ) x
     WHERE
-      bctcb2010 LIKE '%25${string}%25'
+      bctcb2020 LIKE '%25${string}%25'
       OR fips LIKE '%25${string}%25'
     LIMIT 5
   `;
@@ -33,13 +34,13 @@ const block = (string) => {
     return FeatureCollection.features.map((feature) => {
       const {
         boroname,
-        ctlabel,
-        cb2010,
+        geolabel,
+        cb2020,
         fips,
       } = feature.properties;
 
       return {
-        label: `${boroname} Tract ${ctlabel} Block ${cb2010} (${fips})`,
+        label: `${boroname} Tract ${geolabel} Block ${cb2020} (${fips})`,
         feature,
         type: 'block',
       };

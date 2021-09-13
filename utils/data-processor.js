@@ -23,13 +23,13 @@ class DataProcessor {
    * Creates a DataProcessor
    * @constructor
    * @params{Array} data - Raw data from SQL query, an array of objects representing rows;
-   * @params{string} profileName - The profile type; expected to be one of 'demographic', 'housing', 'economic', 'social', 'decennial'
+   * @params{string} surveyName - The survey type; expected to be one of 'acs' or 'decennial'
    * @params{Boolean} isAggregate - True if the given data selection is comprised of multiple geoids; else false
    * @params{Boolean} isPrevious - True if the given data selection is for the older dataset year
    */
-  constructor(data, profileName, isAggregate = false, isPrevious = false) {
+  constructor(data, surveyName, isAggregate = false, isPrevious = false) {
     this.data = data;
-    this.profileName = profileName;
+    this.surveyName = surveyName;
     this.isAggregate = isAggregate;
     this.isPrevious = isPrevious;
   }
@@ -39,14 +39,14 @@ class DataProcessor {
    * @returns{Object[]}
    */
   process() {
-    const profileConfig = specialCalculationConfigs[this.profileName];
+    const surveyConfig = specialCalculationConfigs[this.surveyName];
 
     this.data.forEach((row) => {
-      const rowConfig = find(profileConfig, ['variable', row.variable]);
+      const rowConfig = find(surveyConfig, ['variable', row.variable]);
       if (rowConfig) {
         removePercents(row);
         // Only recalculate values for aggregate datasets, and only for special variables that require it
-        if (this.isAggregate && rowConfig.specialType !== 'removePercentsOnly') {
+        if (rowConfig.specialType !== 'removePercentsOnly') {
           this.recalculateSpecialVariables(row, rowConfig);
         }
       }
@@ -69,8 +69,8 @@ class DataProcessor {
       // row.codingThreshold will be set if in recalculating the sum the estimate was top- or bottom-coded
       const wasCoded = !!row.codingThreshold;
 
-      // decennial profiles do not have MOE values or CV values
-      if (this.profileName !== 'decennial') {
+      // decennial survey results do not have MOE values or CV values
+      if (this.surveyName !== 'decennial') {
         this.recalculateM(row, year, config, wasCoded);
         this.recalculateCV(row, config, wasCoded);
         this.recalculateIsReliable(row, wasCoded);
@@ -88,19 +88,17 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    */
   recalculateSum(row, year, config) {
-    let sum;
-
-    if (config.specialType === 'median') {
-      const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
-      sum = trimmedEstimate;
-      row.codingThreshold = codingThreshold;
-    } else {
-      const formulaName = getFormulaName(config.options, 'sum');
-      sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+    if (this.isAggregate) {
+      if (config.specialType === 'median') {
+        const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
+        row.sum = trimmedEstimate;
+        row.codingThreshold = codingThreshold;
+      } else {
+        const formulaName = getFormulaName(config.options, 'sum');
+        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
     }
-
-    sum = this.applyTransform(sum, config.options.transform, !!row.codingThreshold);
-    row.sum = sum;
+    row.sum = this.applyTransform(row.sum, config.options.transform, !!row.codingThreshold);
   }
 
   /*
@@ -113,21 +111,19 @@ class DataProcessor {
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
   recalculateM(row, year, config, wasCoded) {
-    let m;
-
     // MOE should not be calculated for top- or bottom-coded values
-    if (wasCoded) {
-      m = null;
-    } else if (config.specialType === 'median') {
-      m = calculateMedianError(this.data, row.variable, year, config.options);
-    } else {
-      const formulaName = getFormulaName(config.options, 'm');
-      m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+    if (this.isAggregate) {
+      if (wasCoded) {
+        row.m = null;
+      } else if (config.specialType === 'median') {
+        row.m = calculateMedianError(this.data, row.variable, year, config.options);
+      } else {
+        const formulaName = getFormulaName(config.options, 'm');
+        row.m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
     }
 
-    m = this.applyTransform(m, config.options.transform);
-
-    row.m = m;
+    row.m = this.applyTransform(row.m, config.options.transform);
   }
 
   /*

@@ -35,7 +35,7 @@ function executeWithValues(formulaName, args) {
 
 /*
  * Executes a given formula, in the context of provided variable + data argument, with optional formula arguments
- * @param{Array} data - The full profile dataset, as an array of object representing rows
+ * @param{Array} data - The full survey dataset, as an array of object representing rows
  * @param{string} variable - The name of the variable for which values are being calculated
  * @param{string} formulaName - A string representing the name of the formula to execute
  * @param{Array} [args] - Arguments to pass to the given formula

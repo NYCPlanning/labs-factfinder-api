@@ -20,7 +20,7 @@ const cdta = (string) => {
           END
         || countyfips as fips,
         boroname || ' '
-      FROM nycdta2020
+      FROM pff_2020_cdtas_21c
     ) x
     WHERE
       cdta2020 LIKE '%25${string}%25'
