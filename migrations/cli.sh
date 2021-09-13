@@ -11,6 +11,10 @@ function support_geoids {
     curl $fileurl | psql $DATABASE_URL -f migrations/support_geoids.sql
 }
 
+function selection {
+    psql $DATABASE_URL -f migrations/selection.sql
+}
+
 case $1 in 
     etl ) 
         shift; 
@@ -25,6 +29,11 @@ case $1 in
         bash migrations/metadata.sh $@
     ;;
     * )
+    selection )
+        shift;
+        selection
+    ;;
+    * ) 
         echo
         echo "$1 command not found"
         echo "e.g. ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
