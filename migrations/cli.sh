@@ -20,7 +20,12 @@ case $1 in
         shift;
         support_geoids $1
     ;;
-    * ) 
+    metadata) 
+        shift;
+        echo $@
+        bash migrations/metadata.sh $@
+    ;;
+    * )
         echo
         echo "$1 command not found"
         echo "e.g. ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"

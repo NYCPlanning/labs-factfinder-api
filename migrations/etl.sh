@@ -39,8 +39,8 @@ if [[ $download -eq 1 ]]; then
 fi
 
 if [[ $load -eq 1 ]]; then 
-    # cat $filepath | psql $DATABASE_URL -v TABLE_NAME="$year" -f migrations/$datasource.sql
-    metadata_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/193-adding-category/factfinder/data/$datasource/$year/metadata.json"
+    cat $filepath | psql $DATABASE_URL -v TABLE_NAME="$year" -f migrations/$datasource.sql
+    metadata_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/dev/factfinder/data/$datasource/$year/metadata.json"
     psql $DATABASE_URL -v CONTENT="$(curl -s $metadata_url)" -v TABLE_NAME="$year" -f migrations/acs_metadata.sql
 fi
 
