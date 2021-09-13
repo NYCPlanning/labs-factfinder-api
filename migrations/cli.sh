@@ -11,10 +11,6 @@ function support_geoids {
     curl $fileurl | psql $DATABASE_URL -f migrations/support_geoids.sql
 }
 
-function selection {
-    psql $DATABASE_URL -f migrations/selection.sql
-}
-
 case $1 in 
     etl ) 
         shift; 
@@ -25,8 +21,7 @@ case $1 in
         support_geoids $1
     ;;
     selection )
-        shift;
-        selection $1
+        psql $DATABASE_URL -f migrations/selection.sql
     ;;
     * ) 
         echo
