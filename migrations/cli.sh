@@ -24,8 +24,11 @@ case $1 in
         shift;
         support_geoids $1
     ;;
-    selection )
+    metadata ) 
         shift;
+        bash migrations/metadata.sh $@
+    ;;
+    selection )
         selection
     ;;
     * ) 

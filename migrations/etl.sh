@@ -34,7 +34,7 @@ if [[ $download -eq 1 ]]; then
     )
     mkdir -p $filedir && (
         cd $filedir
-        curl -O $fileurl
+        curl -s -O $fileurl
     )
 fi
 
