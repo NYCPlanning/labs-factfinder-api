@@ -63,6 +63,11 @@ function executeWithData(data, variable, formulaName, args = []) {
 
   const { result, error } = parser.parse(formulaStr);
   if (error) {
+    // If this matches, it's a divide by zero error, which the world's greatest minds could not figure out how to fix in the cv formula
+    if((error==="#VALUE!") && (`${formulaName}`==="cv")) {
+      return 0;
+    }
+
     console.log(`${formulaStr}`);
     throw new Error(`${error}: ${formulaName}`);
   }
