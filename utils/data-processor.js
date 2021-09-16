@@ -133,9 +133,11 @@ class DataProcessor {
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
   recalculateCV(row, config, wasCoded) {
-    // CV should not be computed for top- or bottom-coded values
-    const formulaName = getFormulaName(config.options, 'cv');
-    row.cv = wasCoded ? null : executeFormula(this.data, row.variable, formulaName, config.options.CVArgs);
+    if (this.isAggregate) {
+      // CV should not be computed for top- or bottom-coded values
+      const formulaName = getFormulaName(config.options, 'cv');
+      row.cv = wasCoded ? null : executeFormula(this.data, row.variable, formulaName, config.options.CVArgs);
+    } 
   }
 
   /*
