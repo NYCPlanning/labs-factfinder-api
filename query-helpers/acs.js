@@ -150,7 +150,7 @@ const acsProfileSQL = (ids, isPrevious = false) => `
     ORDER BY variable, base, category
   ) AS variables
   LEFT JOIN base
-  ON variables.base = base.base
+  ON LOWER(variables.base) = LOWER(base.base)
 `;
 
 module.exports = acsProfileSQL;
