@@ -40,7 +40,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
     sum(value) as base_sum,
     relation as base
     FROM enriched_profile
-    WHERE relation = variable
+    WHERE LOWER(relation) = LOWER(variable)
     GROUP BY relation
   )
 
@@ -83,7 +83,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
     GROUP BY variable, variablename, base, category
   ) decennial
   LEFT JOIN base
-  ON decennial.base = base.base
+  ON LOWER(decennial.base) = LOWER(base.base)
 `;
 
 module.exports = decennialProfileSQL;
