@@ -1,4 +1,5 @@
 const {
+  DECENNIAL_METADATA_FULL_PATH,
   DECENNIAL_LATEST_TABLE_FULL_PATH,
   DECENNIAL_EARLIEST_TABLE_FULL_PATH,
 } = require('../special-calculations/data/constants');
@@ -18,14 +19,14 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_profile: decennial data joined with meta data
-   * from decennial_dictionary, filtered for given year
+   * from decennial.metadata, filtered for given year
    * and geoids
    */
   enriched_profile AS (
     SELECT *
     FROM ${isPrevious ? DECENNIAL_EARLIEST_TABLE_FULL_PATH : DECENNIAL_LATEST_TABLE_FULL_PATH} d
-    INNER JOIN decennial_dictionary dd
-    ON LOWER(dd.variablename) = LOWER(d.variable)
+    INNER JOIN ${DECENNIAL_METADATA_FULL_PATH} metadata
+    ON LOWER(metadata.variablename) = LOWER(d.variable)
     WHERE d.geoid ${formatGeoidWhereClause(ids)}
   ),
 
