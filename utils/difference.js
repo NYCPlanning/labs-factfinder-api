@@ -44,15 +44,14 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
     hasValidInputs = allExist(sum, comparison_sum, m, comparison_m);
   }
 
-  const shouldNullify = !hasValidInputs
-    || row.codingThreshold // TODO: why is this here?
-    || row.comparison_codingThreshold; // TODO: why is this here?
+  const shouldNullify = (!hasValidInputs || !!row.codingThreshold || !!row.comparison_codingThreshold);
 
   if (shouldNullify) {
     nullDifferences(difference);
 
     return difference;
   }
+
   difference.sum = executeFormula('delta', [sum, comparison_sum]);
   // special handling for 'decennial' rows, which do not have MOE and are all considered 'significant'
   if (isDecennial) {
@@ -92,7 +91,7 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
   let hasValidInputs = null; 
 
   if (isDecennial) {
-    hasValidInputs =  allExist(percent, comparison_percent);
+    hasValidInputs = allExist(percent, comparison_percent);
   } else {
     hasValidInputs = allExist(percent, comparison_percent, percent_m, comparison_percent_m);
   }

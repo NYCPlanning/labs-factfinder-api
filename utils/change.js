@@ -50,15 +50,14 @@ function calculateChanges(row, previousRow, isDecennial) {
   }
 
 
-  const shouldNullify = !hasValidInputs
-    || codingThreshold // TODO: Why is this part of it?
-    || previous_codingThreshold; // TODO: What is this here for?
+  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previous_codingThreshold);
 
   if (shouldNullify) {
     nullChanges(change);
 
     return change; 
   }
+
   change.sum = executeFormula('delta', [sum, previous_sum]);
 
   if (!isDecennial) {
@@ -100,16 +99,14 @@ function calculateChangePercents(row, previousRow, rowConfig, isDecennial) {
     hasValidInputs = allExist(sum, previous_sum, m, previous_m);
   }
 
-  const shouldNullify = !hasValidInputs
-    || codingThreshold
-    || previous_codingThreshold
-    || (rowConfig && rowConfig.noChangePercents);
+  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previous_codingThreshold || (!!rowConfig && !!rowConfig.noChangePercents));
 
   if (shouldNullify) {
     nullChangePercents(change);
 
     return change; 
   }
+
   // previous_sum is used as divisor in change_pct formula and due to shortcoming of the formula parsing library,
   // divide-by-0 errors cannot be preemptively caught and avoided with IF statements, so it must happen here
   change.percent = (previous_sum === 0) ? 0 : executeFormula('change_pct', [sum, previous_sum]);
