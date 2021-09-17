@@ -1,4 +1,8 @@
-const { DECENNIAL_CUR_YEAR, DECENNIAL_PREV_YEAR } = require('../special-calculations/data/constants');
+const {
+  DECENNIAL_METADATA_FULL_PATH,
+  DECENNIAL_LATEST_TABLE_FULL_PATH,
+  DECENNIAL_EARLIEST_TABLE_FULL_PATH,
+} = require('../special-calculations/data/constants');
 
 /*
  * Returns the appropriate second half of the geoid WHERE clause
@@ -10,21 +14,20 @@ function formatGeoidWhereClause(ids) {
   return `= '${ids}'`;
 }
 
-/* NOTE: 'profile' is a noop param, to make invocation from route cleaner */
-const decennialProfileSQL = (profile, ids, isPrevious = false) => `
+/* NOTE: 'survey' is a noop param, to make invocation from route cleaner */
+const decennialProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_profile: decennial data joined with meta data
-   * from decennial_dictionary, filtered for given year
+   * from decennial.metadata, filtered for given year
    * and geoids
    */
   enriched_profile AS (
     SELECT *
-    FROM decennial d
-    INNER JOIN decennial_dictionary dd
-    ON dd.variablename = d.variable
+    FROM ${isPrevious ? DECENNIAL_EARLIEST_TABLE_FULL_PATH : DECENNIAL_LATEST_TABLE_FULL_PATH} d
+    INNER JOIN ${DECENNIAL_METADATA_FULL_PATH} metadata
+    ON LOWER(metadata.variablename) = LOWER(d.variable)
     WHERE d.geoid ${formatGeoidWhereClause(ids)}
-    AND d.year = '${isPrevious ? DECENNIAL_PREV_YEAR : DECENNIAL_CUR_YEAR}'
   ),
 
   /*
@@ -37,7 +40,7 @@ const decennialProfileSQL = (profile, ids, isPrevious = false) => `
     sum(value) as base_sum,
     relation as base
     FROM enriched_profile
-    WHERE relation = variable
+    WHERE LOWER(relation) = LOWER(variable)
     GROUP BY relation
   )
 
@@ -74,13 +77,13 @@ const decennialProfileSQL = (profile, ids, isPrevious = false) => `
         LOWER(category),
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
-      --- profile ---
-      'decennial' AS profile
+      --- survey ---
+      'decennial' AS survey
     FROM enriched_profile
     GROUP BY variable, variablename, base, category
   ) decennial
   LEFT JOIN base
-  ON decennial.base = base.base
+  ON LOWER(decennial.base) = LOWER(base.base)
 `;
 
 module.exports = decennialProfileSQL;

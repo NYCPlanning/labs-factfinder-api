@@ -5,9 +5,9 @@ const district = (string) => {
     SELECT * FROM (
       SELECT
         the_geom,
-        borocd AS geolabel,
+        CAST(borocd AS varchar) AS geolabel,
         borocd AS geoid
-      FROM nycd2020
+      FROM pff_2020_community_districts_21c
     ) x
     WHERE
       geolabel LIKE '%25${string}%25'

@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop)
 
-# Factfinder API
-An express.js api that provides search and selection data for [NYC Population Factfinder](https://github.com/NYCPlanning/labs-nyc-factfinder).
+# FactFinder API
+An express.js api that provides search and selection data for [NYC Population FactFinder](https://github.com/NYCPlanning/labs-nyc-factfinder).
 
 ## Requirements
 
@@ -25,7 +25,7 @@ You will need the following things properly installed on your computer.
 
 There are three core set of tables that support the Factfinder API:
 
-1. Profile tables - The set of tables that hold ACS and Census data by geography and variable.
+1. Survey tables - The set of tables that hold ACS and Census data by geography and variable.
 2. Selection table - Holds user-defined selection of geographies. See the section Selection geotype Factfinder IDs
 3. Support Geoids table - Holds a mapping of geoid to human-readable label for the geography.
 
@@ -36,42 +36,52 @@ There are three core set of tables that support the Factfinder API:
 
 `/selection` sets and gets collections of census geometries.  Uses mongodb to store an array of geoids that the user selected.
 
-`/profile` returns census/acs data for a given profile type and geographic selection.  Queries postgresql using pg-promise.
+`/survey` returns decennial/acs data for a given survey type and geographic selection.  Queries postgresql using pg-promise.
 
 ### Caching
 The dokku plugin `nginx-cache` via [https://github.com/koalalorenzo/dokku-nginx-cache](https://github.com/koalalorenzo/dokku-nginx-cache) is enabled for this app, but nginx won't cache if expressjs is not returning a cache-control header.
 
-The `profile` routes contain simple middleware that adds `Cache-control` headers to responses with `max-age=2592000` (30 days).
+The `survey` routes contain simple middleware that adds `Cache-control` headers to responses with `max-age=2592000` (30 days).
 
 ### Routes
 
 - `/search` - gets results that match a string passed in as query parameter `q`.  Returns various search result types:
   - `geosearch` - autocomplete API results
   - `nta` - neighborhoods that match the input query
-  - `puma` - pumas that match the input query
   - `tract` - tracts that match the input query
   - `block` - census blocks that match the input query
+  - `borough` -
+  - `cdta` - 
+  - `cd` - community districts
 
 - `/selection`
   - `POST /selection`
     - Request payload should be an object with the following properties:
-      - `geoids` - an array of geoids
-      - `type` - one of 'blocks', 'tracts', 'ntas', 'pumas'
-    - Checks if this combination of geoids already exists in the database.  If so, returns the [Factfinder ID*](#factfinder-id) (specifically a [Selection ID*](#factfinder-id-selection-id)) of the selection.  If not, it adds it to the database and returns the Factfinder ID*
-  - `GET /selection/:factfinder_id`
+      - `:geotype` - (Required) See [geotype section](#geotype) for possible values
+      - `:geoid`  - (Required) See [geoids](#geoid)
+    - Checks if the incoming combination of geoids already exists in the database.  If so, returns the hash ID of the selection.  If not, it adds it to the database and returns the hash ID.
+  - `GET /selection/:geotype/:geoid`
+    Retrieves geography data for the given geoid and geotype combination
     - **Request:**
-      - `:factfinder_id` See the [Factfinder ID*](#factfinder-id) section below for details.
+      - `:geotype` - (Required) See [geotype section](#geotype) for possible values
+      - `:geoid`  - (Required) See [geoids](#geoid)
     - **Response:** an object with the following properties:
       - `status` - 'success' if found, 'not found' if not found
-      - `id` - the [Factfinder ID*](#factfinder-id) of the selection
+      - `id` - the  of the selection
       - `type` - geoid type of the selection, one of 'blocks', 'tracts', 'ntas', 'pumas'
       - `features` - a geojson FeatureCollection containing a Feature for each selected geometry
 
-  - `/profile`
-    - `GET /profile/:factfinder_id`
+  - `/survey`
+    - `GET /survey/:survey/:geotype/:geoid?compareTo={:compareTo}`
+    Retrieves survey data for the given geoid, geotype, and compareTo combination.
       - **Request:**
-          - `:factfinder_id` See the [Factfinder ID*](#factfinder-id) section below for details.
-      - **Response:** An array of objects each representing the data for a different profile variable, for the user's selected geometry. Example:
+        - `:survey` - (Required) Either `acs` or `decennial`.
+        - `:geotype` - (Required) See [geotype section](#geotype) for possible values
+        - `:geoid`  - (Required) See [geoids](#geoid)
+        - `?compareTo` - (Essential) The geoid of the geography to compare against.
+        Although this is a queryParam, this is actually crucial for this endpoint. Not an ideal architecture, probably. If not passed, it will default to NYC. But better to pass in an intended geoid.
+        The endpoint will retrieve survey data for the comparison geography specified by this parameter.
+      - **Response:** An array of objects each representing the data for a different survey variable, for the user's selected geometry. Each object contains the variable data for current year, previous year and change over time. For each year, it further slices data by selection (geoid), the comparison, and the difference between selection and comparison. "Slicing" is done prefixes. Example:
 
       ```
         [
@@ -85,7 +95,7 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
             "variablename": "AIANNH",
             "base": "Pop_2",
             "category": "mutually_exclusive_race_hispanic_origin",
-            "profile": "demographic",
+            "survey": "acs",
             "previous_sum": 0,
             "previous_m": 0,
             ...
@@ -104,36 +114,36 @@ The `profile` routes contain simple middleware that adds `Cache-control` headers
         ]
       ```
 
-<a name="factfinder-id"></a>
-### *Factfinder ID
-  - A Factfinder ID takes this format:
+<a name="geoid"></a>
+### *Geoids
+A `geoid` in the context of endpoint parameters (see above section) can either be a [Selection table id](#selection) (i.e. of geotype `selection`), or an id that maps to the `geoid` column in the Survey tables (e.g. of geotype `ntas`, `boroughs`, `cdtas`, etc).
 
-  ```
-    <geotype abbreviation>_<geoid>
-  ```
+<a name="geotype"></a>
+### Geotypes
 
-  The geotype abbreviation allows the API to infer the `geotype` value associated with the geoid.
+The Frontend and this API has its own programmatic abstraction for the `geotype` variable, different from that in the Postgres database. Primarily, `geotype` in this application can also take on the value of "selection", alongside other geotypes like "ntas", "boroughs", etc. The "selection" value helps indicate to the API whether to look in the Selection Postgres Database table for aggregate geographies.
 
-  For example, given the Factfinder ID `CDTA_BK05`, the API can determine that the geoid `BK05` is the geoid for a Community Districta Tabulation Area (CDTA) geographical area.
+See the table below for possible programmatic Geotype values, and a mapping of programmatic `geotype` values to Survey table values.
 
-  See the table below for valid `<geotype abbreviation>` values and the internal `geotype` values that they translate to.
+  **The programmatic column values are the acceptable arguments into the endpoints above.**
 
-| Abbrev      | Geotype (Programmatic)    | Geotype (Profile table) | Source (which profile tables) |
-| ----------- | ------------------------- | ----------------------- | ----------------------------- |
-| SID         | selection*                 | N/A                    | ACS, Census                   |
-| NTA         | ntas                      | NTA2020                 | ACS, Census                   |
-| TRACT       | tracts                    | CT2020                  | ACS, Census                   |
-| CDTA        | cdtas                     | CDTA2020                | ACS                           |
-| DIST        |                           | ???                     |      Census                   |
-| BLOCK       | blocks                    | CB2020                  |      Census                   |
-| BORO        | boroughs                  | Boro2020                | ACS, Census                   |
+| Geotype (Programmatic)    | Geotype (Survey table) | Source (which survey tables) |
+| ------------------------- | ----------------------- | ----------------------------- |
+| selection*                 | N/A                    | ACS, Census                   |
+| ntas                      | NTA2020                 | ACS, Census                   |
+| tracts                    | CT2020                  | ACS, Census                   |
+| cdtas                     | CDTA2020                | ACS                           |
+|                           | ???                     |      Census                   |
+| blocks                    | CB2020                  |      Census                   |
+| boroughs                  | Boro2020                | ACS, Census                   |
+| city                      | City2020                | ACS, Census                   |
 
-Each row within the profile tables have a unique geoid, geotype pair of values.
+Each row within the survey tables have a unique geoid, geotype pair of values.
 
-<a name="factfinder-id-selection-id"></a>
-#### Selection geotype Factfinder IDs
+<a name="selection"></a>
+#### Selections, Selection geotype and Selection hash Ids
 
-Factfinder IDs of type `selection` are IDs for a custom, user-defined geographical area held by the Selection table in the Factfinder stack. Each Selection ID points to one row in the Selection table. Each row holds an array of geoids for geographies of other geotypes (ntas, tracts, cdtas, etc)
+Geoids of geotype `selection` are ids for a custom, user-defined geographical area held by the Selection table in the Factfinder stack. Each Selection geoid points to one row in the Selection table. Each row holds an array of geoids of other geotypes (like ntas, tracts, cdtas, etc).
 
 ## Data Updates
 Backing data is managed by EDM team. This app sets up foreign data wrappers (FDW) which provide schema-level access to EDM's factfinder tables.

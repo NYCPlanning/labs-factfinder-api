@@ -1,10 +1,9 @@
 const express = require('express');
 const sha1 = require('sha1');
 const carto = require('../utils/carto');
-const getGeotypeFromIdPrefix = require('../utils/geotype-from-id-prefix');
 
-const Selection = require('../models/selection');
 const summaryLevels = require('../selection-helpers/summary-levels');
+const deserializeGeoid = require('../utils/deserialize-geoid');
 
 const router = express.Router();
 
@@ -19,132 +18,125 @@ const getFeatures = (type, geoids) => {
     .then(FC => FC.features);
 };
 
-function convertBoroughLabelToCode(potentialBoroughLabel) {
-  switch (potentialBoroughLabel) {
-    case 'NYC':
-        return '0';
-    case 'Manhattan':
-        return '1';
-    case 'Bronx':
-        return '2';
-    case 'Brooklyn':
-        return '3';
-    case 'Queens':
-        return '4';
-    case 'StatenIsland':
-        return '5';
-    default:
-      return potentialBoroughLabel;
-  }
-}
+router.get('/:geotype/:geoid', async (req, res) => {
+  const { app } = req;
+  let { geotype, geoid } = req.params;
 
-router.get('/:id', (req, res) => {
-  let { id: _id } = req.params;
-
-  let [ idPrefix, selectionId ] = _id.split('_');
-
-  const geotype = getGeotypeFromIdPrefix(idPrefix);
-
-  if (geotype === null) {
-    res.send({
-      status: `error: Invalid ID`,
-    });
-  }
-
-  if (geotype === 'boroughs') {
-    selectionId = convertBoroughLabelToCode(selectionId);
-  }
+  geoid = deserializeGeoid(res, geotype, geoid);
 
   if (geotype === 'selection') {
-    Selection.findOne({ _id: selectionId })
-      .then((match) => {
-        if (match) {
-          const { type, geoids } = match;
+    try {
+      const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
-          getFeatures(type, geoids)
-            .then((features) => {
-              res.send({
-                status: 'success',
-                id: _id,
-                type,
-                features,
-              });
-            })
-            .catch((err) => {
-              console.log('err', err); // eslint-disable-line
+      if (selection && selection.length > 0) {
+        const {
+          geotype: selectionGeotype,
+          geoids: selectionGeoids
+        } = selection[0];
+
+        getFeatures(selectionGeotype, selectionGeoids)
+          .then((features) => {
+            res.send({
+              status: 'success',
+              id: geoid,
+              type: selectionGeotype,
+              features,
             });
-        } else {
-          res.status(404).send({
-            status: 'not found',
+          })
+          .catch((err) => {
+            console.log('err', err); // eslint-disable-line
           });
-        }
+      } else {
+        res.status(404).send({
+          status: 'not found',
+        });
+      }
+    } catch (e) {
+      res.status(500).send({
+        status:  [`Failed to find selection for hash ${geoid}. ${e}`],
+      });
+    }
+  } else {
+    getFeatures(geotype, [ geoid ])
+      .then((features) => {
+        res.send({
+          status: 'success',
+          id: geoid,
+          type: geotype,
+          features,
+        });
       })
       .catch((err) => {
-        res.status(500).send({
-          status: `error: ${err}`,
-        });
+        console.log('err', err); // eslint-disable-line
       });
-    } else {
-      getFeatures(geotype, [ selectionId ])
-        .then((features) => {
-          res.send({
-            status: 'success',
-            id: _id,
-            type: geotype,
-            features,
-          });
-        })
-        .catch((err) => {
-          console.log('err', err); // eslint-disable-line
-        });
-    }
+  }
 });
 
 
-router.post('/', (req, res) => {
-  const { body } = req;
-  const { type, geoids } = body;
+router.post('/', async (req, res) => {
+  const { app, body } = req;
 
   body.geoids.sort();
 
+  const {
+    geotype,
+    geoids
+  } = body;
+
   const hash = sha1(JSON.stringify(body));
 
-  const selection = new Selection({
-    type,
-    geoids,
-    hash,
-  });
+  let selection = null;
 
   // lookup hash in db
-  Selection.findOne({ hash })
-    .then((match) => {
-      if (match) {
-        const { _id } = match;
-        res.send({
-          status: 'existing selection found',
-          id: `SID_${_id}`,
-        });
-      } else {
-        selection.save()
-          .then(({ _id }) => {
+  try {
+    selection = await app.db.query('SELECT * FROM selection WHERE hash = ${hash}', { hash });
+
+    if (selection && selection.length > 0) {
+      const { hash } = selection[0];
+
+      res.send({
+        status: 'existing selection found',
+        id: hash,
+      });
+    } else {
+      try {
+        await app.db.tx(t => t.none(
+          'INSERT INTO selection(geotype, geoids, hash) VALUES(${geotype}, ${geoids}, ${hash})',
+          { geotype, geoids, hash },
+        ));
+
+        try {
+          selection = await app.db.query('SELECT * FROM selection WHERE hash = ${hash}', { hash })
+
+          if (selection && selection.length > 0) {
+            const { hash } = selection[0];
+
             res.send({
-              status: 'new selection saved',
-              id: `SID_${_id}`,
+              status: 'New Selection saved',
+              id: hash,
               hash,
             });
-          })
-          .catch(((err) => {
+          } else {
             res.status(500).send({
-              status: `error: ${err}`,
+              status:  [`Failed to find newly inserted selection for new hash ${hash}. ${e}`],
             });
-          }));
+          }
+        } catch (e) {
+          res.status(500).send({
+            status:  [`Error finding newly inserted selection for new hash ${hash}: ${e}`],
+          });
+        }
+      } catch (e) { // on INSERT new Selection error
+        res.status(500).send({
+          status:  [`Error creating new selection for geoids ${geoids}: ${e}`],
+        });
       }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        status: `error: ${err}`,
-      });
+    }
+  } catch (e) {
+    res.status(500).send({
+      status:  [`Error checking for existing selection from geoids ${geoids}. ${e}`],
     });
+  }
 });
 
 module.exports = router;

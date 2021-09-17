@@ -9,7 +9,7 @@ const summaryLevels = {
       bctcb2020,
       geoid AS geoid,
       bctcb2020 as geolabel
-    FROM nycb2020_fixed
+    FROM pff_2020_census_blocks_21c
   `,
 
   tracts: (webmercator = true) => `
@@ -19,8 +19,9 @@ const summaryLevels = {
       ctlabel as geolabel,
       boroct2020,
       nta2020,
-      boroct2020 AS geoid
-    FROM nyct2020
+      boroct2020 AS geoid,
+      borocode::text
+    FROM pff_2020_census_tracts_21c
   `,
 
   cdtas: (webmercator = true) => `
@@ -32,15 +33,16 @@ const summaryLevels = {
       boroname,
       borocode::text,
       cdta2020 AS geoid
-    FROM nycdta2020
+    FROM pff_2020_cdtas_21c
   `,
 
   districts: (webmercator = true) => `
     SELECT
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       borocd as geolabel,
-      borocd AS geoid
-    FROM nycd2020
+      borocd AS geoid,
+      substring(CAST(borocd AS text), 0, 1) as borocode
+    FROM pff_2020_community_districts_21c
   `,
 
   boroughs: (webmercator = true) => `
@@ -48,7 +50,7 @@ const summaryLevels = {
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       boroname as geolabel,
       borocode AS geoid
-    FROM nybb2020
+    FROM pff_2020_boroughs_21c
   `,
 
   cities: (webmercator = true) => `
@@ -56,7 +58,7 @@ const summaryLevels = {
       ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
       city as geolabel,
       city AS geoid
-    FROM nycity2020
+    FROM pff_2020_city_21c
   `,
 
   ntas: (webmercator = true) => `
@@ -65,18 +67,11 @@ const summaryLevels = {
       ntaname,
       nta2020,
       nta2020 as geolabel,
-      nta2020 AS geoid
-    FROM nynta2020
+      nta2020 AS geoid,
+      borocode::text
+    FROM pff_2020_ntas_21c
     WHERE ntaname NOT ILIKE 'park-cemetery-etc%25'
       AND ntaname != 'Airport'
-  `,
-
-  pumas: (webmercator = true) => `
-    SELECT
-      ${webmercator ? 'the_geom_webmercator' : 'the_geom'},
-      puma AS geolabel,
-      puma AS geoid
-    FROM nyc_puma
   `,
 };
 
