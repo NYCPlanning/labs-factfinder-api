@@ -41,17 +41,23 @@ function calculateChanges(row, previousRow, isDecennial) {
   const { sum, m, codingThreshold } = row;
   const { sum: previous_sum, m: previous_m, codingThreshold: previous_codingThreshold } = previousRow;
 
-  const hasValidInputs = allExist(sum, previous_sum, m, previous_m);
-  const shouldNullify = (!hasValidInputs
-    || codingThreshold // TODO: Why is this part of it?
-    || previous_codingThreshold // TODO: What is this here for?
-  ) && !isDecennial;
+  let hasValidInputs = null;
+
+  if (isDecennial) {
+    hasValidInputs = allExist(sum, previous_sum);
+  } else {
+    hasValidInputs = allExist(sum, previous_sum, m, previous_m);
+  }
+
+
+  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previous_codingThreshold);
 
   if (shouldNullify) {
     nullChanges(change);
 
     return change; 
   }
+
   change.sum = executeFormula('delta', [sum, previous_sum]);
 
   if (!isDecennial) {
@@ -85,18 +91,22 @@ function calculateChangePercents(row, previousRow, rowConfig, isDecennial) {
   const { sum, m, codingThreshold } = row;
   const { sum: previous_sum, m: previous_m, codingThreshold: previous_codingThreshold } = previousRow;
 
-  const hasValidInputs = allExist(sum, previous_sum, m, previous_m);
-  const shouldNullify = (!hasValidInputs
-    || codingThreshold
-    || previous_codingThreshold
-    || (rowConfig && rowConfig.noChangePercents)
-  ) && !isDecennial;
+  let hasValidInputs = null;
+
+  if (isDecennial) {
+    hasValidInputs = allExist(sum, previous_sum);
+  } else {
+    hasValidInputs = allExist(sum, previous_sum, m, previous_m);
+  }
+
+  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previous_codingThreshold || (!!rowConfig && !!rowConfig.noChangePercents));
 
   if (shouldNullify) {
     nullChangePercents(change);
 
     return change; 
   }
+
   // previous_sum is used as divisor in change_pct formula and due to shortcoming of the formula parsing library,
   // divide-by-0 errors cannot be preemptively caught and avoided with IF statements, so it must happen here
   change.percent = (previous_sum === 0) ? 0 : executeFormula('change_pct', [sum, previous_sum]);
@@ -146,13 +156,20 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
   } = previousRow;
 
   const isSpecialCalculation = !!rowConfig;
-  const hasValidInputs = allExist(percent, previous_percent, percent_m, previous_percent_m);
+  
+  let hasValidInputs = null;
+
+  if (isDecennial) {
+    hasValidInputs = allExist(percent, previous_percent);
+  } else {
+    hasValidInputs = allExist(percent, previous_percent, percent_m, previous_percent_m);
+  }
+
   const shouldNullify = (
-    (!hasValidInputs
+    !hasValidInputs
       || codingThreshold
       || previous_codingThreshold
       || (sum === 0 && previous_sum === 0)
-    ) && !isDecennial
   ) || isSpecialCalculation;
 
   if (shouldNullify) {
