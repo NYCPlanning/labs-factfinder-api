@@ -36,11 +36,17 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
 
   const { sum, m } = row;
   const { sum: comparison_sum, m: comparison_m } = comparisonRow;
-  const hasValidInputs = allExist(sum, comparison_sum, m, comparison_m)
-  const shouldNullify = (!hasValidInputs
+  let hasValidInputs = null; 
+
+  if (isDecennial) {
+    hasValidInputs =  allExist(sum, comparison_sum);
+  } else {
+    hasValidInputs = allExist(sum, comparison_sum, m, comparison_m);
+  }
+
+  const shouldNullify = !hasValidInputs
     || row.codingThreshold // TODO: why is this here?
-    || row.comparison_codingThreshold // TODO: why is this here?
-  ) && !isDecennial;
+    || row.comparison_codingThreshold; // TODO: why is this here?
 
   if (shouldNullify) {
     nullDifferences(difference);
@@ -83,8 +89,15 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
   const { percent, percent_m } = row;
   const { percent: comparison_percent, percent_m: comparison_percent_m } = comparisonRow;
 
-  const hasValidInputs = allExist(percent, comparison_percent, percent_m, comparison_percent_m);
-  const shouldNullify = !hasValidInputs && !isDecennial;
+  let hasValidInputs = null; 
+
+  if (isDecennial) {
+    hasValidInputs =  allExist(percent, comparison_percent);
+  } else {
+    hasValidInputs = allExist(percent, comparison_percent, percent_m, comparison_percent_m);
+  }
+
+  const shouldNullify = !hasValidInputs;
 
   if (shouldNullify) {
     nullDifferencePercents(difference);
