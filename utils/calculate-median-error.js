@@ -8,7 +8,7 @@ const { DESIGN_FACTOR } = require('../special-calculations/data/constants');
 
 /*
  * Calculates a margin of error for a median from a set of median values for ranges of the same data point
- * @param{Array} data - The full profile dataset, as an array of objects representing rows
+ * @param{Array} data - The full survey dataset, as an array of objects representing rows
  * @param{string} variable - The name of the variable for which values are being calculated
  * @param{string} year - The year of the given dataset
  * @param{Object} options - An object containing variable-specific configuration for the calculation, specifically design factor

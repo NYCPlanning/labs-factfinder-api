@@ -21,14 +21,14 @@ function isAggregate(ids) {
   return ids.length > 1;
 }
 
-const acsProfileSQL = (ids, isPrevious = false) => `
+const acsSQL = (ids, isPrevious = false) => `
   WITH
   /*
-   * enriched_profile: survey data joined with meta data
+   * enriched_survey_result: survey data joined with meta data
    * from factfinder_metadata, filtered for given year
    * and geoids
    */
-  enriched_profile AS (
+  enriched_survey_result AS (
     SELECT *,
 
     /*
@@ -50,7 +50,7 @@ const acsProfileSQL = (ids, isPrevious = false) => `
   ),
 
   /*
-   * base: an aggregation of enriched_profile that sums the
+   * base: an aggregation of enriched_survey_result that sums the
    * value of all base variables for the given selection
    */
   base AS (
@@ -59,7 +59,7 @@ const acsProfileSQL = (ids, isPrevious = false) => `
       SUM(e) as base_sum,
       SQRT(SUM(POWER(m, 2))) AS base_m,
       base
-      FROM enriched_profile
+      FROM enriched_survey_result
 
       /*
       * these need to be lowercased to make sure they're consistent.
@@ -145,7 +145,7 @@ const acsProfileSQL = (ids, isPrevious = false) => `
       ) AS domain,
       --- survey ---
       'acs' AS survey
-    FROM enriched_profile
+    FROM enriched_survey_result
     GROUP BY variable, variablename, base, category, domain
     ORDER BY variable, base, category
   ) AS variables
@@ -153,4 +153,4 @@ const acsProfileSQL = (ids, isPrevious = false) => `
   ON variables.base = base.base
 `;
 
-module.exports = acsProfileSQL;
+module.exports = acsSQL;
