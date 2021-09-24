@@ -15,14 +15,14 @@ function formatGeoidWhereClause(ids) {
 }
 
 /* NOTE: 'survey' is a noop param, to make invocation from route cleaner */
-const decennialProfileSQL = (ids, isPrevious = false) => `
+const decennialSQL = (ids, isPrevious = false) => `
   WITH
   /*
-   * enriched_profile: decennial data joined with meta data
-   * from decennial.metadata, filtered for given year
+   * enriched_survey_result: decennial data joined with meta data
+   * from decennial_dictionary, filtered for given year
    * and geoids
    */
-  enriched_profile AS (
+  enriched_survey_result AS (
     SELECT *
     FROM ${isPrevious ? DECENNIAL_EARLIEST_TABLE_FULL_PATH : DECENNIAL_LATEST_TABLE_FULL_PATH} d
     INNER JOIN ${DECENNIAL_METADATA_FULL_PATH} metadata
@@ -31,7 +31,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
   ),
 
   /*
-   * base: an aggregation of enriched_profile that sums the
+   * base: an aggregation of enriched_survey_result that sums the
    * value of all base variables for the given selection
    */
   base AS (
@@ -39,8 +39,8 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
     --- sum ---
     sum(value) as base_sum,
     relation as base
-    FROM enriched_profile
-    WHERE LOWER(relation) = LOWER(variable)
+    FROM enriched_survey_result
+    WHERE relation = variable
     GROUP BY relation
   )
 
@@ -48,7 +48,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
    * an aggregation of enriched selection, joined with base that sums
    * value for all rows for a given 'variable' in the selection, and
    * adds additional aggregate value percent.
-   * Columns: id, sum, variable, variablename, base, category, profile, percent
+   * Columns: id, sum, variable, variablename, base, category, percent, survey
    */
   SELECT decennial.*,
   --- percent ---
@@ -79,11 +79,11 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
       ) AS category,
       --- survey ---
       'decennial' AS survey
-    FROM enriched_profile
+    FROM enriched_survey_result
     GROUP BY variable, variablename, base, category
   ) decennial
   LEFT JOIN base
   ON LOWER(decennial.base) = LOWER(base.base)
 `;
 
-module.exports = decennialProfileSQL;
+module.exports = decennialSQL;

@@ -12,9 +12,9 @@ const {
 } = require('../special-calculations/data/constants');
 
 /*
- * The DataIngestor class is used to process raw profile data from postgres query.
- * Additionally for aggregate profiles, the processor recalculates special variables, configured
- * in 'special-calculations/[profile].js' (see special-calculations/index.js for more information).
+ * The DataIngestor class is used to process raw survey data from postgres query.
+ * Additionally for aggregate surveys, the processor recalculates special variables, configured
+ * in 'special-calculations/[survey].js' (see special-calculations/index.js for more information).
  * NOTE: data is stored as an instance variable to make it easily accessible to utilities that perform
  * calculations relying on values from other rows in the data object
  */
