@@ -18,11 +18,11 @@ function formatGeoidWhereClause(ids) {
 const decennialProfileSQL = (ids, isPrevious = false) => `
   WITH
   /*
-   * enriched_profile: decennial data joined with meta data
+   * enriched_survey_result: decennial data joined with meta data
    * from decennial.metadata, filtered for given year
    * and geoids
    */
-  enriched_profile AS (
+  enriched_survey_result AS (
     SELECT *
     FROM ${isPrevious ? DECENNIAL_EARLIEST_TABLE_FULL_PATH : DECENNIAL_LATEST_TABLE_FULL_PATH} d
     INNER JOIN ${DECENNIAL_METADATA_FULL_PATH} metadata
@@ -31,7 +31,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
   ),
 
   /*
-   * base: an aggregation of enriched_profile that sums the
+   * base: an aggregation of enriched_survey_result that sums the
    * value of all base variables for the given selection
    */
   base AS (
@@ -39,7 +39,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
     --- sum ---
     sum(value) as base_sum,
     relation as base
-    FROM enriched_profile
+    FROM enriched_survey_result
     WHERE LOWER(relation) = LOWER(variable)
     GROUP BY relation
   )
@@ -79,7 +79,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
       ) AS category,
       --- survey ---
       'decennial' AS survey
-    FROM enriched_profile
+    FROM enriched_survey_result
     GROUP BY variable, variablename, base, category
   ) decennial
   LEFT JOIN base
