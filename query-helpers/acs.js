@@ -2,7 +2,7 @@ const {
   CV_CONST,
   CUR_YEAR,
   PREV_YEAR,
-  ACS_METADATA_TABLE_NAME,
+  ACS_METADATA_FULL_PATH,
   ACS_LATEST_TABLE_FULL_PATH,
   ACS_EARLIEST_TABLE_FULL_PATH,
 } = require('../special-calculations/data/constants');
@@ -39,13 +39,13 @@ const acsSQL = (ids, isPrevious = false) => `
     '${isPrevious ? PREV_YEAR : CUR_YEAR}' AS dataset
 
     FROM ${isPrevious ? ACS_EARLIEST_TABLE_FULL_PATH : ACS_LATEST_TABLE_FULL_PATH} p
-    INNER JOIN ${ACS_METADATA_TABLE_NAME} ffm
+    INNER JOIN ${ACS_METADATA_FULL_PATH} metadata
 
       /*
       * these need to be lowercased to make sure they're consistent.
       * otherwise, they won't join.
       */
-      ON LOWER(ffm.variablename) = LOWER(p.variable)
+      ON LOWER(metadata.variablename) = LOWER(p.variable)
     WHERE p.geoid ${formatGeoidWhereClause(ids)}
   ),
 
@@ -150,7 +150,7 @@ const acsSQL = (ids, isPrevious = false) => `
     ORDER BY variable, base, category
   ) AS variables
   LEFT JOIN base
-  ON variables.base = base.base
+  ON LOWER(variables.base) = LOWER(base.base)
 `;
 
 module.exports = acsSQL;

@@ -1,4 +1,5 @@
 const {
+  DECENNIAL_METADATA_FULL_PATH,
   DECENNIAL_LATEST_TABLE_FULL_PATH,
   DECENNIAL_EARLIEST_TABLE_FULL_PATH,
 } = require('../special-calculations/data/constants');
@@ -24,8 +25,8 @@ const decennialSQL = (ids, isPrevious = false) => `
   enriched_survey_result AS (
     SELECT *
     FROM ${isPrevious ? DECENNIAL_EARLIEST_TABLE_FULL_PATH : DECENNIAL_LATEST_TABLE_FULL_PATH} d
-    INNER JOIN decennial_dictionary dd
-    ON LOWER(dd.variablename) = LOWER(d.variable)
+    INNER JOIN ${DECENNIAL_METADATA_FULL_PATH} metadata
+    ON LOWER(metadata.variablename) = LOWER(d.variable)
     WHERE d.geoid ${formatGeoidWhereClause(ids)}
   ),
 
@@ -82,7 +83,7 @@ const decennialSQL = (ids, isPrevious = false) => `
     GROUP BY variable, variablename, base, category
   ) decennial
   LEFT JOIN base
-  ON decennial.base = base.base
+  ON LOWER(decennial.base) = LOWER(base.base)
 `;
 
 module.exports = decennialSQL;
