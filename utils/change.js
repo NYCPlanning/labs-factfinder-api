@@ -28,8 +28,8 @@ function doChangeCalculations(row, previousRow, rowConfig, isDecennial) {
  */
 function calculateChanges(row, previousRow, isDecennial) {
   // explicitly set changes to null if:
-  // - any estimates are missing
-  // - either estimate or previous estimate was coded
+  // - any sums are missing
+  // - either sum or previous sum was coded
   const change = {};
 
   if (!row || !previousRow) {
@@ -38,32 +38,31 @@ function calculateChanges(row, previousRow, isDecennial) {
     return change;
   }
 
-  const { sum, m, codingThreshold } = row;
-  const { sum: previous_sum, m: previous_m, codingThreshold: previous_codingThreshold } = previousRow;
+  const { sum, marginOfError, codingThreshold } = row;
+  const { sum: previousSum, marginOfError: previousMarginOfError, codingThreshold: previousCodingThreshold } = previousRow;
 
   let hasValidInputs = null;
 
   if (isDecennial) {
-    hasValidInputs = allExist(sum, previous_sum);
+    hasValidInputs = allExist(sum, previousSum);
   } else {
-    hasValidInputs = allExist(sum, previous_sum, m, previous_m);
+    hasValidInputs = allExist(sum, previousSum, marginOfError, previousMarginOfError);
   }
 
 
-  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previous_codingThreshold);
+  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previousCodingThreshold);
 
   if (shouldNullify) {
     nullChanges(change);
 
     return change; 
   }
-
-  change.sum = executeFormula('delta', [sum, previous_sum]);
+  change.sum = executeFormula('delta', [sum, previousSum]);
 
   if (!isDecennial) {
-    change.m = executeFormula('delta_m', [m, previous_m]);
+    change.marginOfError = executeFormula('delta_m', [marginOfError, previousMarginOfError]);
 
-    if (change.sum !== 0) change.significant = executeFormula('significant', [change.sum, change.m]);
+    if (change.sum !== 0) change.significant = executeFormula('significant', [change.sum, change.marginOfError]);
   }
   return change;
 }
@@ -77,8 +76,8 @@ function calculateChanges(row, previousRow, isDecennial) {
  */
 function calculateChangePercents(row, previousRow, rowConfig, isDecennial) {
   // explicitly set change percents to null if:
-  // - any estimates are missing
-  // - either estimate or previous estimate was coded
+  // - any sums are missing
+  // - either sum or previous sum was coded
   // - row config.noChangePercents is true
   const change = {};
 
@@ -88,34 +87,33 @@ function calculateChangePercents(row, previousRow, rowConfig, isDecennial) {
     return change; 
   }
 
-  const { sum, m, codingThreshold } = row;
-  const { sum: previous_sum, m: previous_m, codingThreshold: previous_codingThreshold } = previousRow;
+  const { sum, marginOfError, codingThreshold } = row;
+  const { sum: previousSum, marginOfError: previousMarginOfError, codingThreshold: previousCodingThreshold } = previousRow;
 
   let hasValidInputs = null;
 
   if (isDecennial) {
-    hasValidInputs = allExist(sum, previous_sum);
+    hasValidInputs = allExist(sum, previousSum);
   } else {
-    hasValidInputs = allExist(sum, previous_sum, m, previous_m);
+    hasValidInputs = allExist(sum, previousSum, marginOfError, previousMarginOfError);
   }
 
-  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previous_codingThreshold || (!!rowConfig && !!rowConfig.noChangePercents));
+  const shouldNullify = (!hasValidInputs || !!codingThreshold || !!previousCodingThreshold || (!!rowConfig && !!rowConfig.noChangePercents));
 
   if (shouldNullify) {
     nullChangePercents(change);
 
-    return change; 
+    return change;
   }
 
-  // previous_sum is used as divisor in change_pct formula and due to shortcoming of the formula parsing library,
+  // previousSum is used as divisor in change_pct formula and due to shortcoming of the formula parsing library,
   // divide-by-0 errors cannot be preemptively caught and avoided with IF statements, so it must happen here
-  change.percent = (previous_sum === 0) ? 0 : executeFormula('change_pct', [sum, previous_sum]);
+  change.percent = (previousSum === 0) ? 0 : executeFormula('change_pct', [sum, previousSum]);
 
   if (!isDecennial) {
-    // change_percent_m is null if previous_sum = 0, and 0 if sum = 0 (Not totally clear on why...)
-    change.percent_m = (previous_sum === 0) ? null : (sum === 0) ? 0 : executeFormula('change_pct_m', [sum, previous_sum, m, previous_m]);
-
-    if (change.percent !== 0 && change.percent_m !== null) change.percent_significant = executeFormula('significant', [change.percent, change.percent_m]);
+    // change_percent_m is null if previousSum = 0, and 0 if sum = 0 (Not totally clear on why...)
+    change.percentMarginOfError = (previousSum === 0) ? null : (sum === 0) ? 0 : executeFormula('change_pct_m', [sum, previousSum, marginOfError, previousMarginOfError]);
+    if (change.percent !== 0 && change.percentMarginOfError !== null) change.percentSignificant = executeFormula('significant', [change.percent, change.percentMarginOfError]);
   }
   return change;
 }
@@ -129,9 +127,9 @@ function calculateChangePercents(row, previousRow, rowConfig, isDecennial) {
 */
 function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennial) {
   // explicitly set change percentage poinst to null if:
-  // - any percent estimates are missing
-  // - either estimate or previous estimate was coded
-  // - both estimate and previous estimate are 0
+  // - any percent sums are missing
+  // - either sum or previous sum was coded
+  // - both sum and previous sum are 0
   // - the given row is a special variables (indicated by existence of row config)
   const change = {};
 
@@ -143,16 +141,16 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
 
   const {
     percent,
-    percent_m,
+    percentMarginOfError,
     codingThreshold,
     sum,
   } = row;
 
   const {
-    percent: previous_percent,
-    m: previous_percent_m,
-    codingThreshold: previous_codingThreshold,
-    sum: previous_sum,
+    percent: previousPercent,
+    marginOfError: previousPercentMarginOfError,
+    codingThreshold: previousCodingThreshold,
+    sum: previousSum,
   } = previousRow;
 
   const isSpecialCalculation = !!rowConfig;
@@ -160,16 +158,16 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
   let hasValidInputs = null;
 
   if (isDecennial) {
-    hasValidInputs = allExist(percent, previous_percent);
+    hasValidInputs = allExist(percent, previousPercent);
   } else {
-    hasValidInputs = allExist(percent, previous_percent, percent_m, previous_percent_m);
+    hasValidInputs = allExist(percent, previousPercent, percentMarginOfError, previousPercentMarginOfError);
   }
 
   const shouldNullify = (
     !hasValidInputs
       || codingThreshold
-      || previous_codingThreshold
-      || (sum === 0 && previous_sum === 0)
+      || previousCodingThreshold
+      || (sum === 0 && previousSum === 0)
   ) || isSpecialCalculation;
 
   if (shouldNullify) {
@@ -177,12 +175,12 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
 
     return change;
   }
-  change.percentage_point = executeFormula('delta', [percent, previous_percent]);
+  change.percentagePoint = executeFormula('delta', [percent, previousPercent]);
 
   if (!isDecennial) {
-    change.percentage_point_m = executeFormula('delta_m', [percent_m, previous_percent_m]);
+    change.percentagePointMarginOfError = executeFormula('delta_m', [percentMarginOfError, previousPercentMarginOfError]);
 
-    if (change.percentage_point !== 0) change.percentage_point_significant = executeFormula('significant', [change.percentage_point, change.percentage_point_m]);
+    if (change.percentagePoint !== 0) change.percentagePointSignificant = executeFormula('significant', [change.percentagePoint, change.percentagePointMarginOfError]);
   }
   return change;
 }
@@ -193,7 +191,7 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
  */
 function nullChanges(row) {
   row.sum = null;
-  row.m = null;
+  row.marginOfError = null;
 }
 
 /*
@@ -202,7 +200,7 @@ function nullChanges(row) {
  */
 function nullChangePercents(row) {
   row.percent = null;
-  row.percent_m = null;
+  row.percentMarginOfError = null;
 }
 
 /*
@@ -210,8 +208,8 @@ function nullChangePercents(row) {
  * @param{Object} row - The row to update
  */
 function nullChangePercentagePoints(row) {
-  row.percentage_point = null;
-  row.percentage_point_m = null;
+  row.percentagePoint = null;
+  row.percentagePointMarginOfError = null;
 }
 
 /*

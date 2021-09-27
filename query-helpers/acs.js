@@ -56,7 +56,7 @@ const acsProfileSQL = (ids, isPrevious = false) => `
   base AS (
     SELECT
       --- sum ---
-      SUM(estimate) as base_estimate,
+      SUM(estimate) as base_sum,
       SQRT(SUM(POWER(margin_of_error, 2))) AS base_margin_of_error,
       base
       FROM enriched_survey_result
@@ -73,57 +73,57 @@ const acsProfileSQL = (ids, isPrevious = false) => `
    * An aggregation of enriched selection, joined with base. For true aggregate data selections,
    * e, m, c, percent and z (sum, m, cv, percent, percent_m, respectively) are recalculated.
    * For non-aggrenate data selections, the original values are selected using MAX as a noop aggregate function.
-   * is_reliable is calculated for all data selections.
+   * isReliable is calculated for all data selections.
    * Note: m is coalesced to 0 if the value does not exist in the data
    * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
-   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, is_reliable
+   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, isReliable
    */
   SELECT variables.*,
     --- percent (do not recalculate for non-aggregate selections)---
     CASE
       WHEN NOT ${isAggregate(ids)} THEN percent / 100
-      WHEN base_estimate = 0 THEN 0
-      WHEN base_estimate IS NULL THEN 0
-      ELSE estimate / base_estimate
+      WHEN base_sum = 0 THEN 0
+      WHEN base_sum IS NULL THEN 0
+      ELSE sum / base_sum
     END AS percent,
     --- percent_margin_of_error ---
     CASE
-      WHEN NOT ${isAggregate(ids)} THEN percentMarginOfError / 100
-      WHEN base_estimate = 0 THEN 0
-      WHEN base_estimate IS NULL THEN 0
-      WHEN POWER(marginOfError, 2) - POWER(estimate / base_estimate, 2) * POWER(base_margin_of_error, 2) < 0
-        THEN (1 / base_estimate) * SQRT(POWER(marginOfError, 2) + POWER(estimate / base_estimate, 2) * POWER(base_margin_of_error, 2))
-      ELSE (1 / base_estimate) * SQRT(POWER(marginOfError, 2) - POWER(estimate / base_estimate, 2) * POWER(base_margin_of_error, 2))
-    END AS percentMarginOfError,
+      WHEN NOT ${isAggregate(ids)} THEN "percentMarginOfError" / 100
+      WHEN base_sum = 0 THEN 0
+      WHEN base_sum IS NULL THEN 0
+      WHEN POWER("marginOfError", 2) - POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2) < 0
+        THEN (1 / base_sum) * SQRT(POWER("marginOfError", 2) + POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2))
+      ELSE (1 / base_sum) * SQRT(POWER("marginOfError", 2) - POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2))
+    END AS "percentMarginOfError",
     --- isReliable ---
     CASE
-      WHEN correlationCoefficient < 20 THEN true
+      WHEN "correlationCoefficient" < 20 THEN true
       ELSE false
-    END AS isReliable
+    END AS "isReliable"
   FROM (
     SELECT
       --- id ---
       ENCODE(CONVERT_TO(variable, 'UTF-8'), 'base64') AS id,
-      --- estimate ---
-      SUM(estimate) AS estimate,
+      --- sum ---
+      SUM(estimate) AS sum,
       --- margin_of_error (do not recalculate for non-aggregate selections)---
       --- coalesce null m to 0 ---
       CASE
         WHEN SUM(margin_of_error) IS NULL THEN 0
         WHEN NOT ${isAggregate(ids)} THEN MAX(margin_of_error)
         ELSE SQRT(SUM(POWER(margin_of_error, 2)))
-      END AS marginOfError,
+      END AS "marginOfError",
       --- correlation_coefficient (do not recalculate for non-aggregate selections)---
       CASE
         WHEN NOT ${isAggregate(ids)} THEN MAX(correlation_coefficient)
         ELSE (((SQRT(SUM(POWER(margin_of_error, 2))) / ${CORRELATION_COEFFICIENT_CONST}) / NULLIF(SUM(estimate), 0)) * 100)
-      END AS correlationCoefficient,
+      END AS "correlationCoefficient",
       --- percent (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)--
       --- coalesce null percent to 0 ---
       COALESCE(MAX(percent), 0) AS percent,
       --- percent_margin_of_error (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)---
       --- coalesce null percent_margin_of_error to 0 ---
-      COALESCE(MAX(percent_margin_of_error), 0) AS percentMarginOfError,
+      COALESCE(MAX(percent_margin_of_error), 0) AS "percentMarginOfError",
       --- variable ---
       REGEXP_REPLACE(
         LOWER(variable),
