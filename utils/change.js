@@ -148,7 +148,7 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
 
   const {
     percent: previousPercent,
-    marginOfError: previousPercentMarginOfError,
+    percentMarginOfError: previousPercentMarginOfError,
     codingThreshold: previousCodingThreshold,
     sum: previousSum,
   } = previousRow;
