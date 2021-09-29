@@ -89,7 +89,6 @@ async function getSurveyData(survey, geoids, compareTo, db) {
     db.query(queryBuilder(geoids, /* is previous */ true)),
     db.query(queryBuilder([compareTo], /* is previous */ true)),
   ]);
-  console.log({data: rawSurveyData[0]})
   // Instantiate DataProcessors to process query results
   const surveyData = new DataProcessor(rawSurveyData, survey, isAggregate).process();
   const compareSurveyData = new DataProcessor(rawCompareSurveyData, survey, /* isAggregate */ false).process();
