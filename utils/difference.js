@@ -8,11 +8,11 @@ const { executeWithValues: executeFormula } = require('./formula');
  */
 function doDifferenceCalculations(row, comparisonRow, isDecennial) {
   const difference = calculateDifferences(row, comparisonRow, isDecennial);
-  const difference_percent = calculateDifferencePercents(row, comparisonRow, isDecennial);
+  const differencePercent = calculateDifferencePercents(row, comparisonRow, isDecennial);
 
   return {
     ...difference,
-    ...difference_percent,
+    ...differencePercent,
   };
 }
 
@@ -34,17 +34,17 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
     return difference;
   }
 
-  const { sum, m } = row;
-  const { sum: comparison_sum, m: comparison_m } = comparisonRow;
+  const { sum, marginOfError } = row;
+  const { sum: comparisonSum, marginOfError: comparisonMarginOfError } = comparisonRow;
   let hasValidInputs = null; 
 
   if (isDecennial) {
-    hasValidInputs =  allExist(sum, comparison_sum);
+    hasValidInputs = allExist(sum, comparisonSum);
   } else {
-    hasValidInputs = allExist(sum, comparison_sum, m, comparison_m);
+    hasValidInputs = allExist(sum, comparisonSum, marginOfError, comparisonMarginOfError);
   }
 
-  const shouldNullify = (!hasValidInputs || !!row.codingThreshold || !!row.comparison_codingThreshold);
+  const shouldNullify = (!hasValidInputs || !!row.codingThreshold || !!row.comparisonCodingThreshold);
 
   if (shouldNullify) {
     nullDifferences(difference);
@@ -52,15 +52,15 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
     return difference;
   }
 
-  difference.sum = executeFormula('delta', [sum, comparison_sum]);
+  difference.sum = executeFormula('delta', [sum, comparisonSum]);
   // special handling for 'decennial' rows, which do not have MOE and are all considered 'significant'
   if (isDecennial) {
     difference.significant = true;
   } else {
-    difference.m = executeFormula('delta_m', [m, comparison_m]);
+    difference.m = executeFormula('delta_m', [marginOfError, comparisonMarginOfError]);
 
     // TODO rename difference_significant
-    if (difference.sum !== 0) difference.significant = executeFormula('significant', [difference.sum, difference.m]);
+    if (difference.sum !== 0) difference.significant = executeFormula('significant', [difference.sum, difference.marginOfError]);
   }
 
   return difference;
@@ -85,15 +85,15 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
     return difference;
   }
 
-  const { percent, percent_m } = row;
-  const { percent: comparison_percent, percent_m: comparison_percent_m } = comparisonRow;
+  const { percent, percentMarginOfError } = row;
+  const { percent: comparisonPercent, percentMarginOfError: comparisonPercentMarginOfError } = comparisonRow;
 
   let hasValidInputs = null; 
 
   if (isDecennial) {
-    hasValidInputs = allExist(percent, comparison_percent);
+    hasValidInputs = allExist(percent, comparisonPercent);
   } else {
-    hasValidInputs = allExist(percent, comparison_percent, percent_m, comparison_percent_m);
+    hasValidInputs = allExist(percent, comparisonPercent, percentMarginOfError, comparisonPercentMarginOfError);
   }
 
   const shouldNullify = !hasValidInputs;
@@ -103,13 +103,13 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
 
     return difference;
   }
-  difference.percent = executeFormula('delta_with_threshold', [percent * 100, comparison_percent * 100]);
+  difference.percent = executeFormula('delta_with_threshold', [percent * 100, comparisonPercent * 100]);
 
   if (!isDecennial) {
-    difference.percent_m = executeFormula('delta_m', [percent_m * 100, comparison_percent_m * 100]);
+    difference.percentMarginOfError = executeFormula('delta_m', [percentMarginOfError * 100, comparisonPercentMarginOfError * 100]);
 
     // TODO rename difference_percent_significant
-    if (difference.percent !== 0) difference.percent_significant = executeFormula('significant', [difference.percent, difference.percent_m]);
+    if (difference.percent !== 0) difference.percentSignificant = executeFormula('significant', [difference.percent, difference.percentMarginOfError]);
   }
   return difference;
 }
@@ -120,7 +120,7 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
  */
 function nullDifferences(row) {
   row.sum = null;
-  row.m = null;
+  row.marginOfError = null;
 }
 
 /*
@@ -129,7 +129,7 @@ function nullDifferences(row) {
  */
 function nullDifferencePercents(row) {
   row.percent = null;
-  row.percent_m = null;
+  row.percentMarginOfError = null;
 }
 
 /*

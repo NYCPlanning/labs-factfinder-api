@@ -19,7 +19,7 @@ const decennialSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_survey_result: decennial data joined with meta data
-   * from decennial_dictionary, filtered for given year
+   * from decennial.metadata, filtered for given year
    * and geoids
    */
   enriched_survey_result AS (
@@ -40,7 +40,7 @@ const decennialSQL = (ids, isPrevious = false) => `
     sum(value) as base_sum,
     relation as base
     FROM enriched_survey_result
-    WHERE relation = variable
+    WHERE LOWER(relation) = LOWER(variable)
     GROUP BY relation
   )
 

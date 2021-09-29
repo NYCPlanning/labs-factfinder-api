@@ -23,5 +23,10 @@ SELECT
     labs_geoid as geoid,
     pff_variable as variable,
     'Y'||(:TABLE_NAME-4)::TEXT||'-'||:'TABLE_NAME' as dataset,
-    domain, c, e, m, p, z
+    domain as profile,
+    c as correlation_coefficient,
+    e as estimate,
+    m as margin_of_error,
+    p as percent,
+    z as percent_margin_of_error
 INTO acs.:"TABLE_NAME" FROM tmp;

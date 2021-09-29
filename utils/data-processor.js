@@ -57,7 +57,7 @@ class DataProcessor {
 
   /*
    * For all special variables, recalculate estimte (called sum), and optionally
-   * margin of error (called m), cv, and is_reliable.
+   * margin of error (called m), cv, and isReliable.
    * @param{Object} row - The row to update
    * @param{Object} config - The special calculation configuration for the given row
    */
@@ -71,8 +71,8 @@ class DataProcessor {
 
       // decennial survey results do not have MOE values or CV values
       if (this.surveyName !== 'decennial') {
-        this.recalculateM(row, year, config, wasCoded);
-        this.recalculateCV(row, config, wasCoded);
+        this.recalculateMarginOfError(row, year, config, wasCoded);
+        this.recalculateCorrelationCoefficient(row, config, wasCoded);
         this.recalculateIsReliable(row, wasCoded);
       }
     } catch (e) {
@@ -110,16 +110,16 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
-  recalculateM(row, year, config, wasCoded) {
+  recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
     if (this.isAggregate) {
       if (wasCoded) {
-        row.m = null;
+        row.marginOfError = null;
       } else if (config.specialType === 'median') {
-        row.m = calculateMedianError(this.data, row.variable, year, config.options);
+        row.marginOfError = calculateMedianError(this.data, row.variable, year, config.options);
       } else {
         const formulaName = getFormulaName(config.options, 'm');
-        row.m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+        row.marginOfError = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
 
@@ -132,22 +132,22 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
-  recalculateCV(row, config, wasCoded) {
+  recalculateCorrelationCoefficient(row, config, wasCoded) {
     if (this.isAggregate) {
-      // CV should not be computed for top- or bottom-coded values
+      // Correlation coefficient should not be computed for top- or bottom-coded values
       const formulaName = getFormulaName(config.options, 'cv');
-      row.cv = wasCoded ? null : executeFormula(this.data, row.variable, formulaName, config.options.CVArgs);
-    } 
+      row.correlationCoefficient = wasCoded ? null : executeFormula(this.data, row.variable, formulaName, config.options.CVArgs);
+    }
   }
 
   /*
-   * Recalculates is_reliable for given row
+   * Recalculates isReliable for given row
    * @param{Row} row - The row to update
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
   recalculateIsReliable(row, wasCoded) {
     // top- or bottom-coded values are not reliable
-    row.is_reliable = wasCoded ? false : executeFormula(this.data, row.variable, 'is_reliable');
+    row.isReliable = wasCoded ? false : executeFormula(this.data, row.variable, 'isReliable');
   }
 
   /*

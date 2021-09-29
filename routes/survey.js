@@ -19,7 +19,8 @@ function prefixObj(row, prefix) {
   // table differ in length
   if (row && prefix) {
     Object.keys(row).forEach((key) => {
-      row[`${prefix}${key}`] = row[key];
+      const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
+      row[`${prefix}${capitalizedKey}`] = row[key];
       delete row[key];
     });
 
@@ -88,7 +89,6 @@ async function getSurveyData(survey, geoids, compareTo, db) {
     db.query(queryBuilder(geoids, /* is previous */ true)),
     db.query(queryBuilder([compareTo], /* is previous */ true)),
   ]);
-
   // Instantiate DataProcessors to process query results
   const surveyData = new DataProcessor(rawSurveyData, survey, isAggregate).process();
   const compareSurveyData = new DataProcessor(rawCompareSurveyData, survey, /* isAggregate */ false).process();
@@ -163,12 +163,12 @@ function join(current, compare, previous, previousCompare) {
       category,
       survey,
       ...removeMetadata(row),
-      ...prefixObj(removeMetadata(previousRow), 'previous_'),
-      ...prefixObj(removeMetadata(compareRow), 'comparison_'),
-      ...prefixObj(removeMetadata(previousCompareRow), 'previous_comparison_'),
-      ...prefixObj(difference, 'difference_'),
-      ...prefixObj(previousDifference, 'previous_difference_'),
-      ...prefixObj(changeOverTime, 'change_'),
+      ...prefixObj(removeMetadata(previousRow), 'previous'),
+      ...prefixObj(removeMetadata(compareRow), 'comparison'),
+      ...prefixObj(removeMetadata(previousCompareRow), 'previousComparison'),
+      ...prefixObj(difference, 'difference'),
+      ...prefixObj(previousDifference, 'previousDifference'),
+      ...prefixObj(changeOverTime, 'change'),
     });
   }
 
