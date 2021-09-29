@@ -15,7 +15,7 @@ function formatGeoidWhereClause(ids) {
 }
 
 /* NOTE: 'survey' is a noop param, to make invocation from route cleaner */
-const decennialProfileSQL = (ids, isPrevious = false) => `
+const decennialSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_survey_result: decennial data joined with meta data
@@ -48,7 +48,7 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
    * an aggregation of enriched selection, joined with base that sums
    * value for all rows for a given 'variable' in the selection, and
    * adds additional aggregate value percent.
-   * Columns: id, sum, variable, variablename, base, category, profile, percent
+   * Columns: id, sum, variable, variablename, base, category, percent, survey
    */
   SELECT decennial.*,
   --- percent ---
@@ -86,4 +86,4 @@ const decennialProfileSQL = (ids, isPrevious = false) => `
   ON LOWER(decennial.base) = LOWER(base.base)
 `;
 
-module.exports = decennialProfileSQL;
+module.exports = decennialSQL;

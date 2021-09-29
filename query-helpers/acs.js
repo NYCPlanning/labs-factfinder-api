@@ -21,7 +21,7 @@ function isAggregate(ids) {
   return ids.length > 1;
 }
 
-const acsProfileSQL = (ids, isPrevious = false) => `
+const acsSQL = (ids, isPrevious = false) => `
   WITH
   /*
    * enriched_survey_result: survey data joined with meta data
@@ -153,4 +153,4 @@ const acsProfileSQL = (ids, isPrevious = false) => `
   ON LOWER(variables.base) = LOWER(base.base)
 `;
 
-module.exports = acsProfileSQL;
+module.exports = acsSQL;
