@@ -57,7 +57,7 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
   if (isDecennial) {
     difference.significant = true;
   } else {
-    difference.m = executeFormula('delta_m', [marginOfError, comparisonMarginOfError]);
+    difference.marginOfError = executeFormula('delta_m', [marginOfError, comparisonMarginOfError]);
 
     // TODO rename difference_significant
     if (difference.sum !== 0) difference.significant = executeFormula('significant', [difference.sum, difference.marginOfError]);
