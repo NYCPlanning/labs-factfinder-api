@@ -24,7 +24,6 @@ BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder
 fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
 filepath=.migration/$datasource/year=$year/geography=$geography/$datasource.csv
 filedir=$(dirname $filepath)
-
 if [[ $download -eq 1 ]]; then 
     mkdir -p .migration && (
         cd .migration

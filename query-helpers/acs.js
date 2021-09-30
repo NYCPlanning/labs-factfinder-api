@@ -1,5 +1,5 @@
 const {
-  CV_CONST,
+  CORRELATION_COEFFICIENT_CONST,
   CUR_YEAR,
   PREV_YEAR,
   ACS_METADATA_FULL_PATH,
@@ -21,14 +21,14 @@ function isAggregate(ids) {
   return ids.length > 1;
 }
 
-const acsProfileSQL = (ids, isPrevious = false) => `
+const acsSQL = (ids, isPrevious = false) => `
   WITH
   /*
-   * enriched_profile: survey data joined with meta data
+   * enriched_survey_result: survey data joined with meta data
    * from acs.metadata, filtered for given year
    * and geoids
    */
-  enriched_profile AS (
+  enriched_survey_result AS (
     SELECT *,
 
     /*
@@ -50,16 +50,16 @@ const acsProfileSQL = (ids, isPrevious = false) => `
   ),
 
   /*
-   * base: an aggregation of enriched_profile that sums the
+   * base: an aggregation of enriched_survey_result that sums the
    * value of all base variables for the given selection
    */
   base AS (
     SELECT
       --- sum ---
-      SUM(e) as base_sum,
-      SQRT(SUM(POWER(m, 2))) AS base_m,
+      SUM(estimate) as base_sum,
+      SQRT(SUM(POWER(margin_of_error, 2))) AS base_margin_of_error,
       base
-      FROM enriched_profile
+      FROM enriched_survey_result
 
       /*
       * these need to be lowercased to make sure they're consistent.
@@ -71,12 +71,12 @@ const acsProfileSQL = (ids, isPrevious = false) => `
 
   /*
    * An aggregation of enriched selection, joined with base. For true aggregate data selections,
-   * e, m, c, p, and z (sum, m, cv, percent, percent_m, respectively) are recalculated.
+   * e, m, c, percent and z (sum, m, cv, percent, percent_m, respectively) are recalculated.
    * For non-aggrenate data selections, the original values are selected using MAX as a noop aggregate function.
-   * is_reliable is calculated for all data selections.
+   * isReliable is calculated for all data selections.
    * Note: m is coalesced to 0 if the value does not exist in the data
    * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
-   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, is_reliable
+   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, isReliable
    */
   SELECT variables.*,
     --- percent (do not recalculate for non-aggregate selections)---
@@ -86,51 +86,51 @@ const acsProfileSQL = (ids, isPrevious = false) => `
       WHEN base_sum IS NULL THEN 0
       ELSE sum / base_sum
     END AS percent,
-    --- percent_m ---
+    --- percent_margin_of_error ---
     CASE
-      WHEN NOT ${isAggregate(ids)} THEN percent_m / 100
+      WHEN NOT ${isAggregate(ids)} THEN "percentMarginOfError" / 100
       WHEN base_sum = 0 THEN 0
       WHEN base_sum IS NULL THEN 0
-      WHEN POWER(m, 2) - POWER(sum / base_sum, 2) * POWER(base_m, 2) < 0
-        THEN (1 / base_sum) * SQRT(POWER(m, 2) + POWER(sum / base_sum, 2) * POWER(base_m, 2))
-      ELSE (1 / base_sum) * SQRT(POWER(m, 2) - POWER(sum / base_sum, 2) * POWER(base_m, 2))
-    END AS percent_m,
-    --- is_reliable ---
+      WHEN POWER("marginOfError", 2) - POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2) < 0
+        THEN (1 / base_sum) * SQRT(POWER("marginOfError", 2) + POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2))
+      ELSE (1 / base_sum) * SQRT(POWER("marginOfError", 2) - POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2))
+    END AS "percentMarginOfError",
+    --- isReliable ---
     CASE
-      WHEN cv < 20 THEN true
+      WHEN "correlationCoefficient" < 20 THEN true
       ELSE false
-    END AS is_reliable
+    END AS "isReliable"
   FROM (
     SELECT
       --- id ---
       ENCODE(CONVERT_TO(variable, 'UTF-8'), 'base64') AS id,
       --- sum ---
-      SUM(e) AS sum,
-      --- m (do not recalculate for non-aggregate selections)---
+      SUM(estimate) AS sum,
+      --- margin_of_error (do not recalculate for non-aggregate selections)---
       --- coalesce null m to 0 ---
       CASE
-        WHEN SUM(m) IS NULL THEN 0
-        WHEN NOT ${isAggregate(ids)} THEN MAX(m)
-        ELSE SQRT(SUM(POWER(m, 2)))
-      END AS m,
-      --- cv (do not recalculate for non-aggregate selections)---
+        WHEN SUM(margin_of_error) IS NULL THEN 0
+        WHEN NOT ${isAggregate(ids)} THEN MAX(margin_of_error)
+        ELSE SQRT(SUM(POWER(margin_of_error, 2)))
+      END AS "marginOfError",
+      --- correlation_coefficient (do not recalculate for non-aggregate selections)---
       CASE
-        WHEN NOT ${isAggregate(ids)} THEN MAX(c)
-        ELSE (((SQRT(SUM(POWER(m, 2))) / ${CV_CONST}) / NULLIF(SUM(e), 0)) * 100)
-      END AS cv,
+        WHEN NOT ${isAggregate(ids)} THEN MAX(correlation_coefficient)
+        ELSE (((SQRT(SUM(POWER(margin_of_error, 2))) / ${CORRELATION_COEFFICIENT_CONST}) / NULLIF(SUM(estimate), 0)) * 100)
+      END AS "correlationCoefficient",
       --- percent (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)--
       --- coalesce null percent to 0 ---
-      COALESCE(MAX(p), 0) AS percent,
-      --- percent_m (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)---
-      --- coalesce null percent_m to 0 ---
-      COALESCE(MAX(z), 0) AS percent_m,
+      COALESCE(MAX(percent), 0) AS percent,
+      --- percent_margin_of_error (use MAX() as noop agg for non-agg selections; will be recalculated for aggregate selections)---
+      --- coalesce null percent_margin_of_error to 0 ---
+      COALESCE(MAX(percent_margin_of_error), 0) AS "percentMarginOfError",
       --- variable ---
       REGEXP_REPLACE(
         LOWER(variable),
         '[^A-Za-z0-9]', '_', 'g'
       ) AS variable,
-      --- variablename ---
-      variablename,
+      --- variableName ---
+      variableName,
       --- base ---
       base,
       --- category ---
@@ -138,19 +138,19 @@ const acsProfileSQL = (ids, isPrevious = false) => `
         LOWER(category),
         '[^A-Za-z0-9]', '_', 'g'
       ) AS category,
-      --- domain ---
+      --- profile ---
       REGEXP_REPLACE(
-        LOWER(domain),
+        LOWER(profile),
         '[^A-Za-z0-9]', '_', 'g'
-      ) AS domain,
+      ) AS profile,
       --- survey ---
       'acs' AS survey
-    FROM enriched_profile
-    GROUP BY variable, variablename, base, category, domain
+    FROM enriched_survey_result
+    GROUP BY variable, variableName, base, category, profile
     ORDER BY variable, base, category
   ) AS variables
   LEFT JOIN base
   ON LOWER(variables.base) = LOWER(base.base)
 `;
 
-module.exports = acsProfileSQL;
+module.exports = acsSQL;

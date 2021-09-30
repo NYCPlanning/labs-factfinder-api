@@ -1,4 +1,4 @@
-const { CV_CONST, DIFF_PERCENT_THRESHOLD } = require('../special-calculations/data/constants');
+const { CORRELATION_COEFFICIENT_CONST, DIFF_PERCENT_THRESHOLD } = require('../special-calculations/data/constants');
 
 /*
  * The goal is that, as much as possible, all math done on the data is contained in formulas in this file.
@@ -13,7 +13,7 @@ const { CV_CONST, DIFF_PERCENT_THRESHOLD } = require('../special-calculations/da
  * - significant: change_significant, change_percent_significant, change_percentage_point_significant, significant, percent_significant
  *
  * There are a few other places where some calculations/calculation-related-decisioning happens:
- * - 'percent', 'percent_m', and 'is_reliable' are calculated as part of the original SQL query
+ * - 'percent', 'percent_m', and 'isReliable' are calculated as part of the original SQL query
  * - boolean checks for value existance are done before all change & difference checks in the code,
  *   and are not represented here in the formulas for readability and easier implementation
  */
@@ -24,15 +24,15 @@ module.exports = {
   sum_ratio: (observed, universe) => `GET("${observed}.sum") / (GET("${observed}.sum") + GET("${universe}.sum")) * 100`,
 
   /** *** margin of error calculations **** */
-  m: (aggSum, universe) => `(1/GET("${universe}.sum")) * SQRT((GET("${aggSum}.m")^2) + ((GET("${aggSum}.sum") / GET("${universe}.sum"))^2 * (GET("${universe}.m")^2)))`,
+  m: (aggSum, universe) => `(1/GET("${universe}.sum")) * SQRT((GET("${aggSum}.marginOfError")^2) + ((GET("${aggSum}.sum") / GET("${universe}.sum"))^2 * (GET("${universe}.marginOfError")^2)))`,
   // special MOE calculation for 'rate' type values, copied from @emaurer in slack
-  m_rate: (aggSum, universe) => `IF(GET("${universe}.sum")=0,0,IF(GET("${aggSum}.sum")=0,0,IF(((GET("${aggSum}.m")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.m")^2)))<0,(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.m")^2)+((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.m")^2))))),(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.m")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.m")^2))))))))`,
+  m_rate: (aggSum, universe) => `IF(GET("${universe}.sum")=0,0,IF(GET("${aggSum}.sum")=0,0,IF(((GET("${aggSum}.marginOfError")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2)))<0,(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.marginOfError")^2)+((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2))))),(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.marginOfError")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2))))))))`,
 
   /** *** coefficient of variation calculations **** */
-  cv: `((GET("m") / "${CV_CONST}") / GET("sum")) * 100`,
+  cv: `((GET("marginOfError") / "${CORRELATION_COEFFICIENT_CONST}") / GET("sum")) * 100`,
 
-  /** *** is_reliable calculation **** */
-  is_reliable: 'GET("cv") < 20',
+  /** *** isReliable calculation **** */
+  isReliable: 'GET("correlationCoefficient") < 20',
 
   /** *** change and difference calculations **** */
   // Δ sum
@@ -43,7 +43,7 @@ module.exports = {
   // Δ change % - requires special calculation
   change_pct: (sum, prevSum) => `(${sum} - ${prevSum}) / ${prevSum}`,
   // Δ change_m % - requires special calculation
-  change_pct_m: (sum, prevSum, m, prevM) => `ABS(${sum} / ${prevSum}) * SQRT(((${m} / ${CV_CONST}) / ${sum})^2 + ((${prevM} / ${CV_CONST}) / ${prevSum})^2) * ${CV_CONST}`,
+  change_pct_m: (sum, prevSum, m, prevM) => `ABS(${sum} / ${prevSum}) * SQRT(((${m} / ${CORRELATION_COEFFICIENT_CONST}) / ${sum})^2 + ((${prevM} / ${CORRELATION_COEFFICIENT_CONST}) / ${prevSum})^2) * ${CORRELATION_COEFFICIENT_CONST}`,
   // Δ significant
-  significant: (sum, m) => `((${m} / ${CV_CONST}) / ABS(${sum})) * 100 < 20`,
+  significant: (sum, m) => `((${m} / ${CORRELATION_COEFFICIENT_CONST}) / ABS(${sum})) * 100 < 20`,
 };
