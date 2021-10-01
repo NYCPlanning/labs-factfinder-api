@@ -38,17 +38,17 @@ const decennialSQL = (ids, isPrevious = false) => `
     SELECT
     --- sum ---
     sum(value) as base_sum,
-    relation as base
+    base
     FROM enriched_survey_result
-    WHERE relation = variable
-    GROUP BY relation
+    WHERE LOWER(base) = LOWER(variable)
+    GROUP BY base
   )
 
   /*
    * an aggregation of enriched selection, joined with base that sums
    * value for all rows for a given 'variable' in the selection, and
    * adds additional aggregate value percent.
-   * Columns: id, sum, variable, variablename, base, category, percent, survey
+   * Columns: id, sum, variable, variablename, base, category, survey, percent
    */
   SELECT decennial.*,
   --- percent ---
@@ -71,7 +71,7 @@ const decennialSQL = (ids, isPrevious = false) => `
       --- variablename ---
       variablename,
       --- base ---
-      relation AS base,
+      base,
       --- category ---
       REGEXP_REPLACE(
         LOWER(category),
