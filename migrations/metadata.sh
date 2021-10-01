@@ -32,19 +32,25 @@ if [ ! -z "$datasource" ] && [ ! -z "$year_curr" ] && [ ! -z "$year_prev" ]; the
     path_prev=$(pwd)/.migration/metadata/$datasource/$year_prev/metadata.json
 
     if [ $datasource == "acs" ]; then
-        psql $DATABASE_URL -c "
+        path_sql=$(pwd)/.migration/metadata/acs/metadata.sql
+        echo "
             CREATE TEMP TABLE meta ( _json text , release_year text );
             INSERT INTO meta VALUES('$(cat $path_curr)', '$year_curr');
             INSERT INTO meta VALUES('$(cat $path_prev)', '$year_prev');
             $(cat migrations/acs_metadata.sql)
-        "
+        " > $path_sql
+        psql $DATABASE_URL -f $path_sql
+        rm $path_sql
     else
-        psql $DATABASE_URL -c "
+        path_sql=$(pwd)/.migration/metadata/decennial/metadata.sql
+        echo "
             CREATE TEMP TABLE meta ( _json text , release_year text );
             INSERT INTO meta VALUES('$(cat $path_curr)', '$year_curr');
             INSERT INTO meta VALUES('$(cat $path_prev)', '$year_prev');
             $(cat migrations/decennial_metadata.sql)
-        "
+        " > $path_sql
+        psql $DATABASE_URL -f $path_sql
+        rm $path_sql
     fi
 else
     echo "incomplete information, please specify source, year_curr and year_prev"
