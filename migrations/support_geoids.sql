@@ -13,7 +13,7 @@ CREATE TABLE support_geoids AS (
             geoid, 
             geotype, 
             geogname AS label, 
-            'City %26 Boroughs' AS typelabel
+            'City & Boroughs' AS typelabel
         FROM tmp
         WHERE geotype LIKE 'Boro%' 
             OR geotype LIKE 'City%'
