@@ -59,7 +59,6 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
   } else {
     difference.marginOfError = executeFormula('delta_m', [marginOfError, comparisonMarginOfError]);
 
-    // TODO rename difference_significant
     if (difference.sum !== 0) difference.significant = executeFormula('significant', [difference.sum, difference.marginOfError]);
   }
 
@@ -108,7 +107,6 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
   if (!isDecennial) {
     difference.percentMarginOfError = executeFormula('delta_m', [percentMarginOfError * 100, comparisonPercentMarginOfError * 100]);
 
-    // TODO rename difference_percent_significant
     if (difference.percent !== 0) difference.percentSignificant = executeFormula('significant', [difference.percent, difference.percentMarginOfError]);
   }
   return difference;

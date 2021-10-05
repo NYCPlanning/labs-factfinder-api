@@ -38,10 +38,10 @@ const decennialSQL = (ids, isPrevious = false) => `
     SELECT
     --- sum ---
     sum(value) as base_sum,
-    relation as base
+    base
     FROM enriched_survey_result
-    WHERE LOWER(relation) = LOWER(variable)
-    GROUP BY relation
+    WHERE LOWER(base) = LOWER(variable)
+    GROUP BY base
   )
 
   /*
@@ -71,7 +71,7 @@ const decennialSQL = (ids, isPrevious = false) => `
       --- variablename ---
       variablename,
       --- base ---
-      relation AS base,
+      base,
       --- category ---
       REGEXP_REPLACE(
         LOWER(category),

@@ -8,7 +8,7 @@ CREATE TABLE decennial.metadata (
     variablename text,
     release_year text,
     category text,
-    relation text
+    base text
 );
 
 INSERT INTO decennial.metadata (
@@ -16,16 +16,16 @@ INSERT INTO decennial.metadata (
         variablename,
         array_to_string(array_agg(release_year), ', '),
         category,
-        relation
+        base
     FROM (
         SELECT
             record ->> 'pff_variable' as variablename,
             release_year,
             record ->> 'category' as category,
-            record ->> 'base_variable' as relation
+            record ->> 'base_variable' as base
         FROM (SELECT json_array_elements(_json::json) AS record, release_year FROM meta) t
         WHERE record ->> 'domain' IN ('decennial')
     ) a 
-    GROUP BY variablename, relation, category
-    ORDER BY variablename, relation, category
+    GROUP BY variablename, base, category
+    ORDER BY variablename, base, category
 );
