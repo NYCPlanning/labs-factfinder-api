@@ -57,7 +57,7 @@ module.exports = [
   {
     variable: 'mdrms',
     specialType: 'median',
-    options: { transform: { type: SCALE, factor: 0.001 } },
+    options: { designFactor: 1.5 },
     noChangePercents: true,
   },
   // value
