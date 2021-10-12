@@ -3,6 +3,7 @@ const { find } = require('lodash');
 const specialCalculationConfigs = require('../special-calculations');
 const calculateMedianError = require('../utils/calculate-median-error');
 const interpolate = require('../utils/interpolate');
+const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
 const { executeWithData: executeFormula } = require('../utils/formula');
 
 const {
@@ -88,6 +89,9 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    */
   recalculateSum(row, year, config) {
+    // For median calculation of aggregate selection, run interpolate() to determine "natural median"
+    // before determining if value is top or bottom coded. Note that interpolate, in turn, runs
+    // topBottomCodeEstimate() for aggregate selections
     if (this.isAggregate) {
       if (config.specialType === 'median') {
         const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
@@ -97,6 +101,17 @@ class DataProcessor {
         const formulaName = getFormulaName(config.options, 'sum');
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
+    // For non-aggregate selections (single geographies), median variables are already
+    // top or bottom coded in the database so we just need to compare row.sum to the
+    // top and bottom bounds for that variable to determine if it was coded
+    } else if (config.specialType === 'median') {
+      const { sum, variable } = row;
+      const {
+        mutatedEstimate: trimmedEstimate,
+        codingThreshold,
+      } = topBottomCodeEstimate(sum, variable, year);
+      row.sum = trimmedEstimate;
+      row.codingThreshold = codingThreshold;
     }
     row.sum = this.applyTransform(row.sum, config.options.transform, !!row.codingThreshold);
   }
