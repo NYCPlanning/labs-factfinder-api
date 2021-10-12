@@ -170,8 +170,6 @@ class DataProcessor {
     if (transformOptions.type === 'inflate' && wasCoded) return val;
     // else if inflation; do special scalar transformation
     if (transformOptions.type === 'inflate') return val * INFLATION_FACTOR;
-    // else; do standard scalar transform
-    if (transformOptions.type === 'scale' && transformOptions.factor) return val * transformOptions.factor;
 
     // else something unexpected happened with transformOptions; just leave the value as is
     return val;
