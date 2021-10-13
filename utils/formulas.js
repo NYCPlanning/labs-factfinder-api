@@ -21,12 +21,13 @@ module.exports = {
   /** *** sum calculations **** */
   sum: (aggSum, universe) => `GET("${aggSum}.sum") / GET("${universe}.sum")`,
   // special mean calculation for 'ratio' type values TODO: get a better name for ratio
-  sum_ratio: (observed, universe) => `GET("${observed}.sum") / (GET("${observed}.sum") + GET("${universe}.sum")) * 100`,
+  // TODO: Rename to sum_rate for clarity
+  sum_ratio: (observed, universe) => `(GET("${observed}.sum") / GET("${universe}.sum")) * 100`,
 
   /** *** margin of error calculations **** */
   m: (aggSum, universe) => `(1/GET("${universe}.sum")) * SQRT((GET("${aggSum}.marginOfError")^2) + ((GET("${aggSum}.sum") / GET("${universe}.sum"))^2 * (GET("${universe}.marginOfError")^2)))`,
   // special MOE calculation for 'rate' type values, copied from @emaurer in slack
-  m_rate: (aggSum, universe) => `IF(GET("${universe}.sum")=0,0,IF(GET("${aggSum}.sum")=0,0,IF(((GET("${aggSum}.marginOfError")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2)))<0,(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.marginOfError")^2)+((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2))))),(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.marginOfError")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2))))))))`,
+  m_rate: (aggSum, universe) => `(IF(GET("${universe}.sum")=0,0,IF(GET("${aggSum}.sum")=0,0,IF(((GET("${aggSum}.marginOfError")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2)))<0,(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.marginOfError")^2)+((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2))))),(1/GET("${universe}.sum")*(SQRT((GET("${aggSum}.marginOfError")^2)-((GET("${aggSum}.sum")^2/GET("${universe}.sum")^2)*(GET("${universe}.marginOfError")^2))))))))) * 100`,
 
   /** *** coefficient of variation calculations **** */
   cv: `((GET("marginOfError") / "${CORRELATION_COEFFICIENT_CONST}") / GET("sum")) * 100`,

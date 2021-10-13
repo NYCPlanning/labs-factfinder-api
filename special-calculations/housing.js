@@ -1,5 +1,4 @@
 const {
-  TRANSFORM_TYPE_SCALE: SCALE,
   TRANSFORM_TYPE_INFLATE: INFLATE,
 } = require('./data/constants');
 
@@ -25,8 +24,7 @@ module.exports = [
     specialType: 'mean',
     options: {
       args: ['vacsale', 'hovacu'],
-      formulaName: { m: 'rate' },
-      transform: { type: SCALE, factor: 100 },
+      formulaName: { m: 'rate', sum: 'ratio' },
     },
     noChangePercents: true,
   },
@@ -35,8 +33,7 @@ module.exports = [
     specialType: 'mean',
     options: {
       args: ['vacrnt', 'rntvacu'],
-      formulaName: { m: 'rate' },
-      transform: { type: SCALE, factor: 100 },
+      formulaName: { m: 'rate', sum: 'ratio' },
     },
     noChangePercents: true,
   },
