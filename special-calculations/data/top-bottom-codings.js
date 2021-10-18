@@ -35,7 +35,7 @@ const topBottomCodings = {
       lower: 2499,
     },
     mdrms: {
-      upper: 9000,
+      upper: 9,
       lower: 0,
     },
     mdvl: {
@@ -77,7 +77,7 @@ const topBottomCodings = {
       lower: 2800,
     },
     mdrms: {
-      upper: 9000,
+      upper: 9,
       lower: 0,
     },
     mdvl: {
