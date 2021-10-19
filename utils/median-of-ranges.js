@@ -33,7 +33,7 @@ function medianOfRanges(ranges) {
     (avg - medianRangeGroup.lower) / medianRange.quantity
   );
 
-  const medianLocationMultiplier = Math.abs(medianRange.bounds.upper - medianRange.bounds.lower) + 1;
+  const medianLocationMultiplier = Math.abs(medianRange.bounds.upper - medianRange.bounds.lower);
 
   const naturalMedian = medianRange.bounds.lower + (medianLocation * medianLocationMultiplier);
 
