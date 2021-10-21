@@ -13,20 +13,37 @@ const { get } = _;
  * @param{string} year - The year of the dataset this variable belongs to
  * @returns{Object}
  */
-function topBottomCodeEstimate(estimate, variable, year) {
+function topBottomCodeEstimate(estimate, variable, year, isAggregate) {
   let mutatedEstimate = estimate;
   let codingThreshold = null;
 
   const codingRule = get(topBottomCodings, `${year}.${variable}`);
 
+  const {
+    preInflation: preInflationUpper,
+    postInflation: postInflationUpper
+   } = get(codingRule, 'upper');
+
+  if (!this.isAggregate) {
+     if (estimate === preInflationUpper) {
+       mutatedEstimate = preInflationUpper;
+       codingThreshold = 'upper';
+     } else {
+      if (estimate >= postInflationUpper) {
+        mutatedEstimate = postInflationUpper;
+        codingThreshold = 'upper';
+      }
+     }
+  } else {
+    if (estimate >= postInflationUpper) {
+      mutatedEstimate = postInflationUpper;
+      codingThreshold = 'upper';
+    }
+  }
+
   if (estimate <= get(codingRule, 'lower')) {
     mutatedEstimate = get(codingRule, 'lower');
     codingThreshold = 'lower';
-  }
-
-  if (estimate >= get(codingRule, 'upper')) {
-    mutatedEstimate = get(codingRule, 'upper');
-    codingThreshold = 'upper';
   }
 
   return { mutatedEstimate, codingThreshold };

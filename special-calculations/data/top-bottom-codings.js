@@ -49,43 +49,73 @@ const topBottomCodings = {
   },
   [PREV_YEAR]: {
     mdage: {
-      upper: 85,
+      upper: {
+        preInflation: 1234,
+        postInflation: 85,
+      },
       lower: 1,
     },
     mdhhinc: {
-      upper: 235000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 235000,
+      },
       lower: 12000
     },
     mdfaminc: {
-      upper: 235000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 235000,
+      },
       lower: 12000
     },
     mdnfinc: {
-      upper: 235000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 235000,
+      },
       lower: 12000
     },
     mdewrk: {
-      upper: 118000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 118000,
+      },
       lower: 2900
     },
     mdemftwrk: {
-      upper: 118000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 118000,
+      },
       lower: 2900
     },
     mdefftwrk: {
-      upper: 118000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 118000,
+      },
       lower: 2900
     },
     mdrms: {
-      upper: 9,
+      upper: {
+        preInflation: 1234,
+        postInflation: 9,
+      },
       lower: 0,
     },
     mdvl: {
-      upper: 1175000,
+      upper: {
+        preInflation: 1234,
+        postInflation: 1175000,
+      },
       lower: 0,
     },
     mdgr: {
-      upper: 2350,
+      upper: {
+        preInflation: 1234,
+        postInflation: 2350,
+      },
       lower: 0,
     },
   },

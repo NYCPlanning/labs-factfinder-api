@@ -99,18 +99,21 @@ class DataProcessor {
         const formulaName = getFormulaName(config.options, 'sum');
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
-    }
 
-    // inflate previous year values
-    row.sum = this.applyTransform(row.sum, config.options.transform);
+      // inflate previous year values
+      row.sum = this.applyTransform(row.sum, config.options.transform);
+    }
 
     if (config.specialType === 'median') {
       const { sum, variable } = row;
+
       const {
         mutatedEstimate: trimmedEstimate,
         codingThreshold,
-      } = topBottomCodeEstimate(sum, variable, year);
+      } = topBottomCodeEstimate(sum, variable, year, this.isAggregate);
+
       row.sum = trimmedEstimate;
+
       row.codingThreshold = codingThreshold;
     }
   }
