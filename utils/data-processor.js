@@ -94,17 +94,17 @@ class DataProcessor {
     // topBottomCodeEstimate() for aggregate selections
     if (this.isAggregate) {
       if (config.specialType === 'median') {
-        const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
-        row.sum = trimmedEstimate;
-        row.codingThreshold = codingThreshold;
+        row.sum =  interpolate(this.data, row.variable, year);
       } else {
         const formulaName = getFormulaName(config.options, 'sum');
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
-    // For non-aggregate selections (single geographies), median variables are already
-    // top or bottom coded in the database so we just need to compare row.sum to the
-    // top and bottom bounds for that variable to determine if it was coded
-    } else if (config.specialType === 'median') {
+    }
+
+    // inflate previous year values
+    row.sum = this.applyTransform(row.sum, config.options.transform);
+
+    if (config.specialType === 'median') {
       const { sum, variable } = row;
       const {
         mutatedEstimate: trimmedEstimate,
@@ -113,7 +113,6 @@ class DataProcessor {
       row.sum = trimmedEstimate;
       row.codingThreshold = codingThreshold;
     }
-    row.sum = this.applyTransform(row.sum, config.options.transform, !!row.codingThreshold);
   }
 
   /*
@@ -176,13 +175,11 @@ class DataProcessor {
    * @param{Boolean} wasCoded - flag indicating if the value was top or bottom coded
    * @returns{Number}
    */
-  applyTransform(val, transformOptions, wasCoded) {
+  applyTransform(val, transformOptions) {
     if (!transformOptions) return val;
 
     // do not inflate if data is current (not isPrevious)
     if (transformOptions.type === 'inflate' && !this.isPrevious) return val;
-    // do not inflate if data was top or bottom coded
-    if (transformOptions.type === 'inflate' && wasCoded) return val;
     // else if inflation; do special scalar transformation
     if (transformOptions.type === 'inflate') return val * INFLATION_FACTOR;
 
