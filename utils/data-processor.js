@@ -92,26 +92,23 @@ class DataProcessor {
     // For median calculation of aggregate selection, run interpolate() to determine "natural median"
     // before determining if value is top or bottom coded. Note that interpolate, in turn, runs
     // topBottomCodeEstimate() for aggregate selections
-    if (this.isAggregate) {
-      if (config.specialType === 'median') {
-        row.sum =  interpolate(this.data, row.variable, year);
-      } else {
-        const formulaName = getFormulaName(config.options, 'sum');
-        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
-      }
-    }
-
-    // inflate previous year values
-    row.sum = this.applyTransform(row.sum, config.options.transform);
-
     if (config.specialType === 'median') {
+      if (this.isAggregate) {
+        row.sum =  interpolate(this.data, row.variable, year);
+      }
       const { sum, variable } = row;
       const {
         mutatedEstimate: trimmedEstimate,
         codingThreshold,
-      } = topBottomCodeEstimate(sum, variable, year);
+      } = topBottomCodeEstimate(sum, variable, year, this.isPrevious, config);
       row.sum = trimmedEstimate;
       row.codingThreshold = codingThreshold;
+    } else {
+      if (this.isAggregate) {
+        const formulaName = getFormulaName(config.options, 'sum');
+        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+        // TODO: add "if mean && type === inflate here" ?
+      }
     }
   }
 
@@ -126,18 +123,28 @@ class DataProcessor {
    */
   recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
-    if (this.isAggregate) {
-      if (wasCoded) {
-        row.marginOfError = null;
-      } else if (config.specialType === 'median') {
+    
+    if (wasCoded) {
+      row.marginOfError = null;
+    } else if (config.specialType === 'median') {
+      if (this.isAggregate) {
         row.marginOfError = calculateMedianError(this.data, row.variable, year, config.options);
-      } else {
+      }
+      if (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.type && 
+        config.options.transform.type === 'inflate'
+        && this.isPrevious
+      ) {
+        row.marginOfError = row.marginOfError * INFLATION_FACTOR
+      }
+    } else {
+      if (this.isAggregate) {
         const formulaName = getFormulaName(config.options, 'm');
         row.marginOfError = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
-
-    row.m = this.applyTransform(row.m, config.options.transform);
   }
 
   /*
@@ -162,29 +169,6 @@ class DataProcessor {
   recalculateIsReliable(row, wasCoded) {
     // top- or bottom-coded values are not reliable
     row.isReliable = wasCoded ? false : executeFormula(this.data, row.variable, 'isReliable');
-  }
-
-  /*
-   * If transformOptions exists, then applies the appropriate transformation.
-   * 'inflate' is a special transform type, which only applies to previous year data points
-   * (designated by this.isPrevious), and scales by INFLATION_FACTOR, if the value was not top- or bottom-coded.
-   * Other allowed transformation is 'scale' type, and requires transformOptions.factor, where
-   * factor is applied as scalar transformation
-   * @param{Number} val - The value to transform
-   * @param{Object} transformOptions - Object containing 'type', and optionally 'factor'; defines the transformation
-   * @param{Boolean} wasCoded - flag indicating if the value was top or bottom coded
-   * @returns{Number}
-   */
-  applyTransform(val, transformOptions) {
-    if (!transformOptions) return val;
-
-    // do not inflate if data is current (not isPrevious)
-    if (transformOptions.type === 'inflate' && !this.isPrevious) return val;
-    // else if inflation; do special scalar transformation
-    if (transformOptions.type === 'inflate') return val * INFLATION_FACTOR;
-
-    // else something unexpected happened with transformOptions; just leave the value as is
-    return val;
   }
 }
 
