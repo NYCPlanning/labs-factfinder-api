@@ -96,6 +96,7 @@ class DataProcessor {
       if (this.isAggregate) {
         row.sum =  interpolate(this.data, row.variable, year);
       }
+
       const { sum, variable } = row;
       const {
         mutatedEstimate: trimmedEstimate,
@@ -107,8 +108,15 @@ class DataProcessor {
       if (this.isAggregate) {
         const formulaName = getFormulaName(config.options, 'sum');
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
-        // TODO: add "if mean && type === inflate here" ?
       }
+
+      if (this.isPrevious && (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.inflate
+     )) {
+       row.sum = row.sum * INFLATION_FACTOR;
+     }
     }
   }
 
@@ -123,7 +131,7 @@ class DataProcessor {
    */
   recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
-    
+
     if (wasCoded) {
       row.marginOfError = null;
     } else if (config.specialType === 'median') {
@@ -133,8 +141,7 @@ class DataProcessor {
       if (
         config.options &&
         config.options.transform &&
-        config.options.transform.type && 
-        config.options.transform.type === 'inflate'
+        config.options.transform.inflate
         && this.isPrevious
       ) {
         row.marginOfError = row.marginOfError * INFLATION_FACTOR
@@ -145,6 +152,14 @@ class DataProcessor {
         row.marginOfError = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
+
+    if (this.isPrevious && (
+      config.options &&
+      config.options.transform &&
+      config.options.transform.inflate
+   )) {
+     row.marginOfError = row.marginOfError * INFLATION_FACTOR;
+   }
   }
 
   /*

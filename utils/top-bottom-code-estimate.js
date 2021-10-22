@@ -34,8 +34,7 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
       if (
         config.options &&
         config.options.transform &&
-        config.options.transform.type && 
-        config.options.transform.type === 'inflate'
+        config.options.transform.inflate
       ) {
         mutatedEstimate = estimate * INFLATION_FACTOR
       }
@@ -57,7 +56,7 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
       preInflation: preInflationLower,
       postInflation: postInflationLower
     } = get(codingRule, 'lower');
-  
+
     if (estimate === preInflationLower) {
       mutatedEstimate = postInflationLower;
       codingThreshold = 'lower';
@@ -65,8 +64,7 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
       if (
         config.options &&
         config.options.transform &&
-        config.options.transform.type && 
-        config.options.transform.type === 'inflate'
+        config.options.transform.inflate
       ) {
         mutatedEstimate = estimate * INFLATION_FACTOR
       }
