@@ -111,10 +111,9 @@ class DataProcessor {
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
 
-      if(config.specialType === 'mean' && (
+      if (this.isPrevious && (
         config.options &&
         config.options.transform &&
-        config.options.transform.type &&
         config.options.transform.type === INFLATE
      )) {
        row.sum = row.sum * INFLATION_FACTOR;
@@ -133,7 +132,7 @@ class DataProcessor {
    */
   recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
-    
+
     if (wasCoded) {
       row.marginOfError = null;
     } else if (config.specialType === 'median') {
@@ -143,7 +142,6 @@ class DataProcessor {
       if (
         config.options &&
         config.options.transform &&
-        config.options.transform.type && 
         config.options.transform.type === INFLATE
         && this.isPrevious
       ) {
@@ -155,6 +153,14 @@ class DataProcessor {
         row.marginOfError = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
+
+    if (this.isPrevious && (
+      config.options &&
+      config.options.transform &&
+      config.options.transform.type === INFLATE
+   )) {
+     row.marginOfError = row.marginOfError * INFLATION_FACTOR;
+   }
   }
 
   /*
