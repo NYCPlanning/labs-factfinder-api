@@ -45,14 +45,14 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
         codingThreshold = 'upper';
       }
     }
-  } else {
-    if (estimate >= get(codingRule, 'upper')) {
+  } else if (estimate >= get(codingRule, 'upper')) {
       mutatedEstimate = get(codingRule, 'upper');
       codingThreshold = 'upper';
-    }
   }
 
-  if (isPrevious) {
+  if (!codingThreshold && isPrevious) {
+    mutatedEstimate = estimate;
+
     const {
       preInflation: preInflationLower,
       postInflation: postInflationLower
@@ -76,11 +76,9 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
         codingThreshold = 'lower';
       }
     }
-  } else {
-    if (estimate <= get(codingRule, 'lower')) {
-      mutatedEstimate = get(codingRule, 'lower');
-      codingThreshold = 'lower';
-    }
+  } else if (estimate <= get(codingRule, 'lower')) {
+    mutatedEstimate = get(codingRule, 'lower');
+    codingThreshold = 'lower';
   }
 
   return { mutatedEstimate, codingThreshold };
