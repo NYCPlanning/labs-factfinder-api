@@ -10,7 +10,6 @@ const {
   INFLATION_FACTOR,
   PREV_YEAR,
   CUR_YEAR,
-  TRANSFORM_TYPE_INFLATE: INFLATE,
 } = require('../special-calculations/data/constants');
 
 /*
@@ -114,7 +113,7 @@ class DataProcessor {
       if (this.isPrevious && (
         config.options &&
         config.options.transform &&
-        config.options.transform.type === INFLATE
+        config.options.transform.inflate
      )) {
        row.sum = row.sum * INFLATION_FACTOR;
      }
@@ -142,7 +141,7 @@ class DataProcessor {
       if (
         config.options &&
         config.options.transform &&
-        config.options.transform.type === INFLATE
+        config.options.transform.inflate
         && this.isPrevious
       ) {
         row.marginOfError = row.marginOfError * INFLATION_FACTOR
@@ -157,7 +156,7 @@ class DataProcessor {
     if (this.isPrevious && (
       config.options &&
       config.options.transform &&
-      config.options.transform.type === INFLATE
+      config.options.transform.inflate
    )) {
      row.marginOfError = row.marginOfError * INFLATION_FACTOR;
    }
