@@ -1,8 +1,10 @@
 const _ = require('lodash');
 const topBottomCodings = require('../special-calculations/data/top-bottom-codings');
+const {
+  INFLATION_FACTOR,
+} = require('../special-calculations/data/constants');
 
 const { get } = _;
-
 /*
  * Conditionally top- or bottom-codes an estimated median value, using configured coding values.
  * Returns the coded estimate, as well as the direction the estimate was coded if it was coded.
@@ -13,30 +15,40 @@ const { get } = _;
  * @param{string} year - The year of the dataset this variable belongs to
  * @returns{Object}
  */
-function topBottomCodeEstimate(estimate, variable, year, isAggregate) {
+function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
   let mutatedEstimate = estimate;
   let codingThreshold = null;
 
   const codingRule = get(topBottomCodings, `${year}.${variable}`);
 
-  const {
-    preInflation: preInflationUpper,
-    postInflation: postInflationUpper
-   } = get(codingRule, 'upper');
+  if (isPrevious) {
+    const {
+      preInflation: preInflationUpper,
+      postInflation: postInflationUpper
+    } = get(codingRule, 'upper');
 
-  if (!this.isAggregate) {
-     if (estimate === preInflationUpper) {
-       mutatedEstimate = preInflationUpper;
-       codingThreshold = 'upper';
-     } else {
-      if (estimate >= postInflationUpper) {
+    if (estimate === preInflationUpper) {
+      mutatedEstimate = postInflationUpper;
+      codingThreshold = 'upper';
+    } else {
+      if (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.type && 
+        config.options.transform.type === 'inflate'
+      ) {
+        mutatedEstimate = estimate * INFLATION_FACTOR
+      }
+
+      // inflate previous year values
+      if (mutatedEstimate >= postInflationUpper) {
         mutatedEstimate = postInflationUpper;
         codingThreshold = 'upper';
       }
-     }
+    }
   } else {
-    if (estimate >= postInflationUpper) {
-      mutatedEstimate = postInflationUpper;
+    if (estimate >= get(codingRule, 'upper')) {
+      mutatedEstimate = get(codingRule, 'upper');
       codingThreshold = 'upper';
     }
   }

@@ -49,10 +49,7 @@ const topBottomCodings = {
   },
   [PREV_YEAR]: {
     mdage: {
-      upper: {
-        preInflation: 1234,
-        postInflation: 85,
-      },
+      upper: 85,
       lower: 1,
     },
     mdhhinc: {
@@ -98,10 +95,7 @@ const topBottomCodings = {
       lower: 2900
     },
     mdrms: {
-      upper: {
-        preInflation: 1234,
-        postInflation: 9,
-      },
+      upper: 9,
       lower: 0,
     },
     mdvl: {
