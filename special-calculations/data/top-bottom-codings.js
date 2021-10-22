@@ -54,45 +54,63 @@ const topBottomCodings = {
     },
     mdhhinc: {
       upper: {
-        preInflation: 1234,
+        preInflation: 200000,
         postInflation: 235000,
       },
-      lower: 12000
+      lower: {
+        preInflation: 9999,
+        postInflation: 12000
+      }
     },
     mdfaminc: {
       upper: {
-        preInflation: 1234,
+        preInflation: 200000,
         postInflation: 235000,
       },
-      lower: 12000
+      lower: {
+        preInflation: 9999,
+        postInflation: 12000
+      }
     },
     mdnfinc: {
       upper: {
-        preInflation: 1234,
+        preInflation: 200000,
         postInflation: 235000,
       },
-      lower: 12000
+      lower: {
+        preInflation: 9999,
+        postInflation: 12000
+      }
     },
     mdewrk: {
       upper: {
-        preInflation: 1234,
+        preInflation: 100000,
         postInflation: 118000,
       },
-      lower: 2900
+      lower: {
+        preInflation: 2499,
+        postInflation: 2900
+      }
     },
     mdemftwrk: {
       upper: {
-        preInflation: 1234,
+        preInflation: 100000,
         postInflation: 118000,
       },
-      lower: 2900
+      lower: {
+        preInflation: 2499,
+        postInflation: 2900
+      }
     },
     mdefftwrk: {
       upper: {
-        preInflation: 1234,
+        preInflation: 100000,
         postInflation: 118000,
       },
-      lower: 2900
+      lower: {
+        preInflation: 2499,
+        postInflation: 2900
+      }
     },
     mdrms: {
       upper: 9,
@@ -100,17 +118,23 @@ const topBottomCodings = {
     },
     mdvl: {
       upper: {
-        preInflation: 1234,
+        preInflation: 1000000,
         postInflation: 1175000,
       },
-      lower: 0,
+      lower: {
+        preInflation: 0,
+        postInflation: 0,
+      }
     },
     mdgr: {
       upper: {
-        preInflation: 1234,
+        preInflation: 2000,
         postInflation: 2350,
       },
-      lower: 0,
+      lower: {
+        preInflation: 0,
+        postInflation: 0,
+      }
     },
   },
 };
