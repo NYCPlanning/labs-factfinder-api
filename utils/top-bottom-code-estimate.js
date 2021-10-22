@@ -2,6 +2,7 @@ const _ = require('lodash');
 const topBottomCodings = require('../special-calculations/data/top-bottom-codings');
 const {
   INFLATION_FACTOR,
+  TRANSFORM_TYPE_INFLATE: INFLATE,
 } = require('../special-calculations/data/constants');
 
 const { get } = _;
@@ -35,7 +36,7 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
         config.options &&
         config.options.transform &&
         config.options.transform.type && 
-        config.options.transform.type === 'inflate'
+        config.options.transform.type === INFLATE
       ) {
         mutatedEstimate = estimate * INFLATION_FACTOR
       }
@@ -66,7 +67,7 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
         config.options &&
         config.options.transform &&
         config.options.transform.type && 
-        config.options.transform.type === 'inflate'
+        config.options.transform.type === INFLATE
       ) {
         mutatedEstimate = estimate * INFLATION_FACTOR
       }

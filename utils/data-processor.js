@@ -10,6 +10,7 @@ const {
   INFLATION_FACTOR,
   PREV_YEAR,
   CUR_YEAR,
+  TRANSFORM_TYPE_INFLATE: INFLATE,
 } = require('../special-calculations/data/constants');
 
 /*
@@ -96,6 +97,7 @@ class DataProcessor {
       if (this.isAggregate) {
         row.sum =  interpolate(this.data, row.variable, year);
       }
+
       const { sum, variable } = row;
       const {
         mutatedEstimate: trimmedEstimate,
@@ -107,8 +109,16 @@ class DataProcessor {
       if (this.isAggregate) {
         const formulaName = getFormulaName(config.options, 'sum');
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
-        // TODO: add "if mean && type === inflate here" ?
       }
+
+      if(config.specialType === 'mean' && (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.type &&
+        config.options.transform.type === INFLATE
+     )) {
+       row.sum = row.sum * INFLATION_FACTOR;
+     }
     }
   }
 
@@ -134,7 +144,7 @@ class DataProcessor {
         config.options &&
         config.options.transform &&
         config.options.transform.type && 
-        config.options.transform.type === 'inflate'
+        config.options.transform.type === INFLATE
         && this.isPrevious
       ) {
         row.marginOfError = row.marginOfError * INFLATION_FACTOR
