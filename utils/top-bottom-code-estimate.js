@@ -40,7 +40,6 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
         mutatedEstimate = estimate * INFLATION_FACTOR
       }
 
-      // inflate previous year values
       if (mutatedEstimate >= postInflationUpper) {
         mutatedEstimate = postInflationUpper;
         codingThreshold = 'upper';
@@ -53,9 +52,35 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
     }
   }
 
-  if (estimate <= get(codingRule, 'lower')) {
-    mutatedEstimate = get(codingRule, 'lower');
-    codingThreshold = 'lower';
+  if (isPrevious) {
+    const {
+      preInflation: preInflationLower,
+      postInflation: postInflationLower
+    } = get(codingRule, 'lower');
+  
+    if (estimate === preInflationLower) {
+      mutatedEstimate = postInflationLower;
+      codingThreshold = 'lower';
+    } else {
+      if (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.type && 
+        config.options.transform.type === 'inflate'
+      ) {
+        mutatedEstimate = estimate * INFLATION_FACTOR
+      }
+
+      if (mutatedEstimate <= postInflationLower) {
+        mutatedEstimate = postInflationLower;
+        codingThreshold = 'lower';
+      }
+    }
+  } else {
+    if (estimate <= get(codingRule, 'lower')) {
+      mutatedEstimate = get(codingRule, 'lower');
+      codingThreshold = 'lower';
+    }
   }
 
   return { mutatedEstimate, codingThreshold };

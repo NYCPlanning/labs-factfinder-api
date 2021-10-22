@@ -107,6 +107,7 @@ class DataProcessor {
       if (this.isAggregate) {
         const formulaName = getFormulaName(config.options, 'sum');
         row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+        // TODO: add "if mean && type === inflate here" ?
       }
     }
   }
