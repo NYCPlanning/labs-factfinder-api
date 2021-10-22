@@ -92,28 +92,32 @@ class DataProcessor {
     // For median calculation of aggregate selection, run interpolate() to determine "natural median"
     // before determining if value is top or bottom coded. Note that interpolate, in turn, runs
     // topBottomCodeEstimate() for aggregate selections
-    if (this.isAggregate) {
-      if (config.specialType === 'median') {
-        const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
-        row.sum = trimmedEstimate;
-        row.codingThreshold = codingThreshold;
-      } else {
-        const formulaName = getFormulaName(config.options, 'sum');
-        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+    if (config.specialType === 'median') {
+      if (this.isAggregate) {
+        row.sum =  interpolate(this.data, row.variable, year);
       }
-    // For non-aggregate selections (single geographies), median variables are already
-    // top or bottom coded in the database so we just need to compare row.sum to the
-    // top and bottom bounds for that variable to determine if it was coded
-    } else if (config.specialType === 'median') {
+
       const { sum, variable } = row;
       const {
         mutatedEstimate: trimmedEstimate,
         codingThreshold,
-      } = topBottomCodeEstimate(sum, variable, year);
+      } = topBottomCodeEstimate(sum, variable, year, this.isPrevious, config);
       row.sum = trimmedEstimate;
       row.codingThreshold = codingThreshold;
+    } else {
+      if (this.isAggregate) {
+        const formulaName = getFormulaName(config.options, 'sum');
+        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
+
+      if (this.isPrevious && (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.inflate
+     )) {
+       row.sum = row.sum * INFLATION_FACTOR;
+     }
     }
-    row.sum = this.applyTransform(row.sum, config.options.transform, !!row.codingThreshold);
   }
 
   /*
@@ -127,18 +131,35 @@ class DataProcessor {
    */
   recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
-    if (this.isAggregate) {
-      if (wasCoded) {
-        row.marginOfError = null;
-      } else if (config.specialType === 'median') {
+
+    if (wasCoded) {
+      row.marginOfError = null;
+    } else if (config.specialType === 'median') {
+      if (this.isAggregate) {
         row.marginOfError = calculateMedianError(this.data, row.variable, year, config.options);
-      } else {
+      }
+      if (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.inflate
+        && this.isPrevious
+      ) {
+        row.marginOfError = row.marginOfError * INFLATION_FACTOR
+      }
+    } else {
+      if (this.isAggregate) {
         const formulaName = getFormulaName(config.options, 'm');
         row.marginOfError = executeFormula(this.data, row.variable, formulaName, config.options.args);
       }
     }
 
-    row.m = this.applyTransform(row.m, config.options.transform);
+    if (this.isPrevious && (
+      config.options &&
+      config.options.transform &&
+      config.options.transform.inflate
+   )) {
+     row.marginOfError = row.marginOfError * INFLATION_FACTOR;
+   }
   }
 
   /*
@@ -163,31 +184,6 @@ class DataProcessor {
   recalculateIsReliable(row, wasCoded) {
     // top- or bottom-coded values are not reliable
     row.isReliable = wasCoded ? false : executeFormula(this.data, row.variable, 'isReliable');
-  }
-
-  /*
-   * If transformOptions exists, then applies the appropriate transformation.
-   * 'inflate' is a special transform type, which only applies to previous year data points
-   * (designated by this.isPrevious), and scales by INFLATION_FACTOR, if the value was not top- or bottom-coded.
-   * Other allowed transformation is 'scale' type, and requires transformOptions.factor, where
-   * factor is applied as scalar transformation
-   * @param{Number} val - The value to transform
-   * @param{Object} transformOptions - Object containing 'type', and optionally 'factor'; defines the transformation
-   * @param{Boolean} wasCoded - flag indicating if the value was top or bottom coded
-   * @returns{Number}
-   */
-  applyTransform(val, transformOptions, wasCoded) {
-    if (!transformOptions) return val;
-
-    // do not inflate if data is current (not isPrevious)
-    if (transformOptions.type === 'inflate' && !this.isPrevious) return val;
-    // do not inflate if data was top or bottom coded
-    if (transformOptions.type === 'inflate' && wasCoded) return val;
-    // else if inflation; do special scalar transformation
-    if (transformOptions.type === 'inflate') return val * INFLATION_FACTOR;
-
-    // else something unexpected happened with transformOptions; just leave the value as is
-    return val;
   }
 }
 

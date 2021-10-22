@@ -1,13 +1,9 @@
-const {
-  TRANSFORM_TYPE_INFLATE: INFLATE,
-} = require('./data/constants');
-
 module.exports = [
   // gross rent
   {
     variable: 'mdgr',
     specialType: 'median',
-    options: { designFactor: 1.6, transform: { type: INFLATE } },
+    options: { designFactor: 1.6, transform: { inflate: true } },
   },
   {
     variable: 'grnorntpd',
@@ -61,7 +57,7 @@ module.exports = [
   {
     variable: 'mdvl',
     specialType: 'median',
-    options: { designFactor: 1.4, transform: { type: INFLATE } },
+    options: { designFactor: 1.4, transform: { inflate: true } },
   },
   // selected monthly owner cost
   {

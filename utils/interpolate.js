@@ -34,12 +34,8 @@ function interpolate(data, variable, year) {
 
   const naturalMedian = medianOfRanges(scenario);
 
-  const {
-    mutatedEstimate: trimmedEstimate,
-    codingThreshold,
-  } = topBottomCodeEstimate(naturalMedian, variable, year);
 
-  return { trimmedEstimate, codingThreshold };
+  return naturalMedian;
 }
 
 module.exports = interpolate;
