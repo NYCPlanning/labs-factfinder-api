@@ -21,15 +21,23 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
 
   const codingRule = get(topBottomCodings, `${year}.${variable}`);
 
-  if (isPrevious) {
-    const {
-      preInflation: preInflationUpper,
-      postInflation: postInflationUpper
-    } = get(codingRule, 'upper');
+  const {
+    preInflation: preInflationUpper,
+    postInflation: postInflationUpper
+  } = get(codingRule, 'upper');
 
+  const {
+    preInflation: preInflationLower,
+    postInflation: postInflationLower
+  } = get(codingRule, 'lower');
+
+  if (isPrevious) {
     if (estimate === preInflationUpper) {
       mutatedEstimate = postInflationUpper;
       codingThreshold = 'upper';
+    } else if (estimate === preInflationLower) {
+      mutatedEstimate = postInflationLower;
+      codingThreshold = 'lower';
     } else {
       if (
         config.options &&
@@ -42,41 +50,19 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
       if (mutatedEstimate >= postInflationUpper) {
         mutatedEstimate = postInflationUpper;
         codingThreshold = 'upper';
-      }
-    }
-  } else if (estimate >= get(codingRule, 'upper')) {
-      mutatedEstimate = get(codingRule, 'upper');
-      codingThreshold = 'upper';
-  }
-
-  if (!codingThreshold && isPrevious) {
-    mutatedEstimate = estimate;
-
-    const {
-      preInflation: preInflationLower,
-      postInflation: postInflationLower
-    } = get(codingRule, 'lower');
-
-    if (estimate === preInflationLower) {
-      mutatedEstimate = postInflationLower;
-      codingThreshold = 'lower';
-    } else {
-      if (
-        config.options &&
-        config.options.transform &&
-        config.options.transform.inflate
-      ) {
-        mutatedEstimate = estimate * INFLATION_FACTOR
-      }
-
-      if (mutatedEstimate <= postInflationLower) {
+      } else if (mutatedEstimate <= postInflationLower) {
         mutatedEstimate = postInflationLower;
         codingThreshold = 'lower';
       }
     }
-  } else if (estimate <= get(codingRule, 'lower')) {
-    mutatedEstimate = get(codingRule, 'lower');
-    codingThreshold = 'lower';
+  } else { // current year
+    if (estimate <= get(codingRule, 'lower')) {
+      mutatedEstimate = get(codingRule, 'lower');
+      codingThreshold = 'lower';
+    } else if (estimate >= get(codingRule, 'upper')) {
+      mutatedEstimate = get(codingRule, 'upper');
+      codingThreshold = 'upper';
+    }
   }
 
   return { mutatedEstimate, codingThreshold };
