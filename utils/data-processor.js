@@ -138,14 +138,6 @@ class DataProcessor {
       if (this.isAggregate) {
         row.marginOfError = calculateMedianError(this.data, row.variable, year, config.options);
       }
-      if (
-        config.options &&
-        config.options.transform &&
-        config.options.transform.inflate
-        && this.isPrevious
-      ) {
-        row.marginOfError = row.marginOfError * INFLATION_FACTOR
-      }
     } else {
       if (this.isAggregate) {
         const formulaName = getFormulaName(config.options, 'm');
