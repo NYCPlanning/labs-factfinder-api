@@ -1,18 +1,15 @@
 const carto = require('../utils/carto');
 
-const block = (string) => {
+const cdta = (string) => {
   const SQL = `
     SELECT * FROM (
       SELECT
         the_geom,
-        ct2020,
-        borocode || ct2020 AS boroct2020,
-        cb2020,
+        cdtaname as geolabel,
+        cdta2020,
+        cdtatype,
         boroname,
-        borocode,
-        bctcb2020,
-        geoid AS geoid,
-        bctcb2020 as geolabel,
+        cdta2020 AS geoid,
         '36' ||
           CASE
             WHEN borocode = '1' THEN '061'
@@ -21,31 +18,28 @@ const block = (string) => {
             WHEN borocode = '4' THEN '081'
             WHEN borocode = '5' THEN '085'
           END
-        || ct2020 || cb2020 as fips
-      FROM pff_2020_census_blocks_21c
+        || countyfips as fips,
+        boroname || ' '
+      FROM pff_2020_cdtas_21c
     ) x
     WHERE
-      bctcb2020 LIKE '%25${string}%25'
+      cdta2020 LIKE '%25${string}%25'
       OR fips LIKE '%25${string}%25'
+      OR boroname LIKE '%25${string}%25'
+      OR geolabel LIKE '%25${string}%25'
     LIMIT 5
   `;
 
   return carto.SQL(SQL, 'geojson').then((FeatureCollection) => { // eslint-disable-line
     return FeatureCollection.features.map((feature) => {
-      const {
-        boroname,
-        geolabel,
-        cb2020,
-        fips,
-      } = feature.properties;
-
+      const { boroname, geolabel, fips } = feature.properties;
       return {
-        label: `${boroname} Tract ${geolabel} Block ${cb2020} (${fips})`,
+        label: `${boroname} ${geolabel} (${fips})`,
         feature,
-        type: 'block',
+        type: 'cdta',
       };
     });
   });
 };
 
-module.exports = block;
+module.exports = cdta;

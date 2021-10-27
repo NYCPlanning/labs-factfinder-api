@@ -31,7 +31,7 @@ module.exports = [
   {
     variable: 'avghhsz',
     specialType: 'mean',
-    options: { args: ['popinhh', 'hh1'] },
+    options: { args: ['popinhh', 'ochu_1'] },
   },
   {
     variable: 'avgfamsz',

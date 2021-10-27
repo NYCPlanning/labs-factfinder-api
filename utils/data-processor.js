@@ -3,6 +3,7 @@ const { find } = require('lodash');
 const specialCalculationConfigs = require('../special-calculations');
 const calculateMedianError = require('../utils/calculate-median-error');
 const interpolate = require('../utils/interpolate');
+const topBottomCodeEstimate = require('../utils/top-bottom-code-estimate');
 const { executeWithData: executeFormula } = require('../utils/formula');
 
 const {
@@ -12,9 +13,9 @@ const {
 } = require('../special-calculations/data/constants');
 
 /*
- * The DataIngestor class is used to process raw profile data from postgres query.
- * Additionally for aggregate profiles, the processor recalculates special variables, configured
- * in 'special-calculations/[profile].js' (see special-calculations/index.js for more information).
+ * The DataIngestor class is used to process raw survey data from postgres query.
+ * Additionally for aggregate surveys, the processor recalculates special variables, configured
+ * in 'special-calculations/[survey].js' (see special-calculations/index.js for more information).
  * NOTE: data is stored as an instance variable to make it easily accessible to utilities that perform
  * calculations relying on values from other rows in the data object
  */
@@ -23,13 +24,13 @@ class DataProcessor {
    * Creates a DataProcessor
    * @constructor
    * @params{Array} data - Raw data from SQL query, an array of objects representing rows;
-   * @params{string} profileName - The profile type; expected to be one of 'demographic', 'housing', 'economic', 'social', 'decennial'
+   * @params{string} surveyName - The survey type; expected to be one of 'acs' or 'decennial'
    * @params{Boolean} isAggregate - True if the given data selection is comprised of multiple geoids; else false
    * @params{Boolean} isPrevious - True if the given data selection is for the older dataset year
    */
-  constructor(data, profileName, isAggregate = false, isPrevious = false) {
+  constructor(data, surveyName, isAggregate = false, isPrevious = false) {
     this.data = data;
-    this.profileName = profileName;
+    this.surveyName = surveyName;
     this.isAggregate = isAggregate;
     this.isPrevious = isPrevious;
   }
@@ -39,14 +40,14 @@ class DataProcessor {
    * @returns{Object[]}
    */
   process() {
-    const profileConfig = specialCalculationConfigs[this.profileName];
+    const surveyConfig = specialCalculationConfigs[this.surveyName];
 
     this.data.forEach((row) => {
-      const rowConfig = find(profileConfig, ['variable', row.variable]);
+      const rowConfig = find(surveyConfig, ['variable', row.variable]);
       if (rowConfig) {
         removePercents(row);
         // Only recalculate values for aggregate datasets, and only for special variables that require it
-        if (this.isAggregate && rowConfig.specialType !== 'removePercentsOnly') {
+        if (rowConfig.specialType !== 'removePercentsOnly') {
           this.recalculateSpecialVariables(row, rowConfig);
         }
       }
@@ -57,7 +58,7 @@ class DataProcessor {
 
   /*
    * For all special variables, recalculate estimte (called sum), and optionally
-   * margin of error (called m), cv, and is_reliable.
+   * margin of error (called m), cv, and isReliable.
    * @param{Object} row - The row to update
    * @param{Object} config - The special calculation configuration for the given row
    */
@@ -69,10 +70,10 @@ class DataProcessor {
       // row.codingThreshold will be set if in recalculating the sum the estimate was top- or bottom-coded
       const wasCoded = !!row.codingThreshold;
 
-      // decennial profiles do not have MOE values or CV values
-      if (this.profileName !== 'decennial') {
-        this.recalculateM(row, year, config, wasCoded);
-        this.recalculateCV(row, config, wasCoded);
+      // decennial survey results do not have MOE values or CV values
+      if (this.surveyName !== 'decennial') {
+        this.recalculateMarginOfError(row, year, config, wasCoded);
+        this.recalculateCorrelationCoefficient(row, config, wasCoded);
         this.recalculateIsReliable(row, wasCoded);
       }
     } catch (e) {
@@ -88,19 +89,35 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    */
   recalculateSum(row, year, config) {
-    let sum;
-
+    // For median calculation of aggregate selection, run interpolate() to determine "natural median"
+    // before determining if value is top or bottom coded. Note that interpolate, in turn, runs
+    // topBottomCodeEstimate() for aggregate selections
     if (config.specialType === 'median') {
-      const { trimmedEstimate, codingThreshold } = interpolate(this.data, row.variable, year);
-      sum = trimmedEstimate;
+      if (this.isAggregate) {
+        row.sum =  interpolate(this.data, row.variable, year);
+      }
+
+      const { sum, variable } = row;
+      const {
+        mutatedEstimate: trimmedEstimate,
+        codingThreshold,
+      } = topBottomCodeEstimate(sum, variable, year, this.isPrevious, config);
+      row.sum = trimmedEstimate;
       row.codingThreshold = codingThreshold;
     } else {
-      const formulaName = getFormulaName(config.options, 'sum');
-      sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
-    }
+      if (this.isAggregate) {
+        const formulaName = getFormulaName(config.options, 'sum');
+        row.sum = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
 
-    sum = this.applyTransform(sum, config.options.transform, !!row.codingThreshold);
-    row.sum = sum;
+      if (this.isPrevious && (
+        config.options &&
+        config.options.transform &&
+        config.options.transform.inflate
+     )) {
+       row.sum = row.sum * INFLATION_FACTOR;
+     }
+    }
   }
 
   /*
@@ -112,22 +129,29 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
-  recalculateM(row, year, config, wasCoded) {
-    let m;
-
+  recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
+
     if (wasCoded) {
-      m = null;
+      row.marginOfError = null;
     } else if (config.specialType === 'median') {
-      m = calculateMedianError(this.data, row.variable, year, config.options);
+      if (this.isAggregate) {
+        row.marginOfError = calculateMedianError(this.data, row.variable, year, config.options);
+      }
     } else {
-      const formulaName = getFormulaName(config.options, 'm');
-      m = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      if (this.isAggregate) {
+        const formulaName = getFormulaName(config.options, 'm');
+        row.marginOfError = executeFormula(this.data, row.variable, formulaName, config.options.args);
+      }
     }
 
-    m = this.applyTransform(m, config.options.transform);
-
-    row.m = m;
+    if (this.isPrevious && (
+      config.options &&
+      config.options.transform &&
+      config.options.transform.inflate
+   )) {
+     row.marginOfError = row.marginOfError * INFLATION_FACTOR;
+   }
   }
 
   /*
@@ -136,47 +160,22 @@ class DataProcessor {
    * @param{Object} config - Special calculation configuration for given row
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
-  recalculateCV(row, config, wasCoded) {
-    // CV should not be computed for top- or bottom-coded values
-    const formulaName = getFormulaName(config.options, 'cv');
-    row.cv = wasCoded ? null : executeFormula(this.data, row.variable, formulaName, config.options.CVArgs);
+  recalculateCorrelationCoefficient(row, config, wasCoded) {
+    if (this.isAggregate) {
+      // Correlation coefficient should not be computed for top- or bottom-coded values
+      const formulaName = getFormulaName(config.options, 'cv');
+      row.correlationCoefficient = wasCoded ? null : executeFormula(this.data, row.variable, formulaName, config.options.CVArgs);
+    }
   }
 
   /*
-   * Recalculates is_reliable for given row
+   * Recalculates isReliable for given row
    * @param{Row} row - The row to update
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
   recalculateIsReliable(row, wasCoded) {
     // top- or bottom-coded values are not reliable
-    row.is_reliable = wasCoded ? false : executeFormula(this.data, row.variable, 'is_reliable');
-  }
-
-  /*
-   * If transformOptions exists, then applies the appropriate transformation.
-   * 'inflate' is a special transform type, which only applies to previous year data points
-   * (designated by this.isPrevious), and scales by INFLATION_FACTOR, if the value was not top- or bottom-coded.
-   * Other allowed transformation is 'scale' type, and requires transformOptions.factor, where
-   * factor is applied as scalar transformation
-   * @param{Number} val - The value to transform
-   * @param{Object} transformOptions - Object containing 'type', and optionally 'factor'; defines the transformation
-   * @param{Boolean} wasCoded - flag indicating if the value was top or bottom coded
-   * @returns{Number}
-   */
-  applyTransform(val, transformOptions, wasCoded) {
-    if (!transformOptions) return val;
-
-    // do not inflate if data is current (not isPrevious)
-    if (transformOptions.type === 'inflate' && !this.isPrevious) return val;
-    // do not inflate if data was top or bottom coded
-    if (transformOptions.type === 'inflate' && wasCoded) return val;
-    // else if inflation; do special scalar transformation
-    if (transformOptions.type === 'inflate') return val * INFLATION_FACTOR;
-    // else; do standard scalar transform
-    if (transformOptions.type === 'scale' && transformOptions.factor) return val * transformOptions.factor;
-
-    // else something unexpected happened with transformOptions; just leave the value as is
-    return val;
+    row.isReliable = wasCoded ? false : executeFormula(this.data, row.variable, 'isReliable');
   }
 }
 
