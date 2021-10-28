@@ -167,8 +167,8 @@ You should see 8 check marks on completion. By the end of the migration, the tar
 
 ## Note on Reliability and Significance
 
-- The frontend `isReliable` variable currently actually is computed from the significance formula in the backend.
-The table values are grayed out based on this variable. However, whether the Change over Time arrows appear are based on *significance*, the logic of which is captured in the `data-table-row-change.hbs` template.
+- The frontend `*significant` (`percentSignificant`, `changePercentSignificant`, etc) variables currently are computed from the reliability formula in the backend.
+The table values are grayed out based on this `*significant` variable, which is actually reliability. However, whether the Change over Time arrows appear are based on true *significance*, the logic of which is captured in the `data-table-row-change.hbs` template.
 
 ## Backend services
 
