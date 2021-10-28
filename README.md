@@ -1,14 +1,14 @@
 [![CircleCI](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop)
 
 # FactFinder API
-An express.js api that provides search and selection data for [NYC Population FactFinder](https://github.com/NYCPlanning/labs-nyc-factfinder).
+An express.js api that provides search and selection data for [NYC Population FactFinder](https://github.com/NYCPlanning/labs-factfinder).
 
 ## Requirements
 
 You will need the following things properly installed on your computer.
 
 - [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/) (with NPM)
+- [Node.js](https://nodejs.org/) (with NPM or Yarn)
 - Nodemon
 
 ## Local development
@@ -17,7 +17,7 @@ You will need the following things properly installed on your computer.
 - Install Dependencies `yarn install`
 - Create `.env` file based on `.env-example` with your mongo uri and postgresql connection string
   - A .env file may be found on 1pass
-- Start the server `npm run devstart`
+- Start the server `npm run devstart` or `yarn run devstart`
 
 ## Architecture
 
@@ -34,14 +34,9 @@ There are three core set of tables that support the Factfinder API:
 
 `/search` returns search results for addresses, neighborhoods, etc.  Uses geosearch, and carto tables to return autocomplete suggestions.
 
-`/selection` sets and gets collections of census geometries.  Uses mongodb to store an array of geoids that the user selected.
+`/selection` sets and gets collections of census geometries. Creates or looks up an array of geoids in the support_geoids table.
 
-`/survey` returns decennial/acs data for a given survey type and geographic selection.  Queries postgresql using pg-promise.
-
-### Caching
-The dokku plugin `nginx-cache` via [https://github.com/koalalorenzo/dokku-nginx-cache](https://github.com/koalalorenzo/dokku-nginx-cache) is enabled for this app, but nginx won't cache if expressjs is not returning a cache-control header.
-
-The `survey` routes contain simple middleware that adds `Cache-control` headers to responses with `max-age=2592000` (30 days).
+`/survey` returns decennial/acs data for a given array of geoids.
 
 ### Routes
 
@@ -146,17 +141,34 @@ Each row within the survey tables have a unique geoid, geotype pair of values.
 Geoids of geotype `selection` are ids for a custom, user-defined geographical area held by the Selection table in the Factfinder stack. Each Selection geoid points to one row in the Selection table. Each row holds an array of geoids of other geotypes (like ntas, tracts, cdtas, etc).
 
 ## Data Updates
-Backing data is managed by EDM team. This app sets up foreign data wrappers (FDW) which provide schema-level access to EDM's factfinder tables.
-What is an FDW? It allows locals access to remote database tables. Once the FDW is created, we do a one-time insert into a local table, performing
-whatever munging needs to happen between EDM and the labs app. In our case, it's unioning the years.
+The project has a set of "migration" scripts to set up a Postgres database with required tables and load data. The scripts transfer read-only data from EDM's databases into the target Postgres database -- whether it be the develop, staging, or production database.
 
-Currently, migration files handle updating the data through these FDWs by inserting data into existing tables.
+### Quickstart
+Make sure you have locally installed the CLI tool [jq](https://stedolan.github.io/jq/download/) and [Postgres](https://www.postgresql.org/download/). Tip: `brew install jq` and `brew install postgresql` for Mac users. Verify you have the `jq` and `psql` command avaible in your command line. Then...
 
-To perform a basic refresh of the data, re-run the relevant migration. What is that? As of writing, it's 1576792591496_copy-data-2017.js.
-Look up pg-migrate instructions on targetting a specific migration.
+  1. Create a new, target PostgreSql database if one doesn't already exist.
+  2. Set the DATABASE_URL environment variable in the `.env` to the target Postgres database (TODO: migrate away from this pattern)
+  3. `yarn migrate`
 
-To update the data with new release data (2018, 2019), generate a new migration for this. This migration should probably clear out the existing data
-and do any munging it needs (for example, unioning the correct years). Then, run the migration.
+Running the `migrate` command kicks off `./bin/migrate` node executable, which in turn runs the `.sh` shell scripts under `./migrations`.
+
+You should see 8 check marks on completion. By the end of the migration, the target Postgres database should be set up with these schemas/tables:
+
+- support_geoids (table)
+- selection (table)
+- acs (schema)
+    - 2010 (table)
+    - 2019 (table)
+    - metadata (table)
+- decennial (schema)
+    - 2010 (table)
+    - 2020 (table)
+    - metadata (table)
+
+## Note on Reliability and Significance
+
+- The frontend `isReliable` variable currently actually is computed from the significance formula in the backend.
+The table values are grayed out based on this variable. However, whether the Change over Time arrows appear are based on *significance*, the logic of which is captured in the `data-table-row-change.hbs` template.
 
 ## Backend services
 
