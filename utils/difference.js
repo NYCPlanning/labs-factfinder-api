@@ -17,7 +17,7 @@ function doDifferenceCalculations(row, comparisonRow, isDecennial) {
 }
 
 /*
- * Calculate difference_sum, difference_m, and significant
+ * Calculate difference_sum, difference_m, and reliable
  * @param{row} - The row to update
  * @param{row} - The row to compare
  * @param{Boolean} isDecennial - True if given row is from a decennial survey, else false
@@ -53,20 +53,20 @@ function calculateDifferences(row, comparisonRow, isDecennial) {
   }
 
   difference.sum = executeFormula('delta', [sum, comparisonSum]);
-  // special handling for 'decennial' rows, which do not have MOE and are all considered 'significant'
+  // special handling for 'decennial' rows, which do not have MOE and are all considered 'reliable'
   if (isDecennial) {
-    difference.significant = true;
+    difference.reliable = true;
   } else {
     difference.marginOfError = executeFormula('delta_m', [marginOfError, comparisonMarginOfError]);
 
-    if (difference.sum !== 0) difference.significant = executeFormula('significant', [difference.sum, difference.marginOfError]);
+    if (difference.sum !== 0) difference.reliable = executeFormula('dynamicReliable', [difference.sum, difference.marginOfError]);
   }
 
   return difference;
 }
 
 /*
- * Calculate difference_percent, difference_percent_m, and percent_significant
+ * Calculate difference_percent, difference_percent_m, and percent_reliable
  * @param{row} - The row to do calculations for
  * @param{row} - The row to compare to
  * @param{Boolean} isDecennial - True if given row is from a decennial survey, else false
@@ -107,7 +107,7 @@ function calculateDifferencePercents(row, comparisonRow, isDecennial) {
   if (!isDecennial) {
     difference.percentMarginOfError = executeFormula('delta_m', [percentMarginOfError * 100, comparisonPercentMarginOfError * 100]);
 
-    if (difference.percent !== 0) difference.percentSignificant = executeFormula('significant', [difference.percent, difference.percentMarginOfError]);
+    if (difference.percent !== 0) difference.percentReliable = executeFormula('dynamicReliable', [difference.percent, difference.percentMarginOfError]);
   }
   return difference;
 }
