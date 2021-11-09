@@ -95,7 +95,7 @@ There are three core set of tables that support the Factfinder API:
             "previous_m": 0,
             ...
             "difference_sum": -15017,
-            "percent_significant": false
+            "percent_is_reliable": false
           },
           {
             "id": "QXNuMVJj",
@@ -165,10 +165,8 @@ You should see 8 check marks on completion. By the end of the migration, the tar
     - 2020 (table)
     - metadata (table)
 
-## Note on Reliability and Significance
+## Note on Reliability
 
-- The frontend `*significant` (`percentSignificant`, `changePercentSignificant`, etc) variables currently are computed from the reliability formula in the backend.
-The table values are grayed out based on this `*significant` variable, which is actually reliability. However, whether the Change over Time arrows appear are based on true *significance*, the logic of which is captured in the `data-table-row-change.hbs` template.
 
 ## Backend services
 
