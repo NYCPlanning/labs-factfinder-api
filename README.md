@@ -95,7 +95,7 @@ There are three core set of tables that support the Factfinder API:
             "previous_m": 0,
             ...
             "difference_sum": -15017,
-            "percent_reliable": false
+            "percent_is_reliable": false
           },
           {
             "id": "QXNuMVJj",

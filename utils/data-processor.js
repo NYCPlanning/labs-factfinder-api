@@ -58,7 +58,7 @@ class DataProcessor {
 
   /*
    * For all special variables, recalculate estimte (called sum), and optionally
-   * margin of error (called m), cv, and reliable.
+   * margin of error (called m), cv, and isReliable.
    * @param{Object} row - The row to update
    * @param{Object} config - The special calculation configuration for the given row
    */
@@ -74,7 +74,7 @@ class DataProcessor {
       if (this.surveyName !== 'decennial') {
         this.recalculateMarginOfError(row, year, config, wasCoded);
         this.recalculateCorrelationCoefficient(row, config, wasCoded);
-        this.recalculateReliable(row, wasCoded);
+        this.recalculateIsReliable(row, wasCoded);
       }
     } catch (e) {
       console.log(`Failed to update special vars for ${row.variable}:`, e); // eslint-disable-line
@@ -169,13 +169,13 @@ class DataProcessor {
   }
 
   /*
-   * Recalculates reliable for given row
+   * Recalculates isReliable for given row
    * @param{Row} row - The row to update
    * @param{boolean} wasCoded - Flag indicating if the estimate value has been coded
    */
-  recalculateReliable(row, wasCoded) {
+  recalculateIsReliable(row, wasCoded) {
     // top- or bottom-coded values are not reliable
-    row.reliable = wasCoded ? false : executeFormula(this.data, row.variable, 'reliable');
+    row.isReliable = wasCoded ? false : executeFormula(this.data, row.variable, 'isReliable');
   }
 }
 

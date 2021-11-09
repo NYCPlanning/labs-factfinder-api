@@ -73,10 +73,10 @@ const acsSQL = (ids, isPrevious = false) => `
    * An aggregation of enriched selection, joined with base. For true aggregate data selections,
    * e, m, c, percent and z (sum, m, cv, percent, percent_m, respectively) are recalculated.
    * For non-aggrenate data selections, the original values are selected using MAX as a noop aggregate function.
-   * reliable is calculated for all data selections.
+   * isReliable is calculated for all data selections.
    * Note: m is coalesced to 0 if the value does not exist in the data
    * TODO make this fix in the data? make m NOT NULL DEFAULT 0?
-   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, reliable
+   * Columns: id, sum, m, cv, variable, variablename, base, category, survey, percent, percent_m, isReliable
    */
   SELECT variables.*,
     --- percent (do not recalculate for non-aggregate selections)---
@@ -95,11 +95,11 @@ const acsSQL = (ids, isPrevious = false) => `
         THEN (1 / base_sum) * SQRT(POWER("marginOfError", 2) + POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2))
       ELSE (1 / base_sum) * SQRT(POWER("marginOfError", 2) - POWER(sum / base_sum, 2) * POWER(base_margin_of_error, 2))
     END AS "percentMarginOfError",
-    --- reliable ---
+    --- isReliable ---
     CASE
       WHEN "correlationCoefficient" < 20 THEN true
       ELSE false
-    END AS "reliable"
+    END AS "isReliable"
   FROM (
     SELECT
       --- id ---

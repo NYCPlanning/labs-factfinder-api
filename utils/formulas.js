@@ -10,10 +10,10 @@ const { CORRELATION_COEFFICIENT_CONST, DIFF_PERCENT_THRESHOLD } = require('../sp
  * - delta_m: change_m, change_percentage_point_m, difference_m, difference_percent_m
  * - change_pct: change_percent
  * - change_pct_m: change_percent_m
- * - reliable: change_reliable, change_percent_reliable, change_percentage_point_reliable, reliable, percent_reliable
+ * - reliable: change_is_reliable, change_percent_is_reliable, change_percentage_point_is_reliable, isReliable, percent_is_reliable
  *
  * There are a few other places where some calculations/calculation-related-decisioning happens:
- * - 'percent', 'percent_m', and 'reliable' are calculated as part of the original SQL query
+ * - 'percent', 'percent_m', and 'isReliable' are calculated as part of the original SQL query
  * - boolean checks for value existance are done before all change & difference checks in the code,
  *   and are not represented here in the formulas for readability and easier implementation
  */
@@ -33,7 +33,7 @@ module.exports = {
   cv: `((GET("marginOfError") / "${CORRELATION_COEFFICIENT_CONST}") / GET("sum")) * 100`,
 
   // For selected and comparison geo estimates where a correlation coefficient is given per variable
-  reliable: 'GET("correlationCoefficient") < 20',
+  isReliable: 'GET("correlationCoefficient") < 20',
 
   /** *** change and difference calculations **** */
   // Δ sum
@@ -47,5 +47,5 @@ module.exports = {
   change_pct_m: (sum, prevSum, m, prevM) => `ABS(${sum} / ${prevSum}) * SQRT(((${m} / ${CORRELATION_COEFFICIENT_CONST}) / ${sum})^2 + ((${prevM} / ${CORRELATION_COEFFICIENT_CONST}) / ${prevSum})^2) * ${CORRELATION_COEFFICIENT_CONST}`,
 
   // For Change and Difference calculations where CV (correlation_coefficient) is not given per variable
-  dynamicReliable: (sum, m) => `((${m} / ${CORRELATION_COEFFICIENT_CONST}) / ABS(${sum})) * 100 < 20`,
+  isDynamicReliable: (sum, m) => `((${m} / ${CORRELATION_COEFFICIENT_CONST}) / ABS(${sum})) * 100 < 20`,
 };

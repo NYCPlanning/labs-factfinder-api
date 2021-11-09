@@ -21,7 +21,7 @@ function doChangeCalculations(row, previousRow, rowConfig, isDecennial) {
 }
 
 /*
- * Calculate change_sum, change_m, and change_reliable
+ * Calculate change_sum, change_m, and change_is_reliable
  * @param{Object} row - The row to update
  * @param{Object} previousRow - The row to compare
  * @param{Boolean} isDecennial - True if given row is from a decennial survey, else false
@@ -62,13 +62,13 @@ function calculateChanges(row, previousRow, isDecennial) {
   if (!isDecennial) {
     change.marginOfError = executeFormula('delta_m', [marginOfError, previousMarginOfError]);
 
-    if (change.sum !== 0) change.reliable = executeFormula('dynamicReliable', [change.sum, change.marginOfError]);
+    if (change.sum !== 0) change.isReliable = executeFormula('isDynamicReliable', [change.sum, change.marginOfError]);
   }
   return change;
 }
 
 /*
- * Calculate change_percent, change_percent_m, change_percent_reliable
+ * Calculate change_percent, change_percent_m, change_percent_is_reliable
  * @param{Object} row - The row to update
  * @param{Object} previousRow - The row to compare
  * @param{Object} rowConfig - Special calculation config for the row, or undefined
@@ -113,13 +113,13 @@ function calculateChangePercents(row, previousRow, rowConfig, isDecennial) {
   if (!isDecennial) {
     // change_percent_m is null if previousSum = 0, and 0 if sum = 0 (Not totally clear on why...)
     change.percentMarginOfError = (previousSum === 0) ? null : (sum === 0) ? 0 : executeFormula('change_pct_m', [sum, previousSum, marginOfError, previousMarginOfError]);
-    if (change.percent !== 0 && change.percentMarginOfError !== null) change.percentReliable = executeFormula('dynamicReliable', [change.percent, change.percentMarginOfError]);
+    if (change.percent !== 0 && change.percentMarginOfError !== null) change.percentIsReliable = executeFormula('isDynamicReliable', [change.percent, change.percentMarginOfError]);
   }
   return change;
 }
 
 /*
- * Calculate change_percentage_point, change_percentage_point_m, change_percentage_point_reliable
+ * Calculate change_percentage_point, change_percentage_point_m, change_percentage_point_is_reliable
  * @param{row} - The row to update
  * @param{row} - The row to compare
  * @param{Object} rowConfig - Special calculation config for the row, or undefined
@@ -180,7 +180,7 @@ function calculateChangePercentagePoints(row, previousRow, rowConfig, isDecennia
   if (!isDecennial) {
     change.percentagePointMarginOfError = executeFormula('delta_m', [percentMarginOfError, previousPercentMarginOfError]);
 
-    if (change.percentagePoint !== 0) change.percentagePointReliable = executeFormula('dynamicReliable', [change.percentagePoint, change.percentagePointMarginOfError]);
+    if (change.percentagePoint !== 0) change.percentagePointIsReliable = executeFormula('isDynamicReliable', [change.percentagePoint, change.percentagePointMarginOfError]);
   }
   return change;
 }
