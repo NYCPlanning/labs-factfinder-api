@@ -1,6 +1,8 @@
 const rp = require('request-promise');
 
-const cartoDomain = 'planninglabs.carto.com';
+const cartoUsername = process.env.CARTO_USERNAME || 'planninglabs';
+
+const cartoDomain = `${cartoUsername}.carto.com`;
 
 const buildTemplate = (layergroupid, type) => { // eslint-disable-line
   return `https://${cartoDomain}/api/v1/map/${layergroupid}/{z}/{x}/{y}.${type}`;
