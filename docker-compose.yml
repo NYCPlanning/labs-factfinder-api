@@ -1,0 +1,12 @@
+version: '3'
+services:
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: factfinder-user
+      POSTGRES_PASSWORD: factfinder-password
+      POSTGRES_DB: factfinder-local
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/

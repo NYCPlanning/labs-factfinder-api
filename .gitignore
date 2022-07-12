@@ -1,4 +1,5 @@
 /node_modules
+/db-data
 /test-output
 npm-debug.log
 .env
