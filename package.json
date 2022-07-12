@@ -3,7 +3,7 @@
   "version": "2.0.1",
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "NODE_ENV=development nodemon ./bin/www",
+    "dev": "NODE_ENV=development nodemon ./bin/www",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "test": "NODE_ENV=test node ./node_modules/mocha/bin/mocha ./test/**/*.js --exit",
     "migrate": "node ./bin/migrate",
@@ -32,7 +32,6 @@
     "mongoose-plugin-autoinc": "^1.1.9",
     "morgan": "^1.9.1",
     "node-pg-migrate": "3.16.0",
-    "nodemon": "^2.0.12",
     "numeral": "^2.0.6",
     "pg-promise": "^8.4.5",
     "request": "^2.87.0",
@@ -56,6 +55,7 @@
     "expect": "22.4.0",
     "glob": "^7.1.2",
     "mocha": "^5.2.0",
+    "nodemon": "^2.0.19",
     "prettyjson": "1.2.1",
     "should": "13.2.1",
     "supertest": "3.1.0"
