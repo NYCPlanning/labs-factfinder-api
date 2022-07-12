@@ -20,13 +20,13 @@ if [ ! -z "$datasource" ] && [ ! -z "$year_curr" ] && [ ! -z "$year_prev" ]; the
     base_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/238-update-metadata-files-on-dev/factfinder/data"
     url_curr="$base_url/$datasource/$year_curr/metadata.json"
     url_prev="$base_url/$datasource/$year_prev/metadata.json"
-    CONTENT_CURR="$(curl -s $url_curr | jq -r 'del(.[].census_variable)')"
-    CONTENT_PREV="$(curl -s $url_prev | jq -r 'del(.[].census_variable)')"
+    curl -s $url_curr | jq -r 'del(.[].census_variable)' > /tmp/JSON_CURR.json
+    curl -s $url_prev | jq -r 'del(.[].census_variable)' > /tmp/JSON_PREV.json
+    # CONTENT_CURR="$(curl -s $url_curr | jq -r 'del(.[].census_variable)')"
+    # CONTENT_PREV="$(curl -s $url_prev | jq -r 'del(.[].census_variable)')"
     if [ $datasource == "acs" ]; then
         echo "$datasource"
         psql $DATABASE_URL \
-            -v CONTENT_CURR="$CONTENT_CURR" \
-            -v CONTENT_PREV="$CONTENT_PREV" \
             -v YEAR_CURR="$year_curr" \
             -v YEAR_PREV="$year_prev" \
             -f migrations/acs_metadata.sql
