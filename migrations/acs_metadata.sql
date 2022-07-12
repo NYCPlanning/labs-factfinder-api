@@ -1,6 +1,8 @@
 CREATE TEMP TABLE meta ( _json text , release_year text );
-INSERT INTO meta VALUES(:'CONTENT_CURR', :'YEAR_CURR');
-INSERT INTO meta VALUES(:'CONTENT_PREV', :'YEAR_PREV');
+\set JSON_CURR `cat /tmp/JSON_CURR.json`
+\set JSON_PREV `cat /tmp/JSON_PREV.json`
+INSERT INTO meta VALUES(:'JSON_CURR', :'YEAR_CURR');
+INSERT INTO meta VALUES(:'JSON_PREV', :'YEAR_PREV');
 
 CREATE SCHEMA IF NOT EXISTS acs;
 DROP TABLE IF EXISTS acs.metadata;
