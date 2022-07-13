@@ -17,7 +17,6 @@ CREATE TEMP TABLE tmp (
 
 \COPY tmp FROM PSTDIN WITH DELIMITER ',' CSV HEADER;
 
-DROP TABLE IF EXISTS acs.:"TABLE_NAME";
 SELECT
     labs_geotype as geotype,
     labs_geoid as geoid,
