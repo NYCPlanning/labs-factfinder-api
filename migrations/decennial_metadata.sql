@@ -1,6 +1,8 @@
 CREATE TEMP TABLE meta ( _json text , release_year text );
-INSERT INTO meta VALUES(:'CONTENT_CURR', :'YEAR_CURR');
-INSERT INTO meta VALUES(:'CONTENT_PREV', :'YEAR_PREV');
+\set DECENNIAL_CURR `cat migrations/metadata/DECENNIAL_CURR.json`
+\set DECENNIAL_PREV `cat migrations/metadata/DECENNIAL_PREV.json`
+INSERT INTO meta VALUES(:'DECENNIAL_CURR', :'YEAR_CURR');
+INSERT INTO meta VALUES(:'DECENNIAL_PREV', :'YEAR_PREV');
 
 CREATE SCHEMA IF NOT EXISTS decennial;
 DROP TABLE IF EXISTS decennial.metadata;
