@@ -1,5 +1,5 @@
 // constants for use in special calculations
-const INFLATION_FACTOR = 1.1751; // Updated to 2020 value
+const INFLATION_FACTOR = 1.1898;
 const CORRELATION_COEFFICIENT_CONST = 1.645;
 const DIFF_PERCENT_THRESHOLD = -0.05;
 const DESIGN_FACTOR = 1.5;
