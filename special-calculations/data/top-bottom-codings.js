@@ -55,7 +55,7 @@ const topBottomCodings = {
     mdhhinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 235000,
+        postInflation: 238000,
       },
       lower: {
         preInflation: 9999,
@@ -65,7 +65,7 @@ const topBottomCodings = {
     mdfaminc: {
       upper: {
         preInflation: 200000,
-        postInflation: 235000,
+        postInflation: 238000,
       },
       lower: {
         preInflation: 9999,
@@ -75,7 +75,7 @@ const topBottomCodings = {
     mdnfinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 235000,
+        postInflation: 238000,
       },
       lower: {
         preInflation: 9999,
@@ -85,31 +85,31 @@ const topBottomCodings = {
     mdewrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 118000,
+        postInflation: 119000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 2900
+        postInflation: 3000
       }
     },
     mdemftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 118000,
+        postInflation: 119000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 2900
+        postInflation: 3000
       }
     },
     mdefftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 118000,
+        postInflation: 119000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 2900
+        postInflation: 3000
       }
     },
     mdrms: {
@@ -119,7 +119,7 @@ const topBottomCodings = {
     mdvl: {
       upper: {
         preInflation: 1000000,
-        postInflation: 1175000,
+        postInflation: 1190000,
       },
       lower: {
         preInflation: 0,
@@ -129,7 +129,7 @@ const topBottomCodings = {
     mdgr: {
       upper: {
         preInflation: 2000,
-        postInflation: 2350,
+        postInflation: 2400,
       },
       lower: {
         preInflation: 0,
