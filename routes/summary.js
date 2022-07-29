@@ -1,5 +1,5 @@
 const express = require('express');
-const { DECENNIAL_LATEST_TABLE_FULL_PATH } = require('../special-calculations/data/constants');
+const { DECENNIAL_LATEST_TABLE_FULL_PATH, ACS_LATEST_TABLE_FULL_PATH } = require('../special-calculations/data/constants');
 
 const router = express.Router();
 
@@ -35,9 +35,18 @@ router.get('/:summary/:summaryvars/:geoids/', async (req, res) => {
   const idString = "'" + _geoids.split(',').join("','") + "'";
 
   if (isInvalidSummary(summary)) res.status(400).send({ error: 'Invalid summary name. Summary must be acs or decennial' });
-  const summaryData = await app.db.query(`SELECT * FROM ${DECENNIAL_LATEST_TABLE_FULL_PATH} WHERE "geoid" IN (${idString}) and "variable" IN (${varString})`);
-  const totals = summarizeData(summaryData, summaryvars.split(','));
-  return res.send({ totals: totals, summaryData: summaryData });
+  const table = (summary === 'decennial') ? DECENNIAL_LATEST_TABLE_FULL_PATH : ACS_LATEST_TABLE_FULL_PATH;
+
+  try {  
+    const summaryData = await app.db.query(`SELECT * FROM ${table} WHERE "geoid" IN (${idString}) and "variable" IN (${varString})`);
+    const totals = summarizeData(summaryData, summaryvars.split(','));
+    return res.send({ totals: totals, summaryData: summaryData });
+  } catch (e) {
+    res.status(500).send({
+      status:  [`Failed to find selection for summary ${summary}, summaryvars ${varString}, geoids ${idString}. ${e}`],
+    });
+  }
+  
 });
 
 module.exports = router;
