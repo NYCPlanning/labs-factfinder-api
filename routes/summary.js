@@ -8,10 +8,9 @@ const router = express.Router();
  * @param{Object} data - the data to calculate totals with
  * @param{Object} variableNames - the variable names to calculate totals for
  */
-function summarizeData(data, variableNames) {
+function summarizeData(data) {
   var summarizedData = {};
-  variableNames.forEach((variableName) => { summarizedData[variableName] = 0; });
-  data.forEach((item) => { summarizedData[item.variable] += item.value });
+  data.forEach((item) => { summarizedData[item.variable] = item.sum });
   return summarizedData;
 }
 
@@ -36,11 +35,12 @@ router.get('/:summary/:summaryvars/:geoids/', async (req, res) => {
 
   if (isInvalidSummary(summary)) res.status(400).send({ error: 'Invalid summary name. Summary must be acs or decennial' });
   const table = (summary === 'decennial') ? DECENNIAL_LATEST_TABLE_FULL_PATH : ACS_LATEST_TABLE_FULL_PATH;
+  const valueField = (summary === 'decennial') ? 'value' : 'estimate';
 
   try {  
-    const summaryData = await app.db.query(`SELECT * FROM ${table} WHERE "geoid" IN (${idString}) and "variable" IN (${varString})`);
-    const totals = summarizeData(summaryData, summaryvars.split(','));
-    return res.send({ totals: totals, summaryData: summaryData });
+    const summaryData = await app.db.query(`SELECT "variable",SUM(${valueField}) FROM ${table} WHERE "geoid" IN (${idString}) and "variable" IN (${varString}) GROUP BY "variable"`);
+    const totals = summarizeData(summaryData);
+    return res.send({ totals: totals });
   } catch (e) {
     res.status(500).send({
       status:  [`Failed to find selection for summary ${summary}, summaryvars ${varString}, geoids ${idString}. ${e}`],
