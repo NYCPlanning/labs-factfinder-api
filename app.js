@@ -34,6 +34,7 @@ app.use('/search', require('./routes/search'));
 app.use('/selection', require('./routes/selection'));
 app.use('/geo-options', require('./routes/geo-options'));
 app.use('/survey', require('./routes/survey'));
+app.use('/summary', require('./routes/summary'));
 
 app.use((req, res) => {
   res.status(404).json({
