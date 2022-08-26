@@ -94,7 +94,7 @@ class DataProcessor {
     // topBottomCodeEstimate() for aggregate selections
     if (config.specialType === 'median') {
       if (this.isAggregate) {
-        row.sum =  interpolate(this.data, row.variable, year);
+        row.sum = interpolate(this.data, row.variable, year);
       }
 
       const { sum, variable } = row;
@@ -131,7 +131,6 @@ class DataProcessor {
    */
   recalculateMarginOfError(row, year, config, wasCoded) {
     // MOE should not be calculated for top- or bottom-coded values
-
     if (wasCoded) {
       row.marginOfError = null;
     } else if (config.specialType === 'median') {
