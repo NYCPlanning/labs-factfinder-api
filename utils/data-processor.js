@@ -175,6 +175,7 @@ class DataProcessor {
    */
   recalculateIsReliable(row, wasCoded) {
     // top- or bottom-coded values are not reliable
+    if (!row.correlationCoefficient) return;
     row.isReliable = wasCoded ? false : executeFormula(this.data, row.variable, 'isReliable');
   }
 }
