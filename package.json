@@ -42,7 +42,7 @@
     "underscore": "^1.9.1"
   },
   "engines": {
-    "node": "10.21.0",
+    "node": "^16",
     "npm": "5.3.0"
   },
   "devDependencies": {
