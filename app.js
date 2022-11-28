@@ -18,7 +18,7 @@ app.db = pgp(process.env.DATABASE_URL);
 
 // allows CORS
 app.all('*', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', 'https://staging--labs-factfinder.netlify.app, https://develop--labs-factfinder.netlify.app, https://popfactfinder.planning.nyc.gov/');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Authorization');
   next();
