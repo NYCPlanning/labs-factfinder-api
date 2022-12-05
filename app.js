@@ -3,6 +3,7 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const app = express();
 
@@ -17,12 +18,11 @@ const pgp = require('pg-promise')({
 app.db = pgp(process.env.DATABASE_URL);
 
 // allows CORS
-app.all('*', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Authorization');
-  next();
-});
+app.use(cors({
+  origin: ['https://staging--labs-factfinder.netlify.app','https://develop--labs-factfinder.netlify.app','https://popfactfinder.planning.nyc.gov/'],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: 'X-Requested-With,Content-Type,Authorization',
+}))
 
 // middleware
 app.use(logger('dev'));

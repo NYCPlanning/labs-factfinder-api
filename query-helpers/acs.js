@@ -109,7 +109,6 @@ const acsSQL = (ids, isPrevious = false) => `
       --- margin_of_error (do not recalculate for non-aggregate selections)---
       --- coalesce null m to 0 ---
       CASE
-        WHEN SUM(margin_of_error) IS NULL THEN 0
         WHEN NOT ${isAggregate(ids)} THEN MAX(margin_of_error)
         ELSE SQRT(SUM(POWER(margin_of_error, 2)))
       END AS "marginOfError",
