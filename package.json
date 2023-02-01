@@ -29,7 +29,7 @@
     "lodash": "^4.17.11",
     "mathjs": "6.0.2",
     "mockgoose": "^7.3.5",
-    "mongoose": "^5.2.4",
+    "mongoose": "^5.13.15",
     "mongoose-plugin-autoinc": "^1.1.9",
     "morgan": "^1.9.1",
     "node-pg-migrate": "3.16.0",
