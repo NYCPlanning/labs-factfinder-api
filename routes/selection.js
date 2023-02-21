@@ -72,6 +72,60 @@ router.get('/:geotype/:geoid', async (req, res) => {
   }
 });
 
+router.post('/:geotype', async (req, res) => {
+  const { app } = req;
+  let { geotype } = req.params;
+  let { geoid } = req.body;
+
+  geoid = deserializeGeoid(res, geotype, geoid);
+
+  if (geotype === 'selection') {
+    try {
+      const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
+
+      if (selection && selection.length > 0) {
+        const {
+          geotype: selectionGeotype,
+          geoids: selectionGeoids
+        } = selection[0];
+
+        getFeatures(selectionGeotype, selectionGeoids)
+          .then((features) => {
+            res.send({
+              status: 'success',
+              id: geoid,
+              type: selectionGeotype,
+              features,
+            });
+          })
+          .catch((err) => {
+            console.log('err', err); // eslint-disable-line
+          });
+      } else {
+        res.status(404).send({
+          status: 'not found',
+        });
+      }
+    } catch (e) {
+      res.status(500).send({
+        status:  [`Failed to find selection for hash ${geoid}. ${e}`],
+      });
+    }
+  } else {
+    getFeatures(geotype, [ geoid ])
+      .then((features) => {
+        res.send({
+          status: 'success',
+          id: geoid,
+          type: geotype,
+          features,
+        });
+      })
+      .catch((err) => {
+        console.log('err', err); // eslint-disable-line
+      });
+  }
+});
 
 router.post('/', async (req, res) => {
   const { app, body } = req;
