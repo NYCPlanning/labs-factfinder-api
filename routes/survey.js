@@ -8,7 +8,7 @@ const deserializeGeoid = require('../utils/deserialize-geoid');
 const DataProcessor = require('../utils/data-processor');
 const doChangeCalculations = require('../utils/change');
 const doDifferenceCalculations = require('../utils/difference');
-
+const { performance } = require('perf_hooks');
 const router = express.Router();
 
 /*
@@ -94,7 +94,11 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
         const selection = await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
         if (selection && selection.length > 0) {
+          console.info("hit selection survey data");
+          const start = performance.now();
           surveyObj = await getSurveyData(survey, selection[0].geoids, compareTo, app.db);
+          const stop = performance.now();
+          console.info('get survey data of selection ms: ', stop - start);
         }
       } catch (e) {
         return res.status(500).send({
@@ -102,6 +106,7 @@ router.get('/:survey/:geotype/:geoid/', async (req, res) => {
         });
       }
     } else {
+      console.info("hit non selection branch");
       surveyObj = await getSurveyData(survey, [geoid], compareTo, app.db);
     }
     return res.send(surveyObj);
@@ -127,7 +132,7 @@ async function getSurveyData(survey, geoids, compareTo, db) {
   const isAggregate = geoids.length > 1;
 
   const queryBuilder = getQueryBuilder(survey);
-
+  let start = performance.now();
   // get data from postgres
   const [rawSurveyData, rawCompareSurveyData, rawPreviousSurveyData, rawPreviousCompareSurveyData] = await Promise.all([
     db.query(queryBuilder(geoids)),
@@ -135,14 +140,23 @@ async function getSurveyData(survey, geoids, compareTo, db) {
     db.query(queryBuilder(geoids, /* is previous */ true)),
     db.query(queryBuilder([compareTo], /* is previous */ true)),
   ]);
+  let stop = performance.now();
+  console.info('time to execute queries: ', stop - start);
+  
+  start = performance.now();
   // Instantiate DataProcessors to process query results
   const surveyData = new DataProcessor(rawSurveyData, survey, isAggregate).process();
   const compareSurveyData = new DataProcessor(rawCompareSurveyData, survey, /* isAggregate */ false).process();
   const previousSurveyData = new DataProcessor(rawPreviousSurveyData, survey, isAggregate, /* isPrevious */ true).process();
   const previousCompareSurveyData = new DataProcessor(rawPreviousCompareSurveyData, survey, false, /* isPrevious */ true).process();
+  stop = performance.now();
+  console.info('time to process data: ', stop - start);
 
+  start = performance.now();
   // add previous surveyData and compareData row objects into surveyData row objects
   const joinedData = join(surveyData, compareSurveyData, previousSurveyData, previousCompareSurveyData);
+  stop = performance.now();
+  console.info('time to join data: ', stop - start);
 
   return joinedData;
 }
