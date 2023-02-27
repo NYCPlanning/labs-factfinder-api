@@ -54,9 +54,6 @@ router.post('/:summary/:summaryvars', async (req, res) => {
   const geoids = req.body;
   const { summary, summaryvars } = req.params;
 
-  console.log('reqreqreq', req);
-  console.log("geoids", geoids, typeof(geoids));
-
   const varString = "'" + summaryvars.split(',').join("','") + "'";
   const idString = "'" + geoids.join("','") + "'";
 
