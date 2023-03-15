@@ -83,7 +83,7 @@ router.post('/:geotype', async (req, res) => {
     try {
       const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
-      if (selection && selection.length > 0) {
+      if (selection?.length > 0) {
         const {
           geotype: selectionGeotype,
           geoids: selectionGeoids
@@ -99,7 +99,8 @@ router.post('/:geotype', async (req, res) => {
             });
           })
           .catch((err) => {
-            console.log('err', err); // eslint-disable-line
+            /* eslint-disable-next-line no-console */
+            console.log('err', err);
           });
       } else {
         res.status(404).send({
@@ -122,7 +123,8 @@ router.post('/:geotype', async (req, res) => {
         });
       })
       .catch((err) => {
-        console.log('err', err); // eslint-disable-line
+        /* eslint-disable-next-line  no-console */
+        console.log('err', err);
       });
   }
 });
