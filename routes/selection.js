@@ -83,7 +83,7 @@ router.post('/:geotype', async (req, res) => {
     try {
       const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
 
-      if (selection?.length > 0) {
+      if (selection && selection.length > 0) {
         const {
           geotype: selectionGeotype,
           geoids: selectionGeoids
