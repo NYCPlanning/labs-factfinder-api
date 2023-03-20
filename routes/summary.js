@@ -42,11 +42,37 @@ router.get('/:summary/:summaryvars/:geoids/', async (req, res) => {
     const totals = summarizeData(summaryData);
     return res.send({ totals: totals });
   } catch (e) {
+    console.error(`Failed to find selection for summary ${summary}, summaryvars ${varString}, geoids ${idString}. ${e}`);
+
     res.status(500).send({
-      status:  [`Failed to find selection for summary ${summary}, summaryvars ${varString}, geoids ${idString}. ${e}`],
+      status:  [`Failed to find selection for summary`],
     });
   }
-  
+});
+
+router.post('/:summary/:summaryvars', async (req, res) => {
+  const { app } = req;
+  const geoids = req.body;
+  const { summary, summaryvars } = req.params;
+
+  const varString = "'" + summaryvars.split(',').join("','") + "'";
+  const idString = "'" + geoids.join("','") + "'";
+
+  if (isInvalidSummary(summary)) res.status(400).send({ error: 'Invalid summary name. Summary must be acs or decennial' });
+  const table = (summary === 'decennial') ? DECENNIAL_LATEST_TABLE_FULL_PATH : ACS_LATEST_TABLE_FULL_PATH;
+  const valueField = (summary === 'decennial') ? 'value' : 'estimate';
+
+  try {
+    const summaryData = await app.db.query(`SELECT "variable",SUM(${valueField}) FROM ${table} WHERE "geoid" IN (${idString}) and "variable" IN (${varString}) GROUP BY "variable"`);
+    const totals = summarizeData(summaryData);
+    return res.send({ totals: totals });
+  } catch (e) {
+    console.error(`Failed to find selection for summary ${summary}, summaryvars ${varString}, geoids ${idString}. ${e}`);
+
+    res.status(500).send({
+      status:  [`Failed to find selection for summary`],
+    });
+  }
 });
 
 module.exports = router;
