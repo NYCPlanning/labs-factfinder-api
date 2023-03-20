@@ -52,8 +52,10 @@ router.get('/:geotype/:geoid', async (req, res) => {
         });
       }
     } catch (e) {
+      console.error(`Failed to find selection for hash ${geoid}. ${e}`);
+
       res.status(500).send({
-        status:  [`Failed to find selection for hash ${geoid}. ${e}`],
+        status:  [`Failed to find selection for hash`],
       });
     }
   } else {
@@ -72,6 +74,64 @@ router.get('/:geotype/:geoid', async (req, res) => {
   }
 });
 
+router.post('/:geotype', async (req, res) => {
+  const { app } = req;
+  let { geotype } = req.params;
+  let { geoid } = req.body;
+
+  geoid = deserializeGeoid(res, geotype, geoid);
+
+  if (geotype === 'selection') {
+    try {
+      const selection =  await app.db.query('SELECT * FROM selection WHERE hash = ${geoid}', { geoid });
+
+      if (selection && selection.length > 0) {
+        const {
+          geotype: selectionGeotype,
+          geoids: selectionGeoids
+        } = selection[0];
+
+        getFeatures(selectionGeotype, selectionGeoids)
+          .then((features) => {
+            res.send({
+              status: 'success',
+              id: geoid,
+              type: selectionGeotype,
+              features,
+            });
+          })
+          .catch((err) => {
+            /* eslint-disable-next-line no-console */
+            console.log('err', err);
+          });
+      } else {
+        res.status(404).send({
+          status: 'not found',
+        });
+      }
+    } catch (e) {
+      console.error(`Failed to find selection for hash ${geoid}. ${e}`)
+
+      res.status(500).send({
+        status:  [`Failed to find selection`],
+      });
+    }
+  } else {
+    getFeatures(geotype, [ geoid ])
+      .then((features) => {
+        res.send({
+          status: 'success',
+          id: geoid,
+          type: geotype,
+          features,
+        });
+      })
+      .catch((err) => {
+        /* eslint-disable-next-line  no-console */
+        console.error('err', err);
+      });
+  }
+});
 
 router.post('/', async (req, res) => {
   const { app, body } = req;
@@ -122,19 +182,25 @@ router.post('/', async (req, res) => {
             });
           }
         } catch (e) {
+          console.error(`Error finding newly inserted selection for new hash ${hash}: ${e}`);
+
           res.status(500).send({
-            status:  [`Error finding newly inserted selection for new hash ${hash}: ${e}`],
+            status:  [`Error finding newly inserted selection`],
           });
         }
       } catch (e) { // on INSERT new Selection error
+        console.error(`Error creating new selection for geoids ${geoids}: ${e}`);
+
         res.status(500).send({
-          status:  [`Error creating new selection for geoids ${geoids}: ${e}`],
+          status:  [`Error creating new selection`],
         });
       }
     }
   } catch (e) {
+    console.error(`Error checking for existing selection from geoids ${geoids}. ${e}`);
+
     res.status(500).send({
-      status:  [`Error checking for existing selection from geoids ${geoids}. ${e}`],
+      status:  [`Error checking for existing selection`],
     });
   }
 });
