@@ -1,16 +1,16 @@
 // constants for use in special calculations
-const INFLATION_FACTOR = 1.1898;
+const INFLATION_FACTOR = 1.2543;
 const CORRELATION_COEFFICIENT_CONST = 1.645;
 const DIFF_PERCENT_THRESHOLD = -0.05;
 const DESIGN_FACTOR = 1.5;
-const CUR_YEAR = 'Y2016-2020';
+const CUR_YEAR = 'Y2017-2021';
 const PREV_YEAR = 'Y2006-2010'; // TODO: update with actual previous year
 const GEOGRAPHY_YEAR = '2010_to_2020';
 const DECENNIAL_SCHEMA_NAME = 'decennial';
 const DECENNIAL_LATEST_TABLE_NAME = '2020';
 const DECENNIAL_EARLIEST_TABLE_NAME = '2010';
 const ACS_SCHEMA_NAME = 'acs';
-const ACS_LATEST_TABLE_NAME = '2020';
+const ACS_LATEST_TABLE_NAME = '2021';
 const ACS_EARLIEST_TABLE_NAME = '2010';
 const ACS_METADATA_FULL_PATH = `"${ACS_SCHEMA_NAME}"."metadata"`
 const ACS_LATEST_TABLE_FULL_PATH = `"${ACS_SCHEMA_NAME}"."${ACS_LATEST_TABLE_NAME}"`;

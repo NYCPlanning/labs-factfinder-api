@@ -40,7 +40,7 @@ const topBottomCodings = {
     },
     mdvl: {
       upper: 2000000,
-      lower: 0,
+      lower: 10000,
     },
     mdgr: {
       upper: 3500,
@@ -55,61 +55,61 @@ const topBottomCodings = {
     mdhhinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 238000,
+        postInflation: 250000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 12000
+        postInflation: 12500
       }
     },
     mdfaminc: {
       upper: {
         preInflation: 200000,
-        postInflation: 238000,
+        postInflation: 250000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 12000
+        postInflation: 12500
       }
     },
     mdnfinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 238000,
+        postInflation: 250000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 12000
+        postInflation: 12500
       }
     },
     mdewrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 119000,
+        postInflation: 125000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3000
+        postInflation: 3100
       }
     },
     mdemftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 119000,
+        postInflation: 125000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3000
+        postInflation: 3100
       }
     },
     mdefftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 119000,
+        postInflation: 125000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3000
+        postInflation: 3100
       }
     },
     mdrms: {
@@ -119,7 +119,7 @@ const topBottomCodings = {
     mdvl: {
       upper: {
         preInflation: 1000000,
-        postInflation: 1190000,
+        postInflation: 1254000,
       },
       lower: {
         preInflation: 0,
@@ -129,7 +129,7 @@ const topBottomCodings = {
     mdgr: {
       upper: {
         preInflation: 2000,
-        postInflation: 2400,
+        postInflation: 2500,
       },
       lower: {
         preInflation: 0,
