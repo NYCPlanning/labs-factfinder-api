@@ -8,7 +8,7 @@ An express.js api that provides search and selection data for [NYC Population Fa
 You will need the following things properly installed on your computer.
 
 - [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/) version 10.21.0. We suggest installing versions of Node via [nvm](https://github.com/nvm-sh/nvm).
+- [Node.js](https://nodejs.org/) **version listed in .nvmrc**  We suggest installing versions of Node via [nvm](https://github.com/nvm-sh/nvm).
 - [Yarn v1.x](https://classic.yarnpkg.com/lang/en/)
 
 ## Setting Up a Local Development Environment
