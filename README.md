@@ -14,7 +14,7 @@ You will need the following things properly installed on your computer.
 ## Setting Up a Local Development Environment
 
 1. Clone this repo `https://github.com/NYCPlanning/labs-factfinder-api.git`
-2. Ensure you're running Node v10.21.0 and have Yarn installed
+2. Ensure you're running the Node version listed in the .nvmrc and have Yarn installed
 3. Install Dependencies `yarn`
 4. Create a file called `.env` in the root directory of this repository. This file must contain an environment variable called `DATABASE_URL` with a postgresql connection string for your database. Copy of the contents of`sample.env` into you're newly created `.env`. Be sure to name this file correctly, as it may need to contain sensitive information and therefore is included in the `.gitignore` file for this repo. If you add this file and see it show up in your Git diffs, that means you named it incorrectly and should not commit the file you created.
 5. This API relies on a Postgresql database for its data. At this point in the set up, you must decide if you want to use a local instance of the database or if you want to connect to the remote database used by our development environment. If you're only making changes to the API code, you will likely be fine using the development environment database. If you're making changes to the scripts in `/migrations` or performing database updates, you should start with a local database so that you can work on your changes without affecting any remote environments shared across the team. If you're unsure which approach you should take, ask someone on the team for help.
