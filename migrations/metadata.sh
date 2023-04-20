@@ -17,7 +17,7 @@ done
 
 if [ ! -z "$datasource" ] && [ ! -z "$year_curr" ] && [ ! -z "$year_prev" ]; then
     echo "loading metadata for $datasource year_curr: $year_curr year_prev: $year_prev"
-    base_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/dev/factfinder/data"
+    base_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/main/factfinder/data"
     url_curr="$base_url/$datasource/$year_curr/metadata.json"
     url_prev="$base_url/$datasource/$year_prev/metadata.json"
     base_path="$( cd ../"$(dirname "$0")" ; pwd -P )"
