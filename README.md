@@ -41,13 +41,13 @@ You will need the following things properly installed on your computer.
       
   Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
 
-  ### Running the api and database with docker
-  When making changes to the factfinder frontend, it can be helpful to have the API and Database run together in docker using `compose`
+  ### Running the api, database, and labs-layers-api with docker
+  When making changes to the factfinder frontend, it can be helpful to have the API, Database, and labs-layers-api run together in docker using `compose`
   * Modify the DATABASE_URL to point to `database`, rather than `localhost`. 
     - This relates to how containers within the same network communicate.
     - The full url is available in the `sample.env`
     - **Note: Migrations previously run outside of docker with `yarn migrate` against the `localhost` url will still be available. The database container is the same as before, simply with a new alias.
-  * Run the api and database together
+  * Run the api, database, and labs-layers-api together
     - `docker compose up`
 
   ### Connecting your local environment to the Development environment database.
