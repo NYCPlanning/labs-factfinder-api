@@ -8,21 +8,16 @@ An express.js api that provides search and selection data for [NYC Population Fa
 You will need the following things properly installed on your computer.
 
 - [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/) version 10.21.0. We suggest installing versions of Node via [nvm](https://github.com/nvm-sh/nvm).
+- [Node.js](https://nodejs.org/) **version listed in .nvmrc**  We suggest installing versions of Node via [nvm](https://github.com/nvm-sh/nvm).
 - [Yarn v1.x](https://classic.yarnpkg.com/lang/en/)
 
 ## Setting Up a Local Development Environment
 
 1. Clone this repo `https://github.com/NYCPlanning/labs-factfinder-api.git`
-2. Ensure you're running Node v10.21.0 and have Yarn installed
+2. Ensure you're running the Node version listed in the .nvmrc and have Yarn installed
 3. Install Dependencies `yarn`
 4. Create a file called `.env` in the root directory of this repository. This file must contain an environment variable called `DATABASE_URL` with a postgresql connection string for your database. Copy of the contents of`sample.env` into you're newly created `.env`. Be sure to name this file correctly, as it may need to contain sensitive information and therefore is included in the `.gitignore` file for this repo. If you add this file and see it show up in your Git diffs, that means you named it incorrectly and should not commit the file you created.
 5. This API relies on a Postgresql database for its data. At this point in the set up, you must decide if you want to use a local instance of the database or if you want to connect to the remote database used by our development environment. If you're only making changes to the API code, you will likely be fine using the development environment database. If you're making changes to the scripts in `/migrations` or performing database updates, you should start with a local database so that you can work on your changes without affecting any remote environments shared across the team. If you're unsure which approach you should take, ask someone on the team for help.
-
-  ### Connecting your local environment to the Development environment database.
-  > This option is only available to internal DCP developers, as it requires access to sensitive information.
-  * Log into our 1PW vault and look for a document called "Factfinder API Development Env"
-  * Download that file and replace the contents of your `.env` file with its contents.
 
   ### Setting up a local database instance with `docker-compose`
   You can set up a local instance of the database that this API relies on using Docker. This is helpful for testing changes to the API locally and for making updates to the "migration" scripts themselves. To set up a local instance of the database:
@@ -46,7 +41,12 @@ You will need the following things properly installed on your computer.
       
   Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
 
-6. Once you're set up to connect to either the development environment or your own local database, start the server by running `yarn run dev`
+  ### Connecting your local environment to the Development environment database.
+  > This option is only available to internal DCP developers, as it requires access to sensitive information.
+  * Log into our 1PW vault and look for a document called "Factfinder API Development Env"
+  * Download that file and replace the contents of your `.env` file with its contents.
+
+6. Once you're set up to connect to either your own local database or the development environment, start the api server by running `yarn run dev`
 
 ## Architecture
 
