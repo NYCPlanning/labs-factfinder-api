@@ -19,10 +19,10 @@ You will need the following things properly installed on your computer.
 4. Create a file called `.env` in the root directory of this repository. This file must contain an environment variable called `DATABASE_URL` with a postgresql connection string for your database. Copy of the contents of`sample.env` into you're newly created `.env`. Be sure to name this file correctly, as it may need to contain sensitive information and therefore is included in the `.gitignore` file for this repo. If you add this file and see it show up in your Git diffs, that means you named it incorrectly and should not commit the file you created.
 5. This API relies on a Postgresql database for its data. At this point in the set up, you must decide if you want to use a local instance of the database or if you want to connect to the remote database used by our development environment. If you're only making changes to the API code, you will likely be fine using the development environment database. If you're making changes to the scripts in `/migrations` or performing database updates, you should start with a local database so that you can work on your changes without affecting any remote environments shared across the team. If you're unsure which approach you should take, ask someone on the team for help.
 
-  ### Setting up a local database instance with `docker compose`
+  ### Setting up a local database instance with docker
   You can set up a local instance of the database that this API relies on using Docker. This is helpful for testing changes to the API locally and for making updates to the "migration" scripts themselves. To set up a local instance of the database:
   * Makes sure you have [docker installed](https://www.docker.com/get-started/). If you don't, consider installing it via [homebrew](https://www.brew.sh).
-  * Once you have docker installed, try running `docker compose up` from the root directory of this repository. The file `compose.yaml` should spin up a container running the default Postgresql image. If this step is successful, you should see logs indicating that the database is running and ready to accept connections in your terminal. You will need to keep this container running while running the project.
+  * Once you have docker installed, try running `docker compose up database` from the root directory of this repository. The file `compose.yaml` should spin up a container running the default Postgresql image. If this step is successful, you should see logs indicating that the database is running and ready to accept connections in your terminal. You will need to keep this container running while running the project.
   * Make sure you have locally installed [jq](https://stedolan.github.io/jq/download/) and [Postgres](https://www.postgresql.org/download/). Tip: `brew install jq` and `brew install postgresql` for Mac users using Homebrew.
   * Double check that you created your `.env` file and copied over the contents of `sample.env`. The contents of `sample.env` are pre-configured to connect to the database created by `docker compose.yml`
   * Run `yarn migrate`. Running the `migrate` command kicks off `./bin/migrate` node executable, which in turn runs the `.sh` shell scripts under `./migrations`. Running this command will kick off a series of bash scripts that download and datasets and load them into your database. You should see logs in your terminal such as `Running ETL command: ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load`.
@@ -40,6 +40,15 @@ You will need the following things properly installed on your computer.
       - metadata (table)
       
   Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
+
+  ### Running the api and database with docker
+  When making changes to the factfinder frontend, it can be helpful to have the API and Database run together in docker using `compose`
+  * Modify the DATABASE_URL to point to `database`, rather than `localhost`. 
+    - This relates to how containers within the same network communicate.
+    - The full url is available in the `sample.env`
+    - **Note: Migrations previously run outside of docker with `yarn migrate` against the `localhost` url will still be available. The database container is the same as before, simply with a new alias.
+  * Run the api and database together
+    - `docker compose up`
 
   ### Connecting your local environment to the Development environment database.
   > This option is only available to internal DCP developers, as it requires access to sensitive information.
