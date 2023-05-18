@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "apicache": "^1.2.3",
+    "axios": "^1.4.0",
     "body-parser": "^1.18.3",
     "compression": "1.7.3",
     "cors": "^2.8.5",
@@ -35,8 +36,6 @@
     "node-pg-migrate": "3.16.0",
     "numeral": "^2.0.6",
     "pg-promise": "^11.4.3",
-    "request": "^2.87.0",
-    "request-promise": "^4.2.2",
     "sha1": "^1.1.1",
     "slug": "^0.9.2",
     "underscore": "^1.9.1"

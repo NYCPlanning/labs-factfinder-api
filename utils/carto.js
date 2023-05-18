@@ -1,12 +1,8 @@
-const rp = require('request-promise');
+const axios = require('axios');
 
 const cartoUsername = process.env.CARTO_USERNAME || 'planninglabs';
 
 const cartoDomain = `${cartoUsername}.carto.com`;
-
-const buildTemplate = (layergroupid, type) => { // eslint-disable-line
-  return `https://${cartoDomain}/api/v1/map/${layergroupid}/{z}/{x}/{y}.${type}`;
-};
 
 const buildSqlUrl = (cleanedQuery, format = 'json', method) => { // eslint-disable-line
   let url = `https://${cartoDomain}/api/v2/sql`;
@@ -17,30 +13,30 @@ const buildSqlUrl = (cleanedQuery, format = 'json', method) => { // eslint-disab
 const Carto = {
   SQL(query, format = 'json', method = 'get') {
     const cleanedQuery = query.replace('\n', '');
-    const uri = buildSqlUrl(cleanedQuery, format, method);
+    const url = buildSqlUrl(cleanedQuery, format, method);
 
-    let fetchOptions = {
-      uri,
+    let axiosOptions = {
+      url,
     };
 
     if (method === 'post') {
-      fetchOptions = {
-        uri,
+      axiosOptions = {
+        url,
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         },
-        body: `q=${cleanedQuery}&format=${format}`,
+        data: `q=${cleanedQuery}&format=${format}`,
       };
     }
 
-    return rp(fetchOptions)
-      .then((response) => {
-        const obj = JSON.parse(response);
-        if (obj.error) console.log('SQL error ', obj.error); // eslint-disable-line
-        return obj.rows ? obj.rows : obj;
-        // throw new Error('Not found');
-      })
+    return axios(
+      axiosOptions,
+    ).then((response) => {
+      const obj = response.data;
+      if (obj.error) console.log('SQL error ', obj.error); // eslint-disable-line
+      return obj.rows ? obj.rows : obj;
+    })
       .catch((reason) => {
         console.log(reason); // eslint-disable-line
       });
