@@ -21,5 +21,5 @@ services:
     command: yarn run dev
     ports:
       - 3001:3001
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: postgresql://factfinder-user:factfinder-password@database:5432/factfinder-local
