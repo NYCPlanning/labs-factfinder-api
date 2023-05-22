@@ -10,7 +10,7 @@ services:
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
   layers:
-    image: tangoyankee/labs-layers-api:1.2.0
+    image: tangoyankee/labs-layers-api:1.3.0
     ports:
       - 3000:3000
     command: yarn run dev
