@@ -13,12 +13,10 @@ services:
     image: dcposeng/labs-layers-api:latest
     ports:
       - 3000:3000
-    command: yarn run dev
   api:
     build: .
     depends_on:
       - database
-    command: yarn run dev
     ports:
       - 3001:3001
     environment:
