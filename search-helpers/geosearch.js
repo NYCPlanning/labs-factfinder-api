@@ -1,11 +1,10 @@
-const rp = require('request-promise');
+const axios = require('axios');
 
 const geosearch = (string) => {
   const geoSearchAPI = `https://geosearch.planninglabs.nyc/v2/autocomplete?text=${string}`;
 
-  return rp(geoSearchAPI)
-    .then(res => JSON.parse(res))
-    .then(json => json.features.filter(feature => feature.properties.borough))
+  return axios(geoSearchAPI)
+    .then(response => response.data.features.filter(feature => feature.properties.borough))
     .then(json => json.map((feature) => {
       const { label } = feature.properties;
       const { coordinates } = feature.geometry;
