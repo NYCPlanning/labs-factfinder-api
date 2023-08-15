@@ -20,7 +20,7 @@ case $i in
 esac
 done
 
-BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/archive
+BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/main
 fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
 filepath=.migration/$datasource/year=$year/geography=$geography/$datasource.csv
 filedir=$(dirname $filepath)
