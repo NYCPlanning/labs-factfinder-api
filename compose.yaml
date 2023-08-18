@@ -2,7 +2,7 @@ services:
   database:
     image: 'postgres:11'
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_USER: factfinder-user
       POSTGRES_PASSWORD: factfinder-password
@@ -20,4 +20,4 @@ services:
     ports:
       - 3001:3001
     environment:
-      DATABASE_URL: postgresql://factfinder-user:factfinder-password@database:5432/factfinder-local
+      DATABASE_URL: postgresql://factfinder-user:factfinder-password@database:5433/factfinder-local
