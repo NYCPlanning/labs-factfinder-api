@@ -1,6 +1,6 @@
 services:
   database:
-    image: 'postgres:11'
+    image: 'postgres:15'
     ports:
       - 5433:5432
     environment:
