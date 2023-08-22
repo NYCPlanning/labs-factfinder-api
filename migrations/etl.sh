@@ -5,24 +5,24 @@ do
 case $i in
     -s=*|--datasource=*) datasource="${i#*=}" ;;
     -y=*|--year=*) year="${i#*=}" ;;
-    -g=*|--geography=*) geography="${i#*=}";;
+    -v=*|--version=*) version="${i#*=}";;
     --download) download=1 ;;
     --load) load=1 ;;
     --clean) clean=1 ;;
     *)
         echo
         echo "invalid flag $i"
-        echo "e.g. --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
-        echo "e.g. -s=acs -y=2019 -g=2010_to_2020 --download --load"
+        echo "e.g. --datasource=acs --year=2019 --version=2023-03-27 --download --load"
+        echo "e.g. -s=acs -y=2019 --v=2023-03-27 --download --load"
         echo
         exit
     ;;
 esac
 done
 
-BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/archive
-fileurl=$BASE_URL/$datasource/year=$year/geography=$geography/$datasource.csv
-filepath=.migration/$datasource/year=$year/geography=$geography/$datasource.csv
+BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/main
+fileurl=$BASE_URL/$datasource/$year/$version/$datasource.csv
+filepath=.migration/$datasource/$year/$datasource.csv
 filedir=$(dirname $filepath)
 if [[ $download -eq 1 ]]; then 
     mkdir -p .migration && (

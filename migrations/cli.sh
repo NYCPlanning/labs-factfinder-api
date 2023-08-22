@@ -5,9 +5,9 @@ if [ -f .env ]; then
 fi
 
 function support_geoids {
-    local geography=${1:-2010_to_2020}
+    local version=${1:-latest}
     BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/main
-    fileurl=$BASE_URL/support_geoids/geography=$geography/support_geoids.csv
+    fileurl=$BASE_URL/support_geoids/$version/support_geoids.csv
     curl $fileurl | psql $DATABASE_URL -f migrations/support_geoids.sql
 }
 
@@ -34,8 +34,8 @@ case $1 in
     * ) 
         echo
         echo "$1 command not found"
-        echo "e.g. ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load"
-        echo "e.g. ./migrations/cli.sh etl -s={{ acs|decennial }} -y=2010 -g=2010_to_2020 --load --clean"
+        echo "e.g. ./migrations/cli.sh etl --datasource=acs --year=2019 --version=2023-03-27 --download --load"
+        echo "e.g. ./migrations/cli.sh etl -s={{ acs|decennial }} -y=2010 -v=2023-03-27 --load --clean"
         echo
     ;;
 esac
