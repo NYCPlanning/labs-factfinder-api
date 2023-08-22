@@ -5,11 +5,13 @@ do
 case $i in
     -s=*|--datasource=*) datasource="${i#*=}" ;;
     --year_curr=*) year_curr="${i#*=}" ;;
+    --year_curr_vers=*) year_curr_vers="${i#*=}";; 
     --year_prev=*) year_prev="${i#*=}" ;;
+    --year_prev_vers=*) year_prev_vers="${i#*=}";; 
     *)
         echo
         echo "invalid flag $i"
-        echo "e.g. -s={{ acs|decennial }} -year_curr=2019 -year_prev=2010"
+        echo "e.g. -s={{ acs|decennial }} -year_curr=2019 -year_curr_vers=2023-03-27 -year_prev=2010 -year_prev_vers=2023-03-27"
         exit
     ;;
 esac
@@ -17,9 +19,9 @@ done
 
 if [ ! -z "$datasource" ] && [ ! -z "$year_curr" ] && [ ! -z "$year_prev" ]; then
     echo "loading metadata for $datasource year_curr: $year_curr year_prev: $year_prev"
-    base_url="https://raw.githubusercontent.com/NYCPlanning/db-factfinder/main/factfinder/data"
-    url_curr="$base_url/$datasource/$year_curr/metadata.json"
-    url_prev="$base_url/$datasource/$year_prev/metadata.json"
+    base_url="https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/main"
+    url_curr="$base_url/$datasource/$year_curr/$year_curr_vers/metadata.json"
+    url_prev="$base_url/$datasource/$year_prev/$year_prev_vers/metadata.json"
     base_path="$( cd ../"$(dirname "$0")" ; pwd -P )"
     if [ $datasource == "acs" ]; then
         echo $base_path
