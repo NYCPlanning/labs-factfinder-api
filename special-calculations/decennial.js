@@ -23,7 +23,7 @@ module.exports = [
   },
   // population density
   {
-    variable: 'popperacre',
+    variable: 'popacre',
     specialType: 'mean',
     options: { args: ['pop1', 'landacres'] },
   },
@@ -31,7 +31,7 @@ module.exports = [
   {
     variable: 'avghhsz',
     specialType: 'mean',
-    options: { args: ['popinhh', 'ochu_1'] },
+    options: { args: ['popinhh_1', 'ochu_1'] },
   },
   {
     variable: 'avgfamsz',
