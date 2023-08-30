@@ -162,6 +162,7 @@ See the table below for possible programmatic Geotype values, and a mapping of p
 | ntas                      | NTA2020                 | ACS, Census                   |
 | tracts                    | CT2020                  | ACS, Census                   |
 | cdtas                     | CDTA2020                | ACS                           |
+| ccds                      | CCD2023                 |      Census                   |
 |                           | ???                     |      Census                   |
 | blocks                    | CB2020                  |      Census                   |
 | boroughs                  | Boro2020                | ACS, Census                   |
