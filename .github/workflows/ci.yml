@@ -11,7 +11,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
     services:
       db:
-        image: postgis/postgis:11-3.0-alpine
+        image: postgres:15
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
