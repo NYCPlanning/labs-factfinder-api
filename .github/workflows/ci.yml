@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '16.15.1'
+          node-version: '18.17.1'
       - run: yarn install
       - run: yarn migrate
       - run: yarn test
