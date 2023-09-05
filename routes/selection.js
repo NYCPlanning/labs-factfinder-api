@@ -58,6 +58,12 @@ router.get('/:geotype/:geoid', async (req, res) => {
         status:  [`Failed to find selection for hash`],
       });
     }
+  } else if (!Object.keys(summaryLevels).includes(geotype)) {
+    const message = `${geotype} is not a valid geotype.`;
+    console.error(message);
+    res.status(400).send({
+      status:  [message],
+    });
   } else {
     getFeatures(geotype, [ geoid ])
       .then((features) => {
