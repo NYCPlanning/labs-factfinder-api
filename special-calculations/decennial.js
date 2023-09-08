@@ -1,5 +1,9 @@
 module.exports = [
-  // housing-occupancy
+  {
+    variable: 'agdpdrt',
+    specialType: 'mean',
+    options: { args: ['']}
+  },
   {
     variable: 'hmownrvcrt',
     specialType: 'mean',
