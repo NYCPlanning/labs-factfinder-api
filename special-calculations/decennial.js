@@ -3,7 +3,7 @@ module.exports = [
     {
         variable: 'popacre',
         specialType: 'mean',
-        options: { args: ['pop5', 'landacres'], formulaName: { sum: 'ratio' } },
+        options: { args: ['pop5', 'landacres'] },
     },
     // Median Age
     {
@@ -15,7 +15,7 @@ module.exports = [
     {
         variable: 'agdpdrt',
         specialType: 'mean',
-        options: { args: ['agu1865p', 'ag18t64'], formulaName: { sum: 'ratio' } }
+        options: { args: ['agu1865pl', 'ag18t64'], formulaName: { sum: 'ratio' } }
     },
     // Old age dependency ratio
     {
