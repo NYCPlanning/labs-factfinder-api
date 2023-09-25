@@ -17,7 +17,7 @@ function interpolate(data, variable, year) {
   const scenario = bins.map((bin) => {
     const [key, range] = bin;
     const [min, max] = range;
-    const row = find(data, ['variable', key]);
+    const row = find(data, (row) => row.variable.match(key) !== null);
 
     if (!row) throw new Error(`${key} was not found in the ${year} dataset.`);
 
