@@ -44,15 +44,5 @@ CREATE TABLE support_geoids AS (
         FROM tmp
         WHERE geotype LIKE 'CDTA%'
         ORDER BY geogname ASC
-    ) UNION ALL 
-    (
-        SELECT 
-            geoid, 
-            geotype, 
-            geogname as label, 
-            'City Council Districts (CCDs)' AS typelabel
-        FROM tmp
-        WHERE geotype LIKE 'CCD%'
-        ORDER BY geogname ASC
     )
 );
