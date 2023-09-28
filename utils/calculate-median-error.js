@@ -20,7 +20,7 @@ function calculateMedianError(data, variable, year, options) {
   const bins = getBins(variable, year);
   const scenario = bins.map((bin) => {
     const [key] = bin;
-    const { sum } = find(data, ['variable', key]);
+    const { sum } = find(data, (row) => row.variable.match(key) !== null);
 
     return {
       quantity: sum,
