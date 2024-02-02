@@ -29,3 +29,5 @@ SELECT
     p as percent,
     z as percent_margin_of_error
 INTO acs.:"TABLE_NAME" FROM tmp;
+
+CREATE INDEX acs_:TABLE_NAME||_geoid_idx ON acs.:"TABLE_NAME" (geoid);
