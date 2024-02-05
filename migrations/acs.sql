@@ -1,5 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS acs;
 DROP TABLE IF EXISTS acs.:"TABLE_NAME";
+DROP INDEX IF EXISTS acs.:INDEX_NAME;
 
 CREATE TEMP TABLE tmp (
     census_geoid text,
@@ -30,4 +31,4 @@ SELECT
     z as percent_margin_of_error
 INTO acs.:"TABLE_NAME" FROM tmp;
 
-CREATE INDEX acs_:TABLE_NAME||_geoid_idx ON acs.:"TABLE_NAME" (geoid);
+CREATE INDEX IF NOT EXISTS :INDEX_NAME ON acs.:"TABLE_NAME" (geoid);
