@@ -38,7 +38,7 @@ if [[ $download -eq 1 ]]; then
 fi
 
 if [[ $load -eq 1 ]]; then 
-    cat $filepath | psql $DATABASE_URL -v TABLE_NAME=$year -f migrations/$datasource.sql
+    cat $filepath | psql $DATABASE_URL -v TABLE_NAME=$year -v INDEX_NAME="${datasource}_${year}_geoid_idx" -f migrations/$datasource.sql
 fi
 
 if [[ $clean -eq 1 ]]; then 
