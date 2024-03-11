@@ -26,7 +26,7 @@ INSERT INTO decennial.metadata (
             record ->> 'category' as category,
             record ->> 'base_variable' as base
         FROM (SELECT json_array_elements(_json::json) AS record, release_year FROM meta) t
-        WHERE record ->> 'domain' IN ('decennial')
+        WHERE record ->> 'domain' IN ('census')
     ) a 
     GROUP BY variablename, base, category
     ORDER BY variablename, base, category
