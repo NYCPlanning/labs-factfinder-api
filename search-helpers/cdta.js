@@ -18,15 +18,12 @@ const cdta = (string) => {
             WHEN borocode = '4' THEN '081'
             WHEN borocode = '5' THEN '085'
           END
-        || countyfips as fips,
-        boroname || ' '
+        || countyfips as fips
       FROM pff_2020_cdtas_21c
     ) x
     WHERE
-      cdta2020 LIKE '%25${string}%25'
-      OR fips LIKE '%25${string}%25'
-      OR boroname LIKE '%25${string}%25'
-      OR geolabel LIKE '%25${string}%25'
+      cdta2020 ILIKE '%25${string}%25'
+      OR geolabel ILIKE '%25${string}%25'
     LIMIT 5
   `;
 
