@@ -19,10 +19,10 @@ app.db = pgp(process.env.DATABASE_URL);
 
 // allows CORS
 app.use(cors({
-  origin: ['https://staging--labs-factfinder.netlify.app','https://develop--labs-factfinder.netlify.app','https://popfactfinder.planning.nyc.gov', 'http://localhost:4200','https://factfinder-staging.planninglabs.nyc','https://factfinder-develop.planninglabs.nyc'],
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  origin: ['https://staging--labs-factfinder.netlify.app', 'https://develop--labs-factfinder.netlify.app', 'https://popfactfinder.planning.nyc.gov', 'http://localhost:4200', 'https://factfinder-staging.planninglabs.nyc', 'https://factfinder-develop.planninglabs.nyc'],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'X-Requested-With,Content-Type,Authorization',
-}))
+}));
 
 // middleware
 app.use(logger('dev'));
