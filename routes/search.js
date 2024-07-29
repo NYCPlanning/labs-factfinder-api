@@ -5,6 +5,7 @@ const neighborhoodTabulationArea = require('../search-helpers/neighborhood-tabul
 const tract = require('../search-helpers/tract');
 const block = require('../search-helpers/block');
 const district = require('../search-helpers/district');
+const cdta = require('../search-helpers/cdta');
 
 const router = express.Router();
 
@@ -17,11 +18,12 @@ router.get('/', (req, res) => {
     tract(q),
     block(q),
     district(q),
+    cdta(q),
   ])
     .then((values) => {
-      const [addresses, ntas, tracts, blocks, districts] = values;
+      const [addresses, ntas, tracts, blocks, districts, cdtas] = values;
       const responseArray = [];
-      res.json(responseArray.concat(addresses, ntas, tracts, blocks, districts));
+      res.json(responseArray.concat(addresses, ntas, tracts, blocks, districts, cdtas));
     }).catch((reason) => {
       console.error(reason); // eslint-disable-line
     });
