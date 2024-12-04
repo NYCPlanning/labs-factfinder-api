@@ -9,15 +9,3 @@ services:
       POSTGRES_DB: factfinder-local
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
-  layers:
-    image: dcposeng/labs-layers-api:latest
-    ports:
-      - 3000:3000
-  api:
-    build: .
-    depends_on:
-      - database
-    ports:
-      - 3001:3001
-    environment:
-      DATABASE_URL: postgresql://factfinder-user:factfinder-password@database:5432/factfinder-local
