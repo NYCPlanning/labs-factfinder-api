@@ -6,7 +6,7 @@ fi
 
 function support_geoids {
     local version=${1:-latest}
-    BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/main
+    BASE_URL=https://nyc3.digitaloceanspaces.com/edm-publishing/db-factfinder/ar_build
     fileurl=$BASE_URL/support_geoids/$version/support_geoids.csv
     curl $fileurl | psql $DATABASE_URL -f migrations/support_geoids.sql
 }

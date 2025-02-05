@@ -1,0 +1,13 @@
+name: migrate
+
+on:
+  push:
+    branches:
+      - 'pratishta/exp-gha-migration'
+
+jobs:
+  update:
+    name: Data update...
+    runs-on: ubuntu-22.04
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
