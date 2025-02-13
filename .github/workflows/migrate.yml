@@ -10,4 +10,4 @@ jobs:
     name: Data update...
     runs-on: ubuntu-22.04
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
