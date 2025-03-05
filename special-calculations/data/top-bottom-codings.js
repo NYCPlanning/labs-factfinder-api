@@ -55,61 +55,61 @@ const topBottomCodings = {
     mdhhinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 270000,
+        postInflation: 281000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 13500
+        postInflation: 14000
       }
     },
     mdfaminc: {
       upper: {
         preInflation: 200000,
-        postInflation: 270000,
+        postInflation: 281000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 13500
+        postInflation: 14000
       }
     },
     mdnfinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 270000,
+        postInflation: 281000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 13500
+        postInflation: 14000
       }
     },
     mdewrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 135000,
+        postInflation: 140000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3400
+        postInflation: 3500
       }
     },
     mdemftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 135000,
+        postInflation: 140000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3400
+        postInflation: 3500
       }
     },
     mdefftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 135000,
+        postInflation: 140000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3400
+        postInflation: 3500
       }
     },
     mdrms: {
@@ -119,7 +119,7 @@ const topBottomCodings = {
     mdvl: {
       upper: {
         preInflation: 1000000,
-        postInflation: 1350000,
+        postInflation: 1405000,
       },
       lower: {
         preInflation: 0,
@@ -129,7 +129,7 @@ const topBottomCodings = {
     mdgr: {
       upper: {
         preInflation: 2000,
-        postInflation: 2700,
+        postInflation: 2800,
       },
       lower: {
         preInflation: 0,
