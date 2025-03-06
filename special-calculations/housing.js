@@ -6,6 +6,15 @@ module.exports = [
     options: { designFactor: 1.6, transform: { inflate: true } },
   },
   {
+    variable: 'mngr',
+    specialType: 'mean',
+    options: {
+      args: ['aggr', 'ochuprnt3'],
+      transform: { inflate: true } 
+    },
+    noChangePercents: true,
+  },
+  {
     variable: 'grnorntpd',
     specialType: 'removePercentsOnly',
   },

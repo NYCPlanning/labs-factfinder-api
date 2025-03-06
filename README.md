@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-factfinder-api/tree/develop)
-
 # FactFinder API
 An express.js api that provides search and selection data for [NYC Population FactFinder](https://github.com/NYCPlanning/labs-factfinder).
 
@@ -22,7 +20,7 @@ You will need the following things properly installed on your computer.
   ### Setting up a local database instance with docker
   You can set up a local instance of the database that this API relies on using Docker. This is helpful for testing changes to the API locally and for making updates to the "migration" scripts themselves. To set up a local instance of the database:
   * Makes sure you have [docker installed](https://www.docker.com/get-started/). If you don't, consider installing it via [homebrew](https://www.brew.sh).
-  * Once you have docker installed, try running `docker compose up database` from the root directory of this repository. The file `compose.yaml` should spin up a container running the default Postgresql image. If this step is successful, you should see logs indicating that the database is running and ready to accept connections in your terminal. You will need to keep this container running while running the project.
+  * Once you have docker installed, try running `docker compose up` from the root directory of this repository. The file `compose.yaml` should spin up a container running the default Postgresql image. If this step is successful, you should see logs indicating that the database is running and ready to accept connections in your terminal. You will need to keep this container running while running the project.
   * Make sure you have locally installed [jq](https://stedolan.github.io/jq/download/) and [Postgres](https://www.postgresql.org/download/). Tip: `brew install jq` and `brew install postgresql` for Mac users using Homebrew.
   * Double check that you created your `.env` file and copied over the contents of `sample.env`. The contents of `sample.env` are pre-configured to connect to the database created by `compose.yaml`
   * Run `yarn migrate`. Running the `migrate` command kicks off `./bin/migrate` node executable, which in turn runs the `.sh` shell scripts under `./migrations`. Running this command will kick off a series of bash scripts that download and datasets and load them into your database. You should see logs in your terminal such as `Running ETL command: ./migrations/cli.sh etl --datasource=acs --year=2019 --geography=2010_to_2020 --download --load`.
@@ -38,13 +36,8 @@ You will need the following things properly installed on your computer.
       - 2010 (table)
       - 2020 (table)
       - metadata (table)
-      
-  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
 
-  ### Running the api, database, and labs-layers-api with docker
-  When making changes to the factfinder frontend, it can be helpful to have the API, Database, and labs-layers-api run together in docker using `compose`
-  * Run the api, database, and labs-layers-api together
-    - `docker compose up`
+  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
 
   ### Connecting your local environment to the Development environment database.
   > This option is only available to internal DCP developers, as it requires access to sensitive information.
@@ -80,7 +73,7 @@ There are three core set of tables that support the Factfinder API:
   - `tract` - tracts that match the input query
   - `block` - census blocks that match the input query
   - `borough` -
-  - `cdta` - 
+  - `cdta` -
   - `cd` - community districts
 
 - `/selection`
