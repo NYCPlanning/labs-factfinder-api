@@ -12,7 +12,6 @@ module.exports = [
       args: ['aggr', 'ochuprnt3'],
       transform: { inflate: true } 
     },
-    noChangePercents: true,
   },
   {
     variable: 'grnorntpd',
