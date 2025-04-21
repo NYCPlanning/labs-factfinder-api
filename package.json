@@ -41,7 +41,7 @@
     "underscore": "^1.9.1"
   },
   "engines": {
-    "node": "^18"
+    "node": "20.x"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
