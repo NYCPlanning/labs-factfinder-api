@@ -12,6 +12,8 @@ const {
   DECENNIAL_EARLIEST_TABLE_NAME,
   DECENNIAL_EARLIEST_VERSION,
 } = constants;
+console.log("SPITTING OUT MIGRATE SCRIPT");
+console.log(process.argv[2]);
 
 const etl = (command) => {
   console.log(`Running ETL command: ${command}`);

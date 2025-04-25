@@ -24,7 +24,7 @@ jobs:
     name: Data update...
     runs-on: ubuntu-22.04
     env:
-      DATABASE_URL: ${{ secrets.DEVELOP_DATABASE_URL }}
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -41,6 +41,6 @@ jobs:
         with:
           node-version: '18.x'
       - name: Install node dependencies
-        run: npm ci
+        run: npm i
       - name: ETL
-        run: npm run migrate
+        run: BUILD=${{ inputs.build }} npm run migrate
