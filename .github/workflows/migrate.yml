@@ -9,22 +9,22 @@ on:
           required: true
           options:
               - all
-              # - acs
-              # - decennial
+              - acs
+              - decennial
       environment:
           description: "The database to update"
           type: choice
           required: true
           options:
-              - development
-              # - staging
+              - production
+              - staging
 
 jobs:
   update:
     name: Data update...
     runs-on: ubuntu-22.04
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - name: checkout code
         uses: actions/checkout@v4

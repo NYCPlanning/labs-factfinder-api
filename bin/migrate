@@ -12,8 +12,7 @@ const {
   DECENNIAL_EARLIEST_TABLE_NAME,
   DECENNIAL_EARLIEST_VERSION,
 } = constants;
-console.log("SPITTING OUT MIGRATE SCRIPT");
-console.log(process.argv[2]);
+
 
 const etl = (command) => {
   console.log(`Running ETL command: ${command}`);
@@ -28,11 +27,21 @@ const etl = (command) => {
   });
 };
 
-etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_LATEST_TABLE_NAME} --version=${ACS_LATEST_VERSION} --download --load`);
-etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_EARLIEST_TABLE_NAME} --version=${ACS_EARLIEST_VERSION} --download --load`);
-etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --version=${DECENNIAL_LATEST_VERSION} --download --load`);
-etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_EARLIEST_TABLE_NAME} --version=${DECENNIAL_EARLIEST_VERSION} --download --load`);
-etl(`./migrations/cli.sh metadata --datasource=acs --year_curr=${ACS_LATEST_TABLE_NAME} --year_curr_vers=${ACS_LATEST_VERSION} --year_prev=${ACS_EARLIEST_TABLE_NAME} --year_prev_vers=${ACS_EARLIEST_VERSION}`);
-etl(`./migrations/cli.sh metadata --datasource=decennial --year_curr=${DECENNIAL_LATEST_TABLE_NAME} --year_curr_vers=${DECENNIAL_LATEST_VERSION} --year_prev=${DECENNIAL_EARLIEST_TABLE_NAME} --year_prev_vers=${DECENNIAL_EARLIEST_VERSION}`);
+if (process.argv[2] === "all" || process.argv[2] == "") {
+  etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_LATEST_TABLE_NAME} --version=${ACS_LATEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_EARLIEST_TABLE_NAME} --version=${ACS_EARLIEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --version=${DECENNIAL_LATEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_EARLIEST_TABLE_NAME} --version=${DECENNIAL_EARLIEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh metadata --datasource=acs --year_curr=${ACS_LATEST_TABLE_NAME} --year_curr_vers=${ACS_LATEST_VERSION} --year_prev=${ACS_EARLIEST_TABLE_NAME} --year_prev_vers=${ACS_EARLIEST_VERSION}`);
+  etl(`./migrations/cli.sh metadata --datasource=decennial --year_curr=${DECENNIAL_LATEST_TABLE_NAME} --year_curr_vers=${DECENNIAL_LATEST_VERSION} --year_prev=${DECENNIAL_EARLIEST_TABLE_NAME} --year_prev_vers=${DECENNIAL_EARLIEST_VERSION}`);
+} else if (process.argv[2] === "acs") {
+  etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_LATEST_TABLE_NAME} --version=${ACS_LATEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_EARLIEST_TABLE_NAME} --version=${ACS_EARLIEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh metadata --datasource=acs --year_curr=${ACS_LATEST_TABLE_NAME} --year_curr_vers=${ACS_LATEST_VERSION} --year_prev=${ACS_EARLIEST_TABLE_NAME} --year_prev_vers=${ACS_EARLIEST_VERSION}`);
+} else if (process.argv[2] === "decennial") {
+  etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --version=${DECENNIAL_LATEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_EARLIEST_TABLE_NAME} --version=${DECENNIAL_EARLIEST_VERSION} --download --load`);
+  etl(`./migrations/cli.sh metadata --datasource=decennial --year_curr=${DECENNIAL_LATEST_TABLE_NAME} --year_curr_vers=${DECENNIAL_LATEST_VERSION} --year_prev=${DECENNIAL_EARLIEST_TABLE_NAME} --year_prev_vers=${DECENNIAL_EARLIEST_VERSION}`);
+}
 etl(`./migrations/cli.sh support_geoids ${GEOGRAPHY_VERSION}`);
 etl('./migrations/cli.sh selection');
