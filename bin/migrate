@@ -13,7 +13,6 @@ const {
   DECENNIAL_EARLIEST_VERSION,
 } = constants;
 
-
 const etl = (command) => {
   console.log(`Running ETL command: ${command}`);
   exec(command, (err, stdout, stderr) => {
