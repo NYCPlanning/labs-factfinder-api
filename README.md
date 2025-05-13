@@ -37,7 +37,7 @@ You will need the following things properly installed on your computer.
       - 2020 (table)
       - metadata (table)
 
-  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
+  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually. To update just the ACS or decennial data, run `yarn migrate acs` and `yarn migrate decennial` respectively. 
 
   ### Connecting your local environment to the Development environment database.
   > This option is only available to internal DCP developers, as it requires access to sensitive information.
