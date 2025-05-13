@@ -37,7 +37,7 @@ You will need the following things properly installed on your computer.
       - 2020 (table)
       - metadata (table)
 
-  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
+  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually. To update just the ACS or decennial data, run `yarn migrate acs` and `yarn migrate decennial` respectively. 
 
   ### Connecting your local environment to the Development environment database.
   > This option is only available to internal DCP developers, as it requires access to sensitive information.
@@ -182,7 +182,7 @@ As most of the source data is organized into folders based on whether the data i
 
 > The following process only applies to internal DCP developers
 
-The process for updating the data in the development, staging, and production environments is similar to that for a local environment. Make sure you have `jq` and `postgresql` installed. Then update your `DATABASE_URL` environment variable to point to the environment you want to update. You can find the host, port, username, and password that you need to update your `DATABASE_URL` connection string by looking in the `labs-db` database cluster in Digital Ocean and looking for the factfinder database for each environment. Once you have that set up, you should be able to run `yarn migrate` against one of those environments. Note that this is currently a manual process so it should usually be executed by experienced members of the team with proper communication beforehand. TODO - finish automating data migrations scripts to run via GitHub Actions. Before updating any remote databases, be sure to submit a PR for review that updates the constants and any necessary code. The updates should only be executed from the corresponding `develop`, `staging`, and `master` branches after a PR has been merged into them.
+The process for updating the data in the development, staging, and production environments is similar to that for a local environment. Make sure you have `jq` and `postgresql` installed. Then update your `DATABASE_URL` environment variable to point to the environment you want to update. You can find the host, port, username, and password that you need to update your `DATABASE_URL` connection string by looking in the `labs-db` database cluster in Digital Ocean and looking for the factfinder database for each environment. Once you have that set up, you should be able to run `yarn migrate` against one of those environments. Note that this is currently a manual process so it should usually be executed by experienced members of the team with proper communication beforehand. Before updating any remote databases, be sure to submit a PR for review that updates the constants and any necessary code. The updates should only be executed from the corresponding `develop`, `staging`, and `master` branches after a PR has been merged into them.
 
 ## Backend services
 
