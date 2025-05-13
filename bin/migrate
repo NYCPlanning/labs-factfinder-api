@@ -27,7 +27,7 @@ const etl = (command) => {
   });
 };
 
-if (process.argv[2] === "all" || process.argv[2] == "") {
+if (process.argv[2] === "all" || process.argv[2] == undefined) {
   etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_LATEST_TABLE_NAME} --version=${ACS_LATEST_VERSION} --download --load`);
   etl(`./migrations/cli.sh etl --datasource=acs --year=${ACS_EARLIEST_TABLE_NAME} --version=${ACS_EARLIEST_VERSION} --download --load`);
   etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --version=${DECENNIAL_LATEST_VERSION} --download --load`);
@@ -42,6 +42,8 @@ if (process.argv[2] === "all" || process.argv[2] == "") {
   etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_LATEST_TABLE_NAME} --version=${DECENNIAL_LATEST_VERSION} --download --load`);
   etl(`./migrations/cli.sh etl --datasource=decennial --year=${DECENNIAL_EARLIEST_TABLE_NAME} --version=${DECENNIAL_EARLIEST_VERSION} --download --load`);
   etl(`./migrations/cli.sh metadata --datasource=decennial --year_curr=${DECENNIAL_LATEST_TABLE_NAME} --year_curr_vers=${DECENNIAL_LATEST_VERSION} --year_prev=${DECENNIAL_EARLIEST_TABLE_NAME} --year_prev_vers=${DECENNIAL_EARLIEST_VERSION}`);
+} else {
+  throw new Error("Invalid parameter");
 }
 etl(`./migrations/cli.sh support_geoids ${GEOGRAPHY_VERSION}`);
 etl('./migrations/cli.sh selection');
