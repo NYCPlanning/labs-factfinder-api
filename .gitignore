@@ -1,6 +1,7 @@
 /node_modules
 /db-data
 /test-output
+/.vscode
 npm-debug.log
 .env
 .python-version
