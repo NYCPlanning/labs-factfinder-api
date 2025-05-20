@@ -25,7 +25,7 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
     name: Data update...
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
