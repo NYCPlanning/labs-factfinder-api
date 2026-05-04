@@ -1,5 +1,5 @@
 // constants for use in special calculations
-const INFLATION_FACTOR = 1.4049;
+const INFLATION_FACTOR = 1.4462;
 const CORRELATION_COEFFICIENT_CONST = 1.645;
 const DIFF_PERCENT_THRESHOLD = -0.05;
 const DESIGN_FACTOR = 1.5;
