@@ -37,7 +37,7 @@ You will need the following things properly installed on your computer.
       - 2020 (table)
       - metadata (table)
 
-  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually.
+  Note - these scripts appear to occasionally time out and fail "silently". If you get all `Done!` logs but are missing tables in your database, try re-running the script for the missing tables individually. To update just the ACS or decennial data, run `yarn migrate acs` and `yarn migrate decennial` respectively. 
 
   ### Connecting your local environment to the Development environment database.
   > This option is only available to internal DCP developers, as it requires access to sensitive information.
@@ -178,11 +178,19 @@ The scripts in the `/migrations` folder of this repo read data from a set of CSV
 
 ### Data Updates
 
-As most of the source data is organized into folders based on whether the data is ACS or Decennial and the year of publication, the migration scripts and the API code rely on a set of constants located in `labs-factfinder-api/special-calculations/data/constants.js`. Performing data updates for new data releases should be as easy as updating the years in those constants and rerunning the migrations against a local database first, then against development and staging environments for testing, and finally for production once the changes are ready to go live. Note that you should only have to make changes to those constants when you are doing the work of updating the _data itself_. If you're just trying to populate a local instance of the database so that you can work on application code, you should be able to leave those constants as-is.
+Most of the source data is organized into folders based on whether the data is ACS or Decennial and the year of publication, so the migration scripts and the API code rely on a set of constants located in `labs-factfinder-api/special-calculations/data/constants.js`. To update your local database with new data releases:
+
+1. Update the years in those constants
+2. Re-run the migrations against the local database, `yarn migrate`
+
+
+3. Commit those changes to develop, staging or production branches, then running the migrate Github Action for the approrpiate environment (develop, staging, or production). Note that you should only have to make changes to those constants when you are doing the work of updating the _data itself_. If you're just trying to populate a local instance of the database so that you can work on application code, you should be able to leave those constants as-is.
 
 > The following process only applies to internal DCP developers
-
-The process for updating the data in the development, staging, and production environments is similar to that for a local environment. Make sure you have `jq` and `postgresql` installed. Then update your `DATABASE_URL` environment variable to point to the environment you want to update. You can find the host, port, username, and password that you need to update your `DATABASE_URL` connection string by looking in the `labs-db` database cluster in Digital Ocean and looking for the factfinder database for each environment. Once you have that set up, you should be able to run `yarn migrate` against one of those environments. Note that this is currently a manual process so it should usually be executed by experienced members of the team with proper communication beforehand. TODO - finish automating data migrations scripts to run via GitHub Actions. Before updating any remote databases, be sure to submit a PR for review that updates the constants and any necessary code. The updates should only be executed from the corresponding `develop`, `staging`, and `master` branches after a PR has been merged into them.
+To update the develop, staging or production databases with new data releases: 
+1. Update the years in those constants
+2. Commit those changes and open a PR for review against the branch associated with the target database (i.e. develop, staging or main)
+3. Run the migrate Github Action with the target database environment under "The database to update" 
 
 ## Backend services
 
