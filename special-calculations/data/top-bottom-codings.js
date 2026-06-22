@@ -59,8 +59,8 @@ const topBottomCodings = {
       },
       lower: {
         preInflation: 9999,
-        postInflation: 14500
-      }
+        postInflation: 14500,
+      },
     },
     mdfaminc: {
       upper: {
@@ -69,8 +69,8 @@ const topBottomCodings = {
       },
       lower: {
         preInflation: 9999,
-        postInflation: 14500
-      }
+        postInflation: 14500,
+      },
     },
     mdnfinc: {
       upper: {
@@ -79,8 +79,8 @@ const topBottomCodings = {
       },
       lower: {
         preInflation: 9999,
-        postInflation: 14500
-      }
+        postInflation: 14500,
+      },
     },
     mdewrk: {
       upper: {
@@ -89,8 +89,8 @@ const topBottomCodings = {
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3600
-      }
+        postInflation: 3600,
+      },
     },
     mdemftwrk: {
       upper: {
@@ -99,8 +99,8 @@ const topBottomCodings = {
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3600
-      }
+        postInflation: 3600,
+      },
     },
     mdefftwrk: {
       upper: {
@@ -109,8 +109,8 @@ const topBottomCodings = {
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3600
-      }
+        postInflation: 3600,
+      },
     },
     mdrms: {
       upper: 9,
@@ -124,7 +124,7 @@ const topBottomCodings = {
       lower: {
         preInflation: 0,
         postInflation: 0,
-      }
+      },
     },
     mdgr: {
       upper: {
@@ -134,7 +134,7 @@ const topBottomCodings = {
       lower: {
         preInflation: 0,
         postInflation: 0,
-      }
+      },
     },
   },
 };
