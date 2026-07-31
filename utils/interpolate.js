@@ -1,6 +1,5 @@
 const { find } = require('lodash');
 
-const topBottomCodeEstimate = require('./top-bottom-code-estimate');
 const medianOfRanges = require('./median-of-ranges');
 const getBins = require('./get-bins');
 
@@ -17,7 +16,7 @@ function interpolate(data, variable, year) {
   const scenario = bins.map((bin) => {
     const [key, range] = bin;
     const [min, max] = range;
-    const row = find(data, (row) => row.variable.match(key) !== null);
+    const row = find(data, row => row.variable.match(key) !== null);
 
     if (!row) throw new Error(`${key} was not found in the ${year} dataset.`);
 
