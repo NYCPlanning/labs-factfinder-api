@@ -23,12 +23,12 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
 
   const {
     preInflation: preInflationUpper,
-    postInflation: postInflationUpper
+    postInflation: postInflationUpper,
   } = get(codingRule, 'upper');
 
   const {
     preInflation: preInflationLower,
-    postInflation: postInflationLower
+    postInflation: postInflationLower,
   } = get(codingRule, 'lower');
 
   if (isPrevious) {
@@ -38,13 +38,15 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
     } else if (estimate === preInflationLower) {
       mutatedEstimate = postInflationLower;
       codingThreshold = 'lower';
-    } else {
-      if (
-        config.options &&
-        config.options.transform &&
-        config.options.transform.inflate
-      ) {
-        mutatedEstimate = estimate * INFLATION_FACTOR
+    }
+
+    if (codingThreshold === null) {
+      const shouldInflate = config.options
+        && config.options.transform
+        && config.options.transform.inflate;
+
+      if (shouldInflate) {
+        mutatedEstimate = estimate * INFLATION_FACTOR;
       }
 
       if (mutatedEstimate >= postInflationUpper) {
@@ -55,14 +57,17 @@ function topBottomCodeEstimate(estimate, variable, year, isPrevious, config) {
         codingThreshold = 'lower';
       }
     }
-  } else { // current year
-    if (estimate <= get(codingRule, 'lower')) {
-      mutatedEstimate = get(codingRule, 'lower');
-      codingThreshold = 'lower';
-    } else if (estimate >= get(codingRule, 'upper')) {
-      mutatedEstimate = get(codingRule, 'upper');
-      codingThreshold = 'upper';
-    }
+
+    return { mutatedEstimate, codingThreshold };
+  }
+
+  // current year
+  if (estimate <= get(codingRule, 'lower')) {
+    mutatedEstimate = get(codingRule, 'lower');
+    codingThreshold = 'lower';
+  } else if (estimate >= get(codingRule, 'upper')) {
+    mutatedEstimate = get(codingRule, 'upper');
+    codingThreshold = 'upper';
   }
 
   return { mutatedEstimate, codingThreshold };
