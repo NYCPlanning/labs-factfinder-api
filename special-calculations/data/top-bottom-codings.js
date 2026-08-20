@@ -55,62 +55,62 @@ const topBottomCodings = {
     mdhhinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 281000,
+        postInflation: 289000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 14000
-      }
+        postInflation: 14500,
+      },
     },
     mdfaminc: {
       upper: {
         preInflation: 200000,
-        postInflation: 281000,
+        postInflation: 289000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 14000
-      }
+        postInflation: 14500,
+      },
     },
     mdnfinc: {
       upper: {
         preInflation: 200000,
-        postInflation: 281000,
+        postInflation: 289000,
       },
       lower: {
         preInflation: 9999,
-        postInflation: 14000
-      }
+        postInflation: 14500,
+      },
     },
     mdewrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 140000,
+        postInflation: 145000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3500
-      }
+        postInflation: 3600,
+      },
     },
     mdemftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 140000,
+        postInflation: 145000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3500
-      }
+        postInflation: 3600,
+      },
     },
     mdefftwrk: {
       upper: {
         preInflation: 100000,
-        postInflation: 140000,
+        postInflation: 145000,
       },
       lower: {
         preInflation: 2499,
-        postInflation: 3500
-      }
+        postInflation: 3600,
+      },
     },
     mdrms: {
       upper: 9,
@@ -119,22 +119,22 @@ const topBottomCodings = {
     mdvl: {
       upper: {
         preInflation: 1000000,
-        postInflation: 1405000,
+        postInflation: 1446000,
       },
       lower: {
         preInflation: 0,
         postInflation: 0,
-      }
+      },
     },
     mdgr: {
       upper: {
         preInflation: 2000,
-        postInflation: 2800,
+        postInflation: 2900,
       },
       lower: {
         preInflation: 0,
         postInflation: 0,
-      }
+      },
     },
   },
 };
