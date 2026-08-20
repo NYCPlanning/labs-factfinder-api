@@ -49,7 +49,7 @@ module.exports = [
   },
   // health insurance coverage
   {
-    variable: 'cni1864_2',
+    variable: 'cni1964_2',
     specialType: 'removePercentsOnly',
   },
   {
